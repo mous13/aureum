@@ -1,0 +1,18 @@
+
+{% extends '@Forumify/admin/base.html.twig' %}
+
+{% block title_page %}
+    {% if hotel is defined %}
+        New Employee for {{ hotel.name }}
+    {% else %}
+        New Employee
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {% include '@Forumify/admin/components/simple_form.html.twig' with {
+        name: hotel is defined ? 'New Employee for ' ~ hotel.name : 'New Employee'|trans,
+        form: form,
+        cancelPath: hotel is defined ? path('aureum_admin_employees_list_by_hotel', {'hotelId': hotel.id}) : path('aureum_admin_employees_list')
+    } only %}
+{% endblock %}

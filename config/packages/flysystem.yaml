@@ -1,0 +1,6 @@
+flysystem:
+    storages:
+        hotel.image.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/public%aureum.hotel.image.storage.path%'

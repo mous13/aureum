@@ -1,0 +1,9 @@
+doctrine:
+    orm:
+        mappings:
+            aureum:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/vendor/citadel/aureum/src/Core/Entity'
+                prefix: Citadel\Aureum\Core\Entity
+                alias: AureumEntity

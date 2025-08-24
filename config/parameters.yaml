@@ -1,0 +1,2 @@
+parameters:
+  aureum.hotel.image.storage.path: '/storage/aureum/hotels/images'

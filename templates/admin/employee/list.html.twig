@@ -1,0 +1,13 @@
+{% extends '@Forumify/admin/crud/list.html.twig' %}
+
+{% block title %}
+    {% if hotel is defined %}
+        {{ hotel.name }} Employees
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block table_container %}
+    {{ component(table) }}
+{% endblock %}

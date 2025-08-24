@@ -1,0 +1,5 @@
+framework:
+    assets:
+        packages:
+            aureum.hotel.image:
+                base_path: '%aureum.hotel.image.storage.path%'

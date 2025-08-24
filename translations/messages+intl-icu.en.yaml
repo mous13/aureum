@@ -1,0 +1,10 @@
+aureum:
+  admin:
+    hotel:
+      crud:
+        plural: 'hotels'
+        single: 'hotel'
+    employee:
+      crud:
+        plural: 'employees'
+        single: 'employee'

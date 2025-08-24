@@ -1,0 +1,20 @@
+{
+  "name": "citadel/aureum",
+  "type": "forumify-plugin",
+  "keywords": ["symfony-ux"],
+  "description": "Aureum SaaS Platform",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "require": {
+    "forumify/forumify-platform": "^0.4.20"
+  },
+  "autoload": {
+    "psr-4": {
+      "Citadel\\Aureum\\": "src/"
+    }
+  },
+  "extra": {
+    "forumify-plugin-class": "Citadel\\Aureum\\CitadelAureum"
+  }
+
+}

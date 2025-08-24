@@ -1,0 +1,11 @@
+admin:
+  resource: ../src/Admin/Controller
+  type: attribute
+  name_prefix: aureum_admin_
+  prefix: admin/aureum/
+
+core:
+  resource: ../src/Core/Controller
+  type: attribute
+  name_prefix: aureum_
+  prefix: /aureum/

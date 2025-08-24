@@ -3,8 +3,10 @@
 namespace Citadel\Aureum\Core\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Citadel\Aureum\Core\Repository\employeeRepository;
+use Citadel\Aureum\Core\Repository\EmployeeRepository;
+use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\User;
+
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
 #[ORM\Table(name: 'aureum_employees')]
@@ -13,10 +15,7 @@ class Employee
     use IdentifiableEntityTrait;
 
     #[ORM\Column(length: 255)]
-    private string $firstName;
-
-    #[ORM\Column(length: 255)]
-    private string $lastName;
+    private string $name;
 
     #[ORM\Column(length: 255)]
     private string $role;
@@ -29,29 +28,14 @@ class Employee
     #[ORM\JoinColumn(name: 'hotel_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private Hotel $hotel;
 
-    public function getFirstName(): string
+    public function getName(): string
     {
-        return $this->firstName;
+        return $this->name;
     }
 
-    public function setFirstName(string $firstName): void
+    public function setName(string $name): void
     {
-        $this->firstName = $firstName;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): void
-    {
-        $this->lastName = $lastName;
-    }
-
-    public function getFullName(): string
-    {
-        return $this->firstName . ' ' . $this->lastName;
+        $this->name = $name;
     }
 
     public function getRole(): string
