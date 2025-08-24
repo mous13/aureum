@@ -4,15 +4,28 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Controller;
 
+use Citadel\Aureum\Core\Repository\EmployeeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class DashboardController extends AbstractController
 {
-    #[Route('/dashboard')]
+    public function __construct(
+        readonly Security $security,
+        readonly EmployeeRepository $employeeRepository,
+    ){
+    }
+    #[Route('/dashboard', name: 'dashboard')]
     public function index(): Response
     {
-        return $this->render('dashboard/index.html.twig');
+        $user = $this->security->getUser();
+        $employee = $this->employeeRepository->findOneBy(['user' => $user->getId()]);
+
+
+        return $this->render('@CitadelAureum/core/base.html.twig',[
+            'employee' => $employee,
+        ]);
     }
 }

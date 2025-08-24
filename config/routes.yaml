@@ -8,4 +8,4 @@ core:
   resource: ../src/Core/Controller
   type: attribute
   name_prefix: aureum_
-  prefix: /aureum/
+  prefix:
