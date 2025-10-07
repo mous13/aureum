@@ -1,0 +1,27 @@
+<div class="card-title" style="background-color:#13233A;color:#ececec;">
+    Collected Guest Packages
+</div>
+<div class="card-body">
+    <table>
+        <tr>
+            <th class="text-left">Date</th>
+            <th class="text-left">Guest Name</th>
+            <th class="text-left">Package Description</th>
+            <th class="text-left">Location Stored</th>
+            <th class="text-left">Logged By</th>
+            <th class="text-left">Notes</th>
+        </tr>
+        {% for package in packages %}
+            {% if package.status == false %}
+                <tr>
+                    <td>{{ package.updatedAt|date('d/m/y H:i') }}</td>
+                    <td>{{ package.name }}</td>
+                    <td>{{ package.description }}</td>
+                    <td>{{ package.location }}</td>
+                    <td>{{ package.employee.name }}</td>
+                    <td>{{ package.note }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+</div>

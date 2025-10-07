@@ -1,0 +1,44 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block body %}
+    <div class="card">
+        <div class="card-title">
+            New Guest Package
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            <div class="flex gap-2 mb-2">
+                {{ form_widget(form.name) }}
+                {{ form_widget(form.description) }}
+                {{ form_widget(form.location) }}
+                {{ form_widget(form.employee) }}
+            </div>
+            <div class="mb-2">
+                {{ form_widget(form.note) }}
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="square btn btn-primary" style="background-color:#1a3f5f;">Save Package</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <div>
+            {% embed '@Forumify/components/tabs.html.twig' %}
+                {% block tabs %}
+                        <button type="button" class="square btn-link" style="background-color:#1a3f5f;color:#ececec;" data-tab-id="received">Received</button>
+                        <button type="button" class="square btn-link" style="background-color:#1a3f5f;color:#ececec;" data-tab-id="collected">Picked Up</button>
+                {% endblock %}
+                {% block tabpanels %}
+                <div id="received" class="card w-100">
+                    {% include '@CitadelAureum/core/packages/blocks/received.html.twig' with {'packages': packages} %}
+                </div>
+                <div id="collected" class="card w-100">
+                    {% include '@CitadelAureum/core/packages/blocks/collected.html.twig' with {'packages': packages} %}
+                </div>
+                {% endblock %}
+            {% endembed %}
+        </div>
+    </div>
+
+{% endblock %}

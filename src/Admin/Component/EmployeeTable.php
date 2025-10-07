@@ -5,21 +5,22 @@ namespace Citadel\Aureum\Admin\Component;
 use Citadel\Aureum\Core\Entity\Employee;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
+
 
 
 #[AsLiveComponent('EmployeeTable', '@Forumify/components/table/table.html.twig')]
 #[IsGranted('aureum.admin.employees.manage')]
 class EmployeeTable extends AbstractDoctrineTable
 {
-    private ?int $hotelId = null;
+    #[LiveProp]
+    public ?int $hotelId = null;
 
     public function __construct(
         private readonly EmployeeRepository $employeeRepository,
-        private readonly RequestStack $requestStack,
     ){
     }
 
@@ -30,11 +31,6 @@ class EmployeeTable extends AbstractDoctrineTable
 
     protected function buildTable(): void
     {
-        $request = $this->requestStack->getCurrentRequest();
-        if ($request && $request->attributes->has('hotelId')) {
-            $this->hotelId = (int) $request->attributes->get('hotelId');
-        }
-
         $this
             ->addColumn('name', [
                 'field' => 'name',

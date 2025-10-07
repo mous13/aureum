@@ -49,3 +49,7 @@ body {
     border-radius:10px;
     background-color:#1a3f5f;
 }
+
+.square {
+    border-radius:5px!important;
+}

@@ -46,11 +46,10 @@ class EmployeeController extends AbstractController
     #[Route('/hotel/{hotelId}', '_list_by_hotel')]
     public function listByHotel(int $hotelId): Response
     {
-        try {
-            $hotel = $this->hotelRepository->findByIdOrFail($hotelId);
-        } catch (\InvalidArgumentException $e) {
-            throw $this->createNotFoundException('Hotel not found');
-        }
+
+        $hotel = $this->hotelRepository->find($hotelId);
+
+
 
         return $this->render('@CitadelAureum/admin/employee/list.html.twig', [
             'table' => 'EmployeeTable',

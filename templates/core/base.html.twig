@@ -11,7 +11,7 @@
     <meta charset="UTF-8">
     <title>
         {% block title %}
-            Dashboard | {{ employee.hotel.name }}
+            Aureum
         {% endblock %}
     </title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('bundles/forumify/images/forumify.svg') }}">
@@ -57,14 +57,16 @@
             {% include '@CitadelAureum/core/header.html.twig' %}
             <div class="responsive mt-4 mb-8">
                 {% block body %}
-                {{ employee.name }} - {{ employee.hotel.name }}
-
-                    <div class="">
-                        <div>test1</div>
-                        <div>test2</div>
-                    </div>
                 {% endblock %}
             </div>
+        {% endblock %}
+        {% block footer %}
+            <footer class="mt-10">
+                <p class="text-small">
+                    <!-- Modifying, hiding, or removing this section is forbidden. See LICENSE.md for more information. -->
+                    Powered by <a href="https://forumify.net">forumify</a>
+                </p>
+            </footer>
         {% endblock %}
     </main>
 </div>

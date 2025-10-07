@@ -20,7 +20,7 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
             ->addItem(new MenuItem('Dashboard', $url('aureum_dashboard'), [
                 'icon' => 'ph ph-gauge',
             ]))
-            ->addItem(new MenuItem('Packages', $url('aureum_dashboard'), [
+            ->addItem(new MenuItem('Packages', $url('aureum_packages'), [
                 'icon' => 'ph ph-package',
             ]))
             ->addItem(new MenuItem('Transfers', $url('aureum_dashboard'), [

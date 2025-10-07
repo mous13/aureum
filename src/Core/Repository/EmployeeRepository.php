@@ -25,13 +25,12 @@ class EmployeeRepository extends AbstractRepository
             ->leftJoin('e.hotel', 'h');
 
         if ($hotelId !== null) {
-            $qb->andWhere('e.hotel = :hotelId')
+            $qb->andWhere('h.id = :hotelId')
                 ->setParameter('hotelId', $hotelId);
         }
 
         return $qb;
     }
-
     /**
      * @return Employee[]
      */

@@ -26,7 +26,7 @@ class DashboardController extends AbstractController
         $employee = $this->employeeRepository->findOneBy(['user' => $user->getId()]);
 
 
-        return $this->render('@CitadelAureum/core/base.html.twig',[
+        return $this->render('@CitadelAureum/core/dashboard.html.twig',[
             'employee' => $employee,
         ]);
     }

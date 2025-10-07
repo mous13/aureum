@@ -9,5 +9,9 @@
 {% endblock %}
 
 {% block table_container %}
-    {{ component(table) }}
+    {% if hotelId is defined %}
+        {{ component(EmployeeTable, { hotelId: hotelId }) }}
+    {% else %}
+        {{ component(EmployeeTable) }}
+    {% endif %}
 {% endblock %}

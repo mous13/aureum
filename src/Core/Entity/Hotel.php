@@ -31,10 +31,14 @@ class Hotel
     #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Employee::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
     private Collection $employees;
 
+    #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Package::class, cascade: ['persist', 'remove'])]
+    private Collection $packages;
+
     public function __construct()
     {
         $this->employees = new ArrayCollection();
         $this->joinDate = new DateTime();
+        $this->packages = new ArrayCollection();
     }
 
     public function getCode(): string
@@ -100,5 +104,15 @@ class Hotel
                 $employee->setHotel(null);
             }
         }
+    }
+
+    public function getPackages(): Collection
+    {
+        return $this->packages;
+    }
+
+    public function setPackages(Collection $packages): void
+    {
+        $this->packages = $packages;
     }
 }
