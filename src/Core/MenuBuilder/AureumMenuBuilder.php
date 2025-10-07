@@ -26,7 +26,7 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
             ->addItem(new MenuItem('Transfers', $url('aureum_dashboard'), [
                 'icon' => 'ph ph-car',
             ]))
-            ->addItem(new MenuItem('Fines', $url('aureum_dashboard'), [
+            ->addItem(new MenuItem('Fines', $url('aureum_fines'), [
                 'icon' => 'ph ph-article',
             ]))
         ;

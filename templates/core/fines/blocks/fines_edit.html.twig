@@ -1,0 +1,24 @@
+{% embed '@Forumify/components/modal.html.twig' %}
+    {% block modalOpenButton %}
+        <button type="button" class="btn-link" {{ stimulus_action('forumify/forumify-platform/modal', 'open') }}>
+            <i class="ph ph-pencil-simple-line" style="color:#1a3f5f;"></i>
+        </button>
+    {% endblock %}
+    {% block modalContent %}
+        <div class="card">
+            <div class="card-title" style="background-color:#13233A;color:#ececec;">Edit Package - {{ fine.name }}: {{ fine.comment }}</div>
+            <div class="card-body">
+                {{ form_start(editForm) }}
+                    {{ form_row(editForm.status) }}
+                    {{ form_row(editForm.comment) }}
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary" style="background-color:#1a3f5f;">
+                        Save Changes
+                    </button>
+                </div>
+                {{ form_end(editForm) }}
+            </div>
+        </div>
+
+    {% endblock %}
+{% endembed %}

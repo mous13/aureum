@@ -16,7 +16,7 @@ final class Version20251007170534 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE aureum_packages ADD hotel_id INT NOT NULL, DROP collection_note');
+        $this->addSql('ALTER TABLE aureum_packages ADD hotel_id INT NOT NULL');
         $this->addSql('ALTER TABLE aureum_packages ADD CONSTRAINT FK_D093720B3243BB18 FOREIGN KEY (hotel_id) REFERENCES aureum_hotels (id)');
         $this->addSql('CREATE INDEX IDX_D093720B3243BB18 ON aureum_packages (hotel_id)');
 
@@ -26,6 +26,6 @@ final class Version20251007170534 extends AbstractMigration
     {
         $this->addSql('ALTER TABLE aureum_packages DROP FOREIGN KEY FK_D093720B3243BB18');
         $this->addSql('DROP INDEX IDX_D093720B3243BB18 ON aureum_packages');
-        $this->addSql('ALTER TABLE aureum_packages ADD collection_note VARCHAR(255) DEFAULT NULL, DROP hotel_id');
+        $this->addSql('ALTER TABLE aureum_packages DROP hotel_id');
     }
 }

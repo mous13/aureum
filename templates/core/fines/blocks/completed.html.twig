@@ -1,0 +1,31 @@
+<div class="card-title" style="background-color:#13233A;color:#ececec;">
+    Completed Fines
+</div>
+<div class="card-body">
+    <table>
+        <tr>
+            <th class="text-left">Date</th>
+            <th class="text-left">Fine Number</th>
+            <th class="text-left">Guest Name</th>
+            <th class="text-left">Guest Email</th>
+            <th class="text-left">Logged By</th>
+            <th class="text-left">Notes</th>
+            <th class="text-left">Status</th>
+            <th></th>
+        </tr>
+        {% for fine in fines %}
+            {% if fine.status.value == 'appeal_completed'  %}
+                <tr>
+                    <td>{{ fine.updatedAt|date('d/m/y H:i') }}</td>
+                    <td>{{ fine.number }}</td>
+                    <td>{{ fine.name }}</td>
+                    <td>{{ fine.email }}</td>
+                    <td>{{ fine.createdBy.name }}</td>
+                    <td>{{ fine.comment }}</td>
+                    <td>{{ fine.status.label }}</td>
+                    <td></td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+</div>
