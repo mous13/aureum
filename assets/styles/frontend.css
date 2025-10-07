@@ -2,6 +2,29 @@
     background-color:#13233A!important;
     color:#F4F1EA;
 }
+.luxury-light {
+    background-color:#1a3f5f;
+    color:#F4F1EA;
+}
+
+.btn-link.luxury-light {
+    background-color:#1a3f5f;
+    color:#F4F1EA;
+}
+
+button.luxury-light.square.btn-link.active {
+    background-color:#13233A;
+    color:#F4F1EA;
+}
+button.luxury-light.square.btn-link:hover {
+    background-color:#13233A;
+}
+.luxury-light.btn-primary {
+    background-color:#1a3f5f;
+}
+.luxury-light.btn-primary:hover {
+    background-color:#13233A;
+}
 .luxury, :root{
     --c-text-primary:#ececec;
 }

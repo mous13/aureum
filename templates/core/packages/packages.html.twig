@@ -1,7 +1,7 @@
 {% extends '@CitadelAureum/core/base.html.twig' %}
 {% block body %}
     <div class="card">
-        <div class="card-title">
+        <div class="card-title luxury">
             New Guest Package
         </div>
         <div class="card-body">
@@ -16,7 +16,7 @@
                 {{ form_widget(form.note) }}
             </div>
             <div class="flex justify-end">
-                <button type="submit" class="square btn btn-primary" style="background-color:#1a3f5f;">Save Package</button>
+                <button type="submit" class="luxury-light square btn btn-primary">Save Package</button>
             </div>
             {{ form_end(form) }}
         </div>
@@ -26,8 +26,8 @@
         <div>
             {% embed '@Forumify/components/tabs.html.twig' %}
                 {% block tabs %}
-                        <button type="button" class="square btn-link" style="background-color:#1a3f5f;color:#ececec;" data-tab-id="received">Received</button>
-                        <button type="button" class="square btn-link" style="background-color:#1a3f5f;color:#ececec;" data-tab-id="collected">Picked Up</button>
+                        <button type="button" class="luxury-light square btn-link" data-tab-id="received">Received</button>
+                        <button type="button" class="luxury-light square btn-link" data-tab-id="collected">Picked Up</button>
                 {% endblock %}
                 {% block tabpanels %}
                 <div id="received" class="card w-100">
