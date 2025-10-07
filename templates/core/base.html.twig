@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="{{ app.locale }}">
 <head>
+    {% set logo %}
+        {%- if setting('forumify.logo') -%}
+            {{ asset(setting('forumify.logo'), 'forumify.asset') }}
+        {%- else -%}
+            {{ asset('bundles/forumify/images/forumify.svg') }}
+        {% endif %}
+    {% endset %}
     <meta charset="UTF-8">
     <title>
         {% block title %}
@@ -18,32 +25,8 @@
 </head>
 <body {{ stimulus_controller('forumify/forumify-platform/admin') }}>
 <div class="flex">
-    <nav class="navigation">
+    <nav class="navigation luxury">
         {% block navigation %}
-            <div class="flex items-center justify-between p-1 pl-2 pr-2 border-b">
-                <div class="flex items-center navigation-brand">
-                    <img class="logo" src="{{ asset('bundles/forumify/images/forumify.svg') }}" alt="logo">
-                    <span>Aureum</span>
-                </div>
-                <div class="nav-controls">
-                    <a
-                            class="btn-link btn-icon btn-small theme-selector"
-                            aria-label="{{ 'toggle_theme'|trans }}"
-                            href="{{ path('forumify_core_theme_toggle', { '_target_path': app.request.requestUri }) }}"
-                            {{ stimulus_controller('forumify/forumify-platform/theme') }}
-                    >
-                        <i class="ph ph-circle-half-tilt"></i>
-                    </a>
-                    <button
-                            type="button"
-                            class="btn-link btn-icon btn-small menu-toggle"
-                            aria-label="{{ 'admin.toggle_nav'|trans }}"
-                            {{ stimulus_action('forumify/forumify-platform/admin', 'toggleNavigation') }}
-                    >
-                        <i class="ph ph-caret-line-left"></i>
-                    </button>
-                </div>
-            </div>
             <div class="navigation-section flex-grow">
                 {% include '@CitadelAureum/core/navigation.html.twig' %}
             </div>
@@ -71,9 +54,15 @@
             {% endif %}
         {% endblock %}
         {% block body_wrapper %}
+            {% include '@CitadelAureum/core/header.html.twig' %}
             <div class="responsive mt-4 mb-8">
                 {% block body %}
                 {{ employee.name }} - {{ employee.hotel.name }}
+
+                    <div class="">
+                        <div>test1</div>
+                        <div>test2</div>
+                    </div>
                 {% endblock %}
             </div>
         {% endblock %}

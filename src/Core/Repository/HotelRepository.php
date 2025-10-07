@@ -21,11 +21,6 @@ class HotelRepository extends AbstractRepository
     public function findByIdOrFail(int $id): Hotel
     {
         $hotel = $this->find($id);
-
-        if (!$hotel) {
-            throw new \InvalidArgumentException("Hotel with ID {$id} not found");
-        }
-
         return $hotel;
     }
 

@@ -1,25 +1,27 @@
 {% set menuItems = menu is defined ? menu.entries : aureum_menu().entries %}
-{% for menuItem in menuItems %}
-    {% if menuItem is instanceof('Forumify\\Core\\MenuBuilder\\MenuItem') %}
-        <a class="btn-link navigation-row" href="{{ menuItem.location }}">
-            {% if menuItem.options.icon is defined %}
-                <i class="{{ menuItem.options.icon }}"></i>
-            {% endif %}
-            {{ menuItem.label }}
-        </a>
-    {% else %}
-        <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'right-start' }) }}>
-            <a class="btn-link navigation-row" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
-                {% if menuItem.options.icon is defined %}
-                    <i class="{{ menuItem.options.icon }}"></i>
-                {% endif %}
-                {{ menuItem.label }}
-            </a>
-            <div class="menu" {{ stimulus_target('forumify/forumify-platform/menu', 'menu') }}>
-                {% include '@Forumify/admin/components/navigation.html.twig' with {
-                    menu: menuItem
-                } only %}
+<div class="navigation-cluster flex flex-col">
+    {% for menuItem in menuItems %}
+        {% if menuItem is instanceof('Forumify\\Core\\MenuBuilder\\MenuItem') %}
+                <a class="btn-link flex flex-col" href="{{ menuItem.location }}">
+                    {% if menuItem.options.icon is defined %}
+                        <i class="text-center {{ menuItem.options.icon }}"></i>
+                    {% endif %}
+                    <span class="text-small text-center">{{ menuItem.label }}</span>
+                </a>
+        {% else %}
+            <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'right-start' }) }}>
+                <a class="btn-link navigation-row" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
+                    {% if menuItem.options.icon is defined %}
+                        <i class="{{ menuItem.options.icon }}"></i>
+                    {% endif %}
+                    {{ menuItem.label }}
+                </a>
+                <div class="menu" {{ stimulus_target('forumify/forumify-platform/menu', 'menu') }}>
+                    {% include '@Forumify/admin/components/navigation.html.twig' with {
+                        menu: menuItem
+                    } only %}
+                </div>
             </div>
-        </div>
-    {% endif %}
-{% endfor %}
+        {% endif %}
+    {% endfor %}
+</div>

@@ -66,14 +66,12 @@ class CreateEmployeeService
 
     private function createUserFromEmployeeData(NewEmployee $data): User
     {
-        // Convert NewEmployee DTO to NewUser DTO that Forumify expects
         $newUser = new NewUser();
         $newUser->setUsername($data->getUsername());
         $newUser->setEmail($data->getEmail());
         $newUser->setPassword($data->getPassword());
         $newUser->setTimezone($data->getTimezone());
 
-        // Use Forumify's service to create the user
         return $this->createUserService->createUser($newUser);
     }
 
@@ -85,7 +83,6 @@ class CreateEmployeeService
         $employee->setUser($user);
         $employee->setHotel($data->getHotel());
 
-        // Save the employee
         $this->employeeRepository->save($employee);
 
         return $employee;
