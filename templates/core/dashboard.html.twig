@@ -1,9 +1,30 @@
 {% extends '@CitadelAureum/core/base.html.twig' %}
 {% block body %}
-    {{ employee.name }} - {{ employee.hotel.name }}
+    <div class="flex justify-center">
+        <div class=" w-20 text-center">
+                <div class="">{{ employee.name }}</div>
+                <div class="">{{ employee.role }}</div>
+                <div class="">{{ employee.hotel.name }}</div>
+        </div>
+    </div>
 
-    <div class="">
-        <div>test1</div>
-        <div>test2</div>
+    <div class="flex justify-center">
+        <div class="box text-center m-10 w-10">
+            <div style="font-size:30px;"><i class="ph ph-package"></i></div>
+            <div>15</div>
+            <div class="text-small">Packages in Storage</div>
+        </div>
+
+        <div class="box text-center m-10 w-10">
+            <div style="font-size:30px;"><i class="ph ph-car"></i></div>
+            <div>15</div>
+            <div class="text-small">Transfers Confirmed</div>
+        </div>
+
+        <div class="box text-center m-10 w-10">
+            <div style="font-size:30px;"><i class="ph ph-article"></i></div>
+            <div>15</div>
+            <div class="text-small">15 Fines Not Completed</div>
+        </div>
     </div>
 {% endblock %}
