@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Citadel\Aureum\Core\Repository\FineRepository;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
-use DateTime;
 
 #[ORM\Entity(repositoryClass: FineRepository::class)]
 #[ORM\Table(name: 'aureum_fines')]
