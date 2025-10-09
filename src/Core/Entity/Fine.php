@@ -1,7 +1,7 @@
 <?php
 
 namespace Citadel\Aureum\Core\Entity;
-use DateTime;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,8 +34,8 @@ class Fine
     #[ORM\ManyToOne(targetEntity: Hotel::class)]
     private Hotel $hotel;
 
-    #[ORM\Column(length: 255)]
-    private string $comment;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $comment = null;
 
     #[ORM\Column(type: 'string', length: 255, enumType: FineStatus::class)]
     private FineStatus $status;
@@ -48,16 +48,6 @@ class Fine
     public function setNumber(string $number): void
     {
         $this->number = $number;
-    }
-
-    public function getDate(): DateTime
-    {
-        return $this->date;
-    }
-
-    public function setDate(DateTime $date): void
-    {
-        $this->date = $date;
     }
 
     public function getName(): string
@@ -110,12 +100,12 @@ class Fine
         $this->hotel = $hotel;
     }
 
-    public function getComment(): string
+    public function getComment(): ?string
     {
         return $this->comment;
     }
 
-    public function setComment(string $comment): void
+    public function setComment(?string $comment): void
     {
         $this->comment = $comment;
     }
