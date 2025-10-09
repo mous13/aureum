@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Citadel\Aureum\Core\Repository\FineRepository;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
+use DateTime;
 
 #[ORM\Entity(repositoryClass: FineRepository::class)]
 #[ORM\Table(name: 'aureum_fines')]
@@ -39,6 +40,9 @@ class Fine
 
     #[ORM\Column(type: 'string', length: 255, enumType: FineStatus::class)]
     private FineStatus $status;
+
+    #[ORM\Column]
+    private DateTime $date;
 
     public function getNumber(): string
     {
@@ -118,5 +122,15 @@ class Fine
     public function setStatus(FineStatus $status): void
     {
         $this->status = $status;
+    }
+
+    public function getDate(): DateTime
+    {
+        return $this->date;
+    }
+
+    public function setDate(DateTime $date): void
+    {
+        $this->date = $date;
     }
 }
