@@ -39,6 +39,7 @@ class FinesController extends AbstractController
             $fine = $form->getData();
 
             $fine->setCreatedAt(new \DateTime());
+            $fine->setDate(new \DateTime());
             $fine->setCreatedBy($employee);
             $fine->setHotel($hotel);
             $this->fineRepository->save($fine);
