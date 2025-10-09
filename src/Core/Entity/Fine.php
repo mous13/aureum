@@ -50,16 +50,6 @@ class Fine
         $this->number = $number;
     }
 
-    public function getDate(): DateTime
-    {
-        return $this->date;
-    }
-
-    public function setDate(DateTime $date): void
-    {
-        $this->date = $date;
-    }
-
     public function getName(): string
     {
         return $this->name;
