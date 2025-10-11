@@ -23,11 +23,9 @@ class AureumExtension extends AbstractExtension
         ];
     }
 
-    public function getEmployee(User $user): User
+    public function getEmployee(User $user): ?Employee
     {
-        $employee = $this->employeeRepository->findOneBy(['user' => $user]);
-        
-        return $employee;
+        return $this->employeeRepository->findOneBy(['user' => $user]);
     }
 
 }
