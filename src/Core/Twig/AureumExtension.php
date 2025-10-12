@@ -6,6 +6,8 @@ use Citadel\Aureum\Core\MenuBuilder\AureumMenuManager;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
+use Forumify\Core\Entity\User;
+use Citadel\Aureum\Core\Entity\Employee;
 
 class AureumExtension extends AbstractExtension
 {
