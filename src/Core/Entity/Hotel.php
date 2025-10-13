@@ -27,18 +27,21 @@ class Hotel
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $logo = null;
 
-    /** @var Collection<int, Employee> */
     #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Employee::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
     private Collection $employees;
 
     #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Package::class, cascade: ['persist', 'remove'])]
     private Collection $packages;
 
+    #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Fine::class, cascade: ['persist', 'remove'])]
+    private Collection $fines;
+
     public function __construct()
     {
         $this->employees = new ArrayCollection();
         $this->joinDate = new DateTime();
         $this->packages = new ArrayCollection();
+        $this->fines = new ArrayCollection();
     }
 
     public function getCode(): string
@@ -97,15 +100,6 @@ class Hotel
         }
     }
 
-    public function removeEmployee(Employee $employee): void
-    {
-        if ($this->employees->removeElement($employee)) {
-            if ($employee->getHotel() === $this) {
-                $employee->setHotel(null);
-            }
-        }
-    }
-
     public function getPackages(): Collection
     {
         return $this->packages;
@@ -114,5 +108,15 @@ class Hotel
     public function setPackages(Collection $packages): void
     {
         $this->packages = $packages;
+    }
+
+    public function getFines(): Collection
+    {
+        return $this->fines;
+    }
+
+    public function setFines(Collection $fines): void
+    {
+        $this->fines = $fines;
     }
 }
