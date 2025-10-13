@@ -34,8 +34,8 @@ class Fine
     #[ORM\ManyToOne(targetEntity: Hotel::class)]
     private Hotel $hotel;
 
-    #[ORM\Column(length: 255)]
-    private string $comment;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $comment = null;
 
     #[ORM\Column(type: 'string', length: 255, enumType: FineStatus::class)]
     private FineStatus $status;
@@ -100,12 +100,12 @@ class Fine
         $this->hotel = $hotel;
     }
 
-    public function getComment(): string
+    public function getComment(): ?string
     {
         return $this->comment;
     }
 
-    public function setComment(string $comment): void
+    public function setComment(?string $comment): void
     {
         $this->comment = $comment;
     }
