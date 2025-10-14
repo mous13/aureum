@@ -18,7 +18,7 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
 
         $menu
             ->addItem(new MenuItem('Dashboard', $url('aureum_dashboard'), [
-                'icon' => 'ph ph-gauge',
+                'icon' => 'ph ph-house',
             ]))
             ->addItem(new MenuItem('Packages', $url('aureum_packages'), [
                 'icon' => 'ph ph-package',
@@ -28,6 +28,9 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
             ]))
             ->addItem(new MenuItem('Fines', $url('aureum_fines'), [
                 'icon' => 'ph ph-article',
+            ]))
+            ->addItem(new MenuItem('Settings', $url('forumify_core_settings'), [
+                'icon' => 'ph ph-gear',
             ]))
         ;
     }

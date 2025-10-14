@@ -27,6 +27,12 @@
 <div class="flex">
     <nav class="navigation luxury">
         {% block navigation %}
+            <div class="border-b ml-2 ">
+                <a href="{{ path('forumify_core_index') }}" class="header-logo">
+                    <img src="{{ logo }}" alt="logo">
+                    <span class="ml-2 text-capitalize" style="color:#ececec;">{{ setting('forumify.title') }}</span>
+                </a>
+            </div>
             <div class="navigation-section flex-grow">
                 {% include '@CitadelAureum/core/navigation.html.twig' %}
             </div>
@@ -38,7 +44,7 @@
             </div>
         {% endblock %}
     </nav>
-    <main class="flex flex-col">
+    <main class="flex w-100 flex-col">
         {% block flashbag %}
             {% set flashes = app.flashes %}
             {% if flashes is not empty %}

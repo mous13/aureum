@@ -34,7 +34,7 @@ body {
 }
 
 .navigation.luxury {
-    width:100px;
+    width:200px;
 }
 
 .luxury .btn-link {
@@ -49,7 +49,7 @@ body {
     align-items: center;
     color: var(--c-text-primary);
     display: flex;
-    font-weight: 800;
+    font-weight: 300;
     padding: var(--spacing-3) 0;
     font-size:25px;
 }
@@ -63,16 +63,27 @@ body {
 }
 
 .navigation.luxury .navigation-section .navigation-cluster {
-    margin-top:50px;
-    gap: 1rem;
+
 }
 .navigation-cluster {
-    padding-top:25px;
     padding-bottom:25px;
     border-radius:10px;
-    background-color:#1a3f5f;
 }
 
 .square {
     border-radius:5px!important;
+}
+.navigation-cluster .btn-link {
+    font-weight:300;
+    color: #ececec;
+    background-color:#1a3f5f52;
+    padding:2px;
+    box-shadow: 0 1px 0 rgba(26, 63, 95, 0.32);
+}
+.navigation .border-b {
+    box-shadow: 0 1px 0 rgb(26, 63, 95);
+}
+.header {
+    height:56px;
+    box-shadow: 0 1px 0 rgb(236, 236, 236);
 }

@@ -1,0 +1,25 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title_page %}{{ 'account_settings.title'|trans }}{% endblock %}
+{% block body %}
+    <div class="box">
+        {{ form_start(form) }}
+        <div id="account-settings">
+            {{ form_row(form.timezone) }}
+            {{ form_row(form.newPassword) }}
+        </div>
+        {% set notifications = form.notificationSettings %}
+        <div style="display:none;">
+            {{ form_row(notifications.autoSubscribeToOwnTopics) }}
+            {{ form_row(notifications.autoSubscribeToTopics) }}
+            {{ form_row(notifications.emailOnMessage) }}
+            {{ form_row(notifications.emailOnNotification) }}
+            {{ form_row(form.displayName) }}
+            {{ form_row(form.newAvatar) }}
+            {{ form_row(form.signature) }}
+        </div>
+        <div class="flex justify-center mt-4">
+            <button type="submit" class="btn-primary">{{ 'save'|trans }}</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

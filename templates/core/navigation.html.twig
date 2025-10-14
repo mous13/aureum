@@ -1,12 +1,12 @@
 {% set menuItems = menu is defined ? menu.entries : aureum_menu().entries %}
-<div class="navigation-cluster flex flex-col">
+<div class="navigation-cluster flex flex-col gap-2">
     {% for menuItem in menuItems %}
         {% if menuItem is instanceof('Forumify\\Core\\MenuBuilder\\MenuItem') %}
-                <a class="btn-link flex flex-col" href="{{ menuItem.location }}">
+                <a class="btn-link flex" href="{{ menuItem.location }}">
                     {% if menuItem.options.icon is defined %}
-                        <i class="text-center {{ menuItem.options.icon }}"></i>
+                        <i class="text-center ml-2 {{ menuItem.options.icon }}"></i>
                     {% endif %}
-                    <span class="text-small text-center">{{ menuItem.label }}</span>
+                    <span class="text-small ml-2 text-center">{{ menuItem.label }}</span>
                 </a>
         {% else %}
             <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'right-start' }) }}>
