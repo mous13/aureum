@@ -2,6 +2,7 @@
 
 namespace Citadel\Aureum\Admin\Form\DTO;
 
+use Citadel\Aureum\Core\Entity\EmployeeRole;
 use Citadel\Aureum\Core\Entity\Hotel;
 
 class NewEmployee
@@ -14,7 +15,7 @@ class NewEmployee
 
     // Employee data
     public ?string $name = null;
-    public ?string $role = null;
+    public EmployeeRole $role;
     public ?Hotel $hotel = null;
 
     public function getUsername(): ?string
@@ -67,12 +68,12 @@ class NewEmployee
         $this->name = $name;
     }
 
-    public function getRole(): ?string
+    public function getRole(): EmployeeRole
     {
         return $this->role;
     }
 
-    public function setRole(?string $role): void
+    public function setRole(EmployeeRole $role): void
     {
         $this->role = $role;
     }

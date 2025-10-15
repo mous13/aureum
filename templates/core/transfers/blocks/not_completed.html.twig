@@ -1,0 +1,57 @@
+<div class="card-title" style="background-color:#13233A;color:#ececec;">
+    Scheduled Jobs
+</div>
+<div class="card-body">
+    <table>
+        <tr>
+            <th class="text-left">Date</th>
+            <th class="text-left">Guest Name</th>
+            <th class="text-left">Number</th>
+            <th class="text-left">Email</th>
+            <th class="text-left">Pickup</th>
+            <th class="text-left">Drop Off</th>
+            <th class="text-left">Concierge</th>
+            <th class="text-left">Driver</th>
+            <th class="text-left">
+                {% if employee.role.value == "Concierge" %}
+                    Cost
+                {% endif %}
+            </th>
+            <th class="text-left">Status</th>
+            <th class="text-left"></th>
+        </tr>
+        {% for transfer in transfers %}
+            {% if transfer.status.value != 'completed'  %}
+                <tr>
+                    <td>{{ transfer.date|date('d/m/y H:i') }}</td>
+                    <td>{{ transfer.guest }}</td>
+                    <td>{{ transfer.number }}</td>
+                    <td>{{ transfer.email }}</td>
+                    <td>{{ transfer.pickup }}</td>
+                    <td>{{ transfer.dropoff }}</td>
+                    <td>{{ transfer.middleman.name }}</td>
+                    <td>{{ transfer.driver }}</td>
+                    <td>
+                        {% if employee.role.value == "Concierge" %}
+                            {{ transfer.cost }}
+                        {% endif %}
+                    </td>
+                    <td><i class=" text-huge ph ph-{{ statusIcon[transfer.status.value] }}" style="color:{{ statusColor[transfer.status.value] }};" title="{{ transfer.status.value }}"></i></td>
+                    <td>
+                        <div class="flex">
+                            {% include '@CitadelAureum/core/transfers/blocks/transfer_notes.html.twig' with {
+                                'transfer': transfer
+                            } %}
+                            {% if employee.role.value == "Concierge" %}
+                                {% include '@CitadelAureum/core/transfers/blocks/transfers_edit.html.twig' with {
+                                    'transfer': transfer,
+                                    'editForm': editForms[transfer.id]
+                                } %}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+</div>

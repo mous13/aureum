@@ -17,8 +17,8 @@ class Employee
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[ORM\Column(length: 255)]
-    private string $role;
+    #[ORM\Column(type: 'string', enumType: EmployeeRole::class)]
+    private EmployeeRole $role;
 
     #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
@@ -38,16 +38,15 @@ class Employee
         $this->name = $name;
     }
 
-    public function getRole(): string
+    public function getRole(): EmployeeRole
     {
         return $this->role;
     }
 
-    public function setRole(string $role): void
+    public function setRole(EmployeeRole $role): void
     {
         $this->role = $role;
     }
-
     public function getUser(): User
     {
         return $this->user;

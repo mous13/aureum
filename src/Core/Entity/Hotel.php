@@ -36,12 +36,16 @@ class Hotel
     #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Fine::class, cascade: ['persist', 'remove'])]
     private Collection $fines;
 
+    #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Transfer::class, cascade: ['persist', 'remove'])]
+    private Collection $transfers;
+
     public function __construct()
     {
         $this->employees = new ArrayCollection();
         $this->joinDate = new DateTime();
         $this->packages = new ArrayCollection();
         $this->fines = new ArrayCollection();
+        $this->transfers = new ArrayCollection();
     }
 
     public function getCode(): string

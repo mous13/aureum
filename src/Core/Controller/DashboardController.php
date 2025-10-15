@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Controller;
 
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
-use Forumify\Core\Controller\IndexController;
+use Citadel\Aureum\Core\Service\AureumService;
+use Forumify\Cms\Controller\Frontend\PageController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,22 +19,19 @@ class DashboardController extends AbstractController
         readonly Security $security,
         readonly EmployeeRepository $employeeRepository,
         readonly HttpClientInterface $client,
-        readonly IndexController $indexController,
+        private readonly AureumService $aureumService,
     ){
     }
-    #[Route('/', name: 'dashboard')]
+
+    #[Route('/', name: 'dashboard', priority: 100)]
     public function index(): Response
     {
-        $user = $this->security->getUser();
-        if(!$user){
-            return $this->redirectToRoute('forumify_cms_page', ['urlKey' => 'home']);
+        if(!$this->aureumService->isEmployee()){
+            return $this->forward(PageController::class, ['urlKey' => '']);
         }
 
-        $employee = $this->employeeRepository->findOneBy(['user' => $user->getId()]);
-
         return $this->render('@CitadelAureum/core/dashboard.html.twig',[
-            'employee' => $employee,
+            'employee' => $this->aureumService->getEmployee(),
         ]);
     }
-
 }

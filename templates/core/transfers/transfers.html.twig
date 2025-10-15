@@ -1,0 +1,78 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block body %}
+    {% set statusIcon = {
+        'unconfirmed': 'question',
+        'confirmed': 'check-circle',
+        'cancelled': 'x-circle',
+        'completed': 'seal-check',
+    } %}
+
+    {% set statusColor = {
+        'unconfirmed': 'orange',
+        'confirmed': 'green',
+        'cancelled': 'red',
+        'completed': 'green',
+    } %}
+
+    <div class="card">
+        <div class="card-title luxury">
+            New Job
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            <div class="flex gap-2 mb-2">
+                {{ form_widget(form.date) }}
+                {{ form_widget(form.guest) }}
+                {{ form_widget(form.number) }}
+                {{ form_widget(form.email) }}
+                {{ form_widget(form.middleman) }}
+                {{ form_widget(form.driver) }}
+                {{ form_widget(form.cost) }}
+                {{ form_widget(form.status) }}
+            </div>
+            <div class="flex gap-2 mb-2">
+                <div class="w-20">
+                    {{ form_widget(form.pickup) }}
+                </div>
+                <div class="w-20">
+                    {{ form_widget(form.dropoff) }}
+                </div>
+                <div class="w-60">
+                    {{ form_widget(form.notes) }}
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="luxury-light square btn btn-primary">Submit Job</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <div>
+            {% embed '@Forumify/components/tabs.html.twig' %}
+                {% block tabs %}
+                        <button type="button" class="luxury-light square btn-link" data-tab-id="not_completed">Not Completed</button>
+                        <button type="button" class="luxury-light square btn-link" data-tab-id="completed">Completed</button>
+                {% endblock %}
+                {% block tabpanels %}
+                <div id="not_completed" class="card w-100">
+                    {% include '@CitadelAureum/core/transfers/blocks/not_completed.html.twig' with {
+                        'transfers': transfers,
+                        'statusColor': statusColor,
+                        'statusIcon': statusIcon
+                    } %}
+                </div>
+                <div id="completed" class="card w-100">
+                    {% include '@CitadelAureum/core/transfers/blocks/completed.html.twig' with {
+                        'transfers': transfers,
+                        'statusColor': statusColor,
+                        'statusIcon': statusIcon
+                    } %}
+                </div>
+                {% endblock %}
+            {% endembed %}
+        </div>
+    </div>
+
+{% endblock %}

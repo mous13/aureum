@@ -3,7 +3,9 @@
 namespace Citadel\Aureum\Core\Service;
 
 use Citadel\Aureum\Core\Entity\Employee;
+use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
+use Citadel\Aureum\Core\Repository\HotelRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class AureumService
@@ -11,17 +13,25 @@ class AureumService
     public function __construct(
         private readonly Security $security,
         private readonly EmployeeRepository $employeeRepository,
+        private readonly HotelRepository $hotelRepository,
     ){
+    }
+
+    public function getEmployee(): ?Employee
+    {
+        $user = $this->security->getUser();
+
+        return $this->employeeRepository->findOneBy(['user' => $user]);
     }
     public function isEmployee(): bool
     {
-        $user = $this->security->getUser() ?? null;
-        $employee = $this->employeeRepository->findOneBy(['user' => $user]);
+        return $this->getEmployee() !== null;
+    }
 
-        if($employee === null){
-            return false;
-        }
+    public function getHotel(): ?Hotel
+    {
+        $employee = $this->getEmployee();
 
-        return true;
+        return $employee?->getHotel();
     }
 }

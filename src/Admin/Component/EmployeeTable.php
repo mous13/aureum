@@ -36,10 +36,6 @@ class EmployeeTable extends AbstractDoctrineTable
                 'field' => 'name',
                 'sortable' => true,
             ])
-            ->addColumn('role', [
-                'field' => 'role',
-                'sortable' => true,
-            ])
             ->addColumn('hotel', [
                 'field' => 'hotel.name',
                 'sortable' => true,

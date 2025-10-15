@@ -18,7 +18,15 @@ class CitadelAureum extends AbstractForumifyPlugin
     public function getPermissions(): array
     {
         return [
-            'admin' => ['view']
+            'admin' => [
+                'view'
+            ],
+            'core' => [
+                'concierge' => [
+                    'view',
+                    'manage'
+                ]
+            ]
         ];
     }
 
