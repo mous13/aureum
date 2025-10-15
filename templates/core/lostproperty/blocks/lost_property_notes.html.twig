@@ -6,64 +6,71 @@
     {% endblock %}
     {% block modalContent %}
         <div class="card">
-            <div class="card-title" style="background-color:#13233A;color:#ececec;">Property Notes</div>
+            <div class="card-title" style="background-color:#13233A;color:#ececec;">Property Notes & History</div>
             <div class="card-body">
-                {{ property.note }}
-                <hr>
-                {% if logs is empty%}
-                    No History available for this property.
-                {% else %}
-                    <table class="w-100">
-                        <thead>
-                        <tr>
-                            <th class="text-left">Date & Time</th>
-                            <th class="text-left">Action</th>
-                            <th class="text-left">Performed By</th>
-                            <th class="text-left">Changes</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for log in logs %}
-                            <tr>
-                                <td>{{ log.createdAt|date('d/m/Y H:i') }}</td>
-                                <td>
-                                        <span>{{ log.action.label }}</span>
-                                </td>
-                                <td>{{ log.performedBy.name }}</td>
-                                <td>
-                                    {% if log.changes %}
-                                        <details>
-                                            <summary style="cursor: pointer;">View changes</summary>
-                                            <ul style="margin-top: 10px;">
-                                                {% for field, change in log.changes %}
-                                                    {% if change.old is defined %}
-                                                        <li>
-                                                            <strong>{{ field|title }}:</strong>
-                                                            <span style="text-decoration: line-through; color: #999;">
+                <div>
+                    <div class="card-title">Property Notes</div>
+                    <div class="card-body">{{ property.note }}</div>
+                </div>
+                <div class="mt-5">
+                    <div class="card-title">Property History</div>
+                    <div class="card-body">
+                        {% if logs is empty%}
+                            No History available for this property.
+                        {% else %}
+                            <table class="w-100">
+                                <thead>
+                                <tr>
+                                    <th class="text-left">Date & Time</th>
+                                    <th class="text-left">Action</th>
+                                    <th class="text-left">Performed By</th>
+                                    <th class="text-left">Changes</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for log in logs %}
+                                    <tr>
+                                        <td>{{ log.createdAt|date('d/m/Y H:i') }}</td>
+                                        <td>
+                                            <span>{{ log.action.label }}</span>
+                                        </td>
+                                        <td>{{ log.performedBy.name }}</td>
+                                        <td>
+                                            {% if log.changes %}
+                                                <details>
+                                                    <summary style="cursor: pointer;">View changes</summary>
+                                                    <ul style="margin-top: 10px;">
+                                                        {% for field, change in log.changes %}
+                                                            {% if change.old is defined %}
+                                                                <li>
+                                                                    <strong>{{ field|title }}:</strong>
+                                                                    <span style="text-decoration: line-through; color: #999;">
                                                                     {{ change.old ?? 'empty' }}
                                                                 </span>
-                                                            <i class="ph ph-arrow-right"></i>
-                                                            <span style="color: #28a745;">
+                                                                    <i class="ph ph-arrow-right"></i>
+                                                                    <span style="color: #28a745;">
                                                                     {{ change.new ?? 'empty' }}
                                                                 </span>
-                                                        </li>
-                                                    {% else %}
-                                                        <li>
-                                                            <span class="text-bold">{{ field|title }}:</span> {{ change }}
-                                                        </li>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </ul>
-                                        </details>
-                                    {% else %}
-                                        No changes recorded
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endif %}
+                                                                </li>
+                                                            {% else %}
+                                                                <li>
+                                                                    <span class="text-bold">{{ field|title }}:</span> {{ change }}
+                                                                </li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                </details>
+                                            {% else %}
+                                                No changes recorded
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
 

@@ -37,7 +37,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <i class=" text-huge ph ph-{{ statusIcon[transfer.status.value] }}" style="color:{{ statusColor[transfer.status.value] }};" title="{{ transfer.status.value }}"></i>
+                        {{ transfer.status.value }}
                         {% if transfer.date < date() and transfer.status.value != 'cancelled' %}<i class="text-huge ph ph-clock-countdown" style="color:red;" title="OVERDUE"></i>{% endif %}
                     </td>
                     <td>

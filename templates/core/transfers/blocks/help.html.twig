@@ -1,0 +1,117 @@
+<div class="flex flex-col gap-5">
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            Help
+        </div>
+        <div class="card-body">
+            <div>
+                This is a quick tutorial on how to use the transfers feature.
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            New Job
+        </div>
+        <div class="card-body">
+            <div>
+                New Job is a form containing 11 fields (Boxes) in which you can fill out. Once filled out, hit the Submit Job to create a new job.
+            </div>
+            <div>
+                <table class="mt-5">
+                    <tr>
+                        <th>Field</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Date (dd/mm/yyyy --:--)</td>
+                        <td>This field lets you select the date and time of the job, if this is TBD then leave blank </td>
+                    </tr>
+                    <tr>
+                        <td>Guest Name</td>
+                        <td>This is the name of the guest that will be the main contact on the day for the job</td>
+                    </tr>
+                    <tr>
+                        <td>Guest Email</td>
+                        <td>email of the guest, or the agent that is acting on behalf of the guest.</td>
+                    </tr>
+                    <tr>
+                        <td>Select Concierge</td>
+                        <td>Select the concierge who is dealing with the job.</td>
+                    </tr>
+                    <tr>
+                        <td>Driver Name</td>
+                        <td>The name of the driver who'll be conducting the job.</td>
+                    </tr>
+                    <tr>
+                        <td>Job Cost</td>
+                        <td>The cost for the job.</td>
+                    </tr>
+                    <tr>
+                        <td>Select Status</td>
+                        <td>
+                            Select the status of the job, for example if a guest has reached out for a transfer,
+                            create a new job with the status "unconfirmed" You can update this later down the line
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Pickup Location</td>
+                        <td>Where the guest is getting picked up from</td>
+                    </tr>
+                    <tr>
+                        <td>Drop Off Location</td>
+                        <td>Where the guest will be dropped off</td>
+                    </tr>
+                    <tr>
+                        <td>Notes</td>
+                        <td>
+                            Useful to add notes. For example, if jobs are a <span class="text-bold">wait & return</span> then you can put that info here. But if a job has a stop in between then you can also put it here.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            Not Completed Tab
+        </div>
+        <div class="card-body">
+            When clicking the <button type="button" class="luxury-light square btn-link">Not Completed</button> button, you'll see a list of jobs that are either
+            <ul class="mt-2">
+                <li><span class="text-bold">Unconfirmed</span> - Details are still being settled, job is not booked in yet with driver.</li>
+                <li><span class="text-bold">Confirmed</span> - Details are settled, job is booked with driver</li>
+            </ul>
+            Any that have <i class="text-huge ph ph-clock-countdown" style="color:red;" title="OVERDUE"></i> next to the status means the date of job has surpassed.
+            It is a notification to let concierge know that the job has most likely been completed, if so, update job so status is completed.
+            <span class="text-italic">If status is unconfirmed, and it has <i class="text-huge ph ph-clock-countdown" style="color:red;" title="OVERDUE"></i>, then most likely
+        job is cancelled. Best to update job so status is cancelled.</span>
+
+            <div class="mt-2">
+                <div>
+                    <span class="text-bold">To modify job</span> click the
+                    <button type="button" class="btn-link btn-icon">
+                        <i class="ph ph-pencil-simple-line" style="color:#1a3f5f;"></i>
+                    </button>
+                    and a pop up will appear with the boxes (with prefilled data from the job). Here you can modify the data.
+                </div>
+                <div>
+                    <span class="text-bold">To view the job's notes</span> click the
+                    <button type="button" class="btn-link btn-icon">
+                        <i class="ph ph-pencil-simple-line" style="color:#1a3f5f;"></i>
+                    </button>
+                    and a pop up will appear with the job's notes.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            Completed Tab
+        </div>
+        <div class="card-body">
+            Similar to the Not Completed Tab, The Completed Tab shows jobs that have been completed.
+        </div>
+    </div>
+</div>

@@ -9,7 +9,6 @@
             <th class="text-left">Guest Name</th>
             <th class="text-left">Guest Email</th>
             <th class="text-left">Logged By</th>
-            <th class="text-left">Notes</th>
             <th class="text-left">Status</th>
             <th></th>
         </tr>
@@ -21,9 +20,12 @@
                     <td>{{ fine.name }}</td>
                     <td>{{ fine.email }}</td>
                     <td>{{ fine.createdBy.name }}</td>
-                    <td>{{ fine.comment }}</td>
                     <td>{{ fine.status.label }}</td>
-                    <td></td>
+                    <td>
+                        {% include '@CitadelAureum/core/fines/blocks/fine_notes.html.twig' with {
+                            'fine': fine
+                        } %}
+                    </td>
                 </tr>
             {% endif %}
         {% endfor %}

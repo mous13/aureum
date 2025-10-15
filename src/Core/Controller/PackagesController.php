@@ -38,6 +38,7 @@ class PackagesController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $package = $form->getData();
 
+            $package->setEmployee($employee);
             $package->setHotel($hotel);
             $this->packageRepository->save($package);
 

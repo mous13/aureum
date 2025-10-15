@@ -16,7 +16,7 @@
                 {{ form_widget(form.comment) }}
             </div>
             <div class="flex justify-end">
-                <button type="submit" class="luxury-light square btn btn-primary">Log Fine</button>
+                <button type="submit" class="luxury-light square btn btn-primary">Submit Fine</button>
             </div>
             {{ form_end(form) }}
         </div>
@@ -26,16 +26,22 @@
         <div>
             {% embed '@Forumify/components/tabs.html.twig' %}
                 {% block tabs %}
-                        <button type="button" class="luxury-light square btn-link" data-tab-id="not_completed">Not Completed</button>
-                        <button type="button" class="luxury-light square btn-link" data-tab-id="completed">Completed</button>
+                    <button type="button" class="luxury-light square btn-link" data-tab-id="not_completed">Not Completed</button>
+                    <button type="button" class="luxury-light square btn-link" data-tab-id="completed">Completed</button>
+                    <button type="button" class="luxury-light square btn-link btn-icon" data-tab-id="help">
+                        <i class="ph text-huge ph-question"></i>
+                    </button>
                 {% endblock %}
                 {% block tabpanels %}
-                <div id="not_completed" class="card w-100">
-                    {% include '@CitadelAureum/core/fines/blocks/not_completed.html.twig' with {'fines': fines} %}
-                </div>
-                <div id="completed" class="card w-100">
-                    {% include '@CitadelAureum/core/fines/blocks/completed.html.twig' with {'fines': fines} %}
-                </div>
+                    <div id="not_completed" class="card w-100">
+                        {% include '@CitadelAureum/core/fines/blocks/not_completed.html.twig' with {'fines': fines} %}
+                    </div>
+                    <div id="completed" class="card w-100">
+                        {% include '@CitadelAureum/core/fines/blocks/completed.html.twig' with {'fines': fines} %}
+                    </div>
+                    <div id="help">
+                        {% include '@CitadelAureum/core/fines/blocks/help.html.twig' %}
+                    </div>
                 {% endblock %}
             {% endembed %}
         </div>

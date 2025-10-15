@@ -13,6 +13,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -46,6 +47,51 @@ class TransferEditType extends AbstractType
                     'placeholder' => 'Notes'
                 ],
                 'required' => false
+            ])
+            ->add('date', DateTimeType::class, [
+                'widget' => 'single_text',
+            ])
+            ->add('guest', TextType::class, [
+                'label' => '',
+                'attr' => [
+                    'placeholder' => 'Guest Name'
+                ]
+            ])
+            ->add('number', TextType::class, [
+                'label' => '',
+                'attr' => [
+                    'placeholder' => 'Guest Number'
+                ]
+            ])
+            ->add('email', TextType::class, [
+                'label' => '',
+                'attr' => [
+                    'placeholder' => 'Guest Email'
+                ]
+            ])
+            ->add('pickup', TextType::class, [
+                'label' => '',
+                'attr' => [
+                    'placeholder' => 'Pickup Location'
+                ]
+            ])
+            ->add('dropoff', TextType::class, [
+                'label' => '',
+                'attr' => [
+                    'placeholder' => 'Drop Off Location'
+                ]
+            ])
+            ->add('driver', TextType::class, [
+                'label' => '',
+                'attr' => [
+                    'placeholder' => 'Driver Name'
+                ]
+            ])
+            ->add('cost', TextType::class, [
+                'label' => '',
+                'attr' => [
+                    'placeholder' => 'Job Cost'
+                ]
             ]);
     }
 }

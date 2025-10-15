@@ -36,7 +36,7 @@
                         {{ transfer.cost }}
                         {% endif %}
                     </td>
-                    <td><i class=" text-huge ph ph-{{ statusIcon[transfer.status.value] }}" style="color:{{ statusColor[transfer.status.value] }};" title="{{ transfer.status.value }}"></i></td>
+                    <td>{{ transfer.status.value }}</td>
                     <td></td>
                 </tr>
             {% endif %}

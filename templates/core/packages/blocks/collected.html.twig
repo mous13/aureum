@@ -9,7 +9,7 @@
             <th class="text-left">Package Description</th>
             <th class="text-left">Location Stored</th>
             <th class="text-left">Logged By</th>
-            <th class="text-left">Notes</th>
+            <th class="text-left"></th>
         </tr>
         {% for package in packages %}
             {% if package.status == false %}
@@ -19,7 +19,11 @@
                     <td>{{ package.description }}</td>
                     <td>{{ package.location }}</td>
                     <td>{{ package.employee.name }}</td>
-                    <td>{{ package.note }}</td>
+                    <td>
+                        {% include '@CitadelAureum/core/packages/blocks/package_notes.html.twig' with {
+                            'package': package
+                        } %}
+                    </td>
                 </tr>
             {% endif %}
         {% endfor %}

@@ -8,6 +8,7 @@ use Citadel\Aureum\Core\Entity\Employee;
 use Citadel\Aureum\Core\Entity\Package;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -44,12 +45,7 @@ class PackageType extends AbstractType
                     'placeholder' => 'Location Stored'
                 ]
             ])
-            ->add('employee', EntityType::class, [
-                'class' => Employee::class,
-                'choice_label' => 'name',
-                'label' => '',
-                'placeholder' => 'Logged By'
-            ])
+            ->add('employee', HiddenType::class)
             ->add('note', TextType::class, [
                 'label' => '',
                 'attr' => [

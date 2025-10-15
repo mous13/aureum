@@ -5,20 +5,45 @@
         </button>
     {% endblock %}
     {% block modalContent %}
-        <div class="card">
-            <div class="card-title" style="background-color:#13233A;color:#ececec;">Edit Transfer - {{ transfer.guest }}: {{ transfer.notes }}</div>
+        {{ form_start(editForm) }}
+        <div class="card w-100">
+            <div class="card-title" style="background-color:#13233A;color:#ececec;">Edit Job - {{ transfer.guest }}</div>
             <div class="card-body">
-                {{ form_start(editForm) }}
-                    {{ form_row(editForm.status) }}
-                    {{ form_row(editForm.notes) }}
+                <div class="">
+                    Job Information
+                    <div class="flex gap-2 mb-2 mt-2">
+                        {{ form_widget(editForm.date) }}
+                        {{ form_widget(editForm.email) }}
+                        {{ form_widget(editForm.driver) }}
+                        {{ form_widget(editForm.cost) }}
+                    </div>
+                    <div  class="flex gap-2 mt-2 mb-2">
+                        {{ form_widget(editForm.pickup) }}
+                        {{ form_widget(editForm.dropoff) }}
+                    </div>
+                    <div class="flex gap-2 mt-2 mb-2">
+                        <div class="w-20">
+                            {{ form_widget(editForm.status) }}
+                        </div>
+                        <div class="w-80">
+                            {{ form_widget(editForm.notes) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    Guest Details
+                    <div class="flex gap-2 mb-2">
+                        {{ form_widget(editForm.guest) }}
+                        {{ form_widget(editForm.number) }}
+                    </div>
+                </div>
                 <div class="flex gap-2">
                     <button type="submit" class="btn btn-primary" style="background-color:#1a3f5f;">
                         Save Changes
                     </button>
                 </div>
-                {{ form_end(editForm) }}
             </div>
         </div>
-
+        {{ form_end(editForm) }}
     {% endblock %}
 {% endembed %}

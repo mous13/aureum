@@ -1,0 +1,91 @@
+<div class="flex flex-col gap-5">
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            Help
+        </div>
+        <div class="card-body">
+            <div>
+                This is a quick tutorial on how to use the Fines feature, which is designed to log Fines.
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            New Fine
+        </div>
+        <div class="card-body">
+            <div>
+                New Fine is a form containing 5 fields (Boxes) in which you can fill out. Once filled out, hit the Submit Fine to create a new Fine.
+            </div>
+            <div>
+                <table class="mt-5">
+                    <tr>
+                        <th>Field</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>Fine Number</td>
+                        <td>The ID of the fine</td>
+                    </tr>
+                    <tr>
+                        <td>Guest Name</td>
+                        <td>This is the name of the guest that received the fine</td>
+                    </tr>
+                    <tr>
+                        <td>Guest Email</td>
+                        <td>Email of the guest</td>
+                    </tr>
+                    <tr>
+                        <td>Select Status</td>
+                        <td>
+                            Select the status of the fine.
+                            <span class="text-bold">Not Appealed</span> - Fine hasn't been appealed yet
+                            <span class="text-bold">Appeal Submitted</span> - An Appeal has been submitted
+                            <span class="text-bold">Appeal Completed</span> - Fine has been cancelled.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Notes</td>
+                        <td>
+                            Useful to add notes. For example, if you have to contact the car park company, you can explain that here.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            Not Completed Tab
+        </div>
+        <div class="card-body">
+            When clicking the <button type="button" class="luxury-light square btn-link">Not Completed</button> button, you'll see a list of fines that have been logged, are either waiting for processing by the car park company or are yet to be appealed.
+
+            <div class="mt-2">
+                <div>
+                    If a fine has been cancelled or you need to update the notes click the
+                    <button type="button" class="btn-link btn-icon">
+                        <i class="ph ph-pencil-simple-line" style="color:#1a3f5f;"></i>
+                    </button>
+                    and a pop up will appear with a status field and note field.
+                </div>
+                <div>
+                    <span class="text-bold">To view the fine's notes</span> click the
+                    <button type="button" class="btn-link btn-icon">
+                        <i class="ph ph-notebook" style="color:#1a3f5f;"></i>
+                    </button>
+                    and a pop up will appear with the fine's notes.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            Completed Tab
+        </div>
+        <div class="card-body">
+            Similar to the Not Completed Tab, The Completed Tab shows fines that have been cancelled.
+        </div>
+    </div>
+</div>
