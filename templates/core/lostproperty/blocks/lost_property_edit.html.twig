@@ -5,6 +5,7 @@
         </button>
     {% endblock %}
     {% block modalContent %}
+        {{ form_start(editForm) }}
         <div class="card w-100">
             <div class="card-title" style="background-color:#13233A;color:#ececec;">Edit Property - {{ property.description }}</div>
             <div class="card-body">
@@ -43,9 +44,8 @@
                         Save Changes
                     </button>
                 </div>
-                {{ form_end(editForm) }}
             </div>
         </div>
-
+        {{ form_end(editForm) }}
     {% endblock %}
 {% endembed %}

@@ -26,7 +26,8 @@
                     <td>
                         <div class="flex">
                             {% include '@CitadelAureum/core/lostproperty/blocks/lost_property_notes.html.twig' with {
-                                'property': property
+                                'property': property,
+                                'logs': propertyLogs[property.id] ?? []
                             } %}
                                 {% include '@CitadelAureum/core/lostproperty/blocks/lost_property_edit.html.twig' with {
                                     'property': property,

@@ -52,16 +52,22 @@
                     <div id="lost" class="card w-100">
                         {% include '@CitadelAureum/core/lostproperty/blocks/lost.html.twig' with {
                             'lostProperties': lostProperties,
+                            'propertyLogs': propertyLogs,
+                            'editForms': editForms
                         } %}
                     </div>
                     <div id="found" class="card w-100">
                         {% include '@CitadelAureum/core/lostproperty/blocks/found.html.twig' with {
                             'lostProperties': lostProperties,
+                            'propertyLogs': propertyLogs,
+                            'editForms': editForms
                         } %}
                     </div>
                     <div id="closed" class="card w-100">
                         {% include '@CitadelAureum/core/lostproperty/blocks/closed.html.twig' with {
                             'lostProperties': lostProperties,
+                            'propertyLogs': propertyLogs,
+                            'editForms': editForms
                         } %}
                     </div>
 
