@@ -27,7 +27,7 @@ class TransfersController extends AbstractController
     public function index(Request $request): Response
     {
         $hotel = $this->aureumService->getHotel();
-        $transfers = $this->transferRepository->findBy(['hotel' => $hotel]);
+        $transfers = $this->transferRepository->findAllOrderedByDate($hotel);
 
         $transfer = new Transfer();
         $form = $this->createForm(TransferType::class, $transfer);
