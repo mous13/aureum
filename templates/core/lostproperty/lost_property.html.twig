@@ -1,0 +1,73 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">
+            New Entry
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            <div class="">
+                Property Information
+                <div class="flex gap-2 mb-2">
+                    {{ form_widget(form.type) }}
+                    {{ form_widget(form.location) }}
+                    {{ form_widget(form.storedLocation) }}
+                    {{ form_widget(form.status) }}
+                </div>
+                <div class="flex gap-2 mb-2">
+                    <div class="w-100">
+                        {{ form_widget(form.description) }}
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5">
+                Guest Details
+                <div class="flex gap-2 mb-2">
+                    {{ form_widget(form.guest) }}
+                    {{ form_widget(form.contact) }}
+                </div>
+            </div>
+            <div class="mt-5">
+                Notes
+                <div class="flex gap-2 mb-2">
+                    {{ form_widget(form.note) }}
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="luxury-light square btn btn-primary">Submit Entry</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <div>
+            {% embed '@Forumify/components/tabs.html.twig' %}
+                {% block tabs %}
+                        <button type="button" class="luxury-light square btn-link" data-tab-id="lost">Lost Property</button>
+                        <button type="button" class="luxury-light square btn-link" data-tab-id="found">Found Property</button>
+                        <button type="button" class="luxury-light square btn-link" data-tab-id="closed">Closed Entries</button>
+                {% endblock %}
+                {% block tabpanels %}
+                    <div id="lost" class="card w-100">
+                        {% include '@CitadelAureum/core/lostproperty/blocks/lost.html.twig' with {
+                            'lostProperties': lostProperties,
+                        } %}
+                    </div>
+                    <div id="found" class="card w-100">
+                        {% include '@CitadelAureum/core/lostproperty/blocks/found.html.twig' with {
+                            'lostProperties': lostProperties,
+                        } %}
+                    </div>
+                    <div id="closed" class="card w-100">
+                        {% include '@CitadelAureum/core/lostproperty/blocks/closed.html.twig' with {
+                            'lostProperties': lostProperties,
+                        } %}
+                    </div>
+
+                {% endblock %}
+            {% endembed %}
+        </div>
+    </div>
+
+{% endblock %}

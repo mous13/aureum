@@ -75,6 +75,4 @@ class PackagesController extends AbstractController
         }
         return $this->redirectToRoute('aureum_packages');
     }
-
-
 }

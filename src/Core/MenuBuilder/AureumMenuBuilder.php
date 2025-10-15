@@ -26,6 +26,9 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
             ->addItem(new MenuItem('Transfers', $url('aureum_transfers'), [
                 'icon' => 'ph ph-car',
             ]))
+            ->addItem(new MenuItem('Lost Property', $url('aureum_lost_property'), [
+                'icon' => 'ph ph-t-shirt',
+            ]))
             ->addItem(new MenuItem('Fines', $url('aureum_fines'), [
                 'icon' => 'ph ph-article',
             ]))

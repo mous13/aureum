@@ -76,6 +76,4 @@ class FinesController extends AbstractController
         }
         return $this->redirectToRoute('aureum_fines');
     }
-
-
 }

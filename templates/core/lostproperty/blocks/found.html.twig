@@ -1,0 +1,44 @@
+<div class="card-title" style="background-color:#13233A;color:#ececec;">
+    Found Property
+</div>
+<div class="card-body">
+    <table>
+        <tr>
+            <th class="text-left">Date</th>
+            <th class="text-left">Guest Name</th>
+            <th class="text-left">Guest Contact</th>
+            <th class="text-left">Description</th>
+            <th class="text-left">Found Location</th>
+            <th class="text-left">Stored Location</th>
+            <th class="text-left">Reported By</th>
+            <th class="text-left">Status</th>
+            <th class="text-left"></th>
+        </tr>
+        {% for property in lostProperties %}
+            {% set status = property.status.value %}
+            {% if status in ['waiting for collection', 'waiting to be posted', 'stored']   %}
+                <tr>
+                    <td>{{ property.createdAt|date('d/m/y H:i') }}</td>
+                    <td>{{ property.guest }}</td>
+                    <td>{{ property.contact }}</td>
+                    <td>{{ property.description }}</td>
+                    <td>{{ property.location }}</td>
+                    <td>{{ property.storedLocation }}</td>
+                    <td>{{ property.reportedBy.name }}</td>
+                    <td>{{ property.status.value }}</td>
+                    <td>
+                        <div class="flex">
+                            {% include '@CitadelAureum/core/lostproperty/blocks/lost_property_notes.html.twig' with {
+                                'property': property
+                            } %}
+                            {% include '@CitadelAureum/core/lostproperty/blocks/lost_property_edit.html.twig' with {
+                                'property': property,
+                                'editForm': editForms[property.id]
+                            } %}
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+</div>

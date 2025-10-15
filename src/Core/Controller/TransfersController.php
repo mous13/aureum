@@ -72,6 +72,4 @@ class TransfersController extends AbstractController
         }
         return $this->redirectToRoute('aureum_transfers');
     }
-
-
 }
