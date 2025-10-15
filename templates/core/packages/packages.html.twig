@@ -28,9 +28,7 @@
                 {% block tabs %}
                         <button type="button" class="luxury-light square btn-link" data-tab-id="received">Received</button>
                         <button type="button" class="luxury-light square btn-link" data-tab-id="collected">Picked Up</button>
-                        <button type="button" class="luxury-light square btn-link btn-icon" data-tab-id="help">
-                            <i class="ph text-huge ph-question"></i>
-                        </button>
+                        <button type="button" class="luxury-light square btn-link btn-icon" data-tab-id="help">Help</button>
                 {% endblock %}
                 {% block tabpanels %}
                     <div id="received" class="card w-100">
@@ -39,7 +37,7 @@
                     <div id="collected" class="card w-100">
                         {% include '@CitadelAureum/core/packages/blocks/collected.html.twig' with {'packages': packages} %}
                     </div>
-                    <div id="help">
+                    <div id="help" class="w-100">
                         {% include '@CitadelAureum/core/packages/blocks/help.html.twig' %}
                     </div>
                 {% endblock %}
