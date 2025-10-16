@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Admin\Form;
 
 use Citadel\Aureum\Core\Entity\Employee;
+use Citadel\Aureum\Core\Entity\EmployeeRole;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
