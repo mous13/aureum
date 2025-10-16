@@ -44,25 +44,29 @@ class TransferType extends AbstractType
                 'label' => '',
                 'attr' => [
                     'placeholder' => 'Guest Number'
-                ]
+                ],
+                'required' => false,
             ])
             ->add('email', TextType::class, [
                 'label' => '',
                 'attr' => [
                     'placeholder' => 'Guest Email'
-                ]
+                ],
+                'required' => false,
             ])
             ->add('pickup', TextType::class, [
                 'label' => '',
                 'attr' => [
                     'placeholder' => 'Pickup Location'
-                ]
+                ],
+                'required' => false,
             ])
             ->add('dropoff', TextType::class, [
                 'label' => '',
                 'attr' => [
                     'placeholder' => 'Drop Off Location'
-                ]
+                ],
+                'required' => false,
             ])
             ->add('middleman', EntityType::class, [
                 'class' => Employee::class,
@@ -79,13 +83,15 @@ class TransferType extends AbstractType
                 'label' => '',
                 'attr' => [
                     'placeholder' => 'Driver Name'
-                ]
+                ],
+                'required' => false,
             ])
             ->add('cost', TextType::class, [
                 'label' => '',
                 'attr' => [
                     'placeholder' => 'Job Cost'
-                ]
+                ],
+                'required' => false,
             ])
             ->add('notes', TextType::class, [
                 'label' => '',
