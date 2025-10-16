@@ -158,7 +158,10 @@ class EmployeeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            $isVerified = $form->get('verified')->getData();
+            $user->setEmailVerified($isVerified);
 
+            $this->userEmployee->save($user);
             $this->employeeRepository->save($data);
 
             $this->addFlash('success', 'Employee updated successfully.');
