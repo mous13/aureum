@@ -9,6 +9,7 @@ use Citadel\Aureum\Core\Entity\Hotel;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -28,9 +29,9 @@ class EmployeeEditType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Full Name'
             ])
-            ->add('role', TextType::class, [
-                'label' => 'Role/Position',
-                'help' => 'e.g., Front Desk Manager, Concierge, etc.',
+            ->add('role', EnumType::class, [
+                'class' => EmployeeRole::class,
+                'label' => 'Role',
             ])
             ->add('verified', CheckboxType::class, [
                 'label' => 'email verified',
