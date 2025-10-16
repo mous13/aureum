@@ -29,7 +29,8 @@ class PackageEditType extends AbstractType
         $builder
             ->add('status', CheckBoxType::class, [
                 'label' => 'Mark as Picked Up',
-                'required' => true,
+                'required' => false,
+                'data' => false,
             ])
             ->add('note', TextType::class, [
                 'label' => '',
