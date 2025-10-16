@@ -35,7 +35,7 @@ class EmployeeEditType extends AbstractType
             ->add('verified' CheckboxType::class, [
                 'label' => 'email verified',
                 'required' => false,
-                'mapped' => falsem
+                'mapped' => false,
             ]);
     }
 }
