@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class EmployeeEditType extends AbstractType
 {
@@ -30,6 +31,11 @@ class EmployeeEditType extends AbstractType
             ->add('role', TextType::class, [
                 'label' => 'Role/Position',
                 'help' => 'e.g., Front Desk Manager, Concierge, etc.',
+            ])
+            ->add('verified' CheckboxType::class, [
+                'label' => 'email verified',
+                'required' => false,
+                'mapped' => falsem
             ]);
     }
 }
