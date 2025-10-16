@@ -16,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/employees', 'employees')]
 class EmployeeController extends AbstractController
@@ -25,6 +26,7 @@ class EmployeeController extends AbstractController
         private readonly CreateEmployeeService $createEmployeeService,
         private readonly EmployeeRepository $employeeRepository,
         private readonly UserRepository $userRepository,
+        private readonly Security $security,
     ) {
     }
 
@@ -151,6 +153,8 @@ class EmployeeController extends AbstractController
     public function edit(Request $request, ?int $id): Response
     {
         $employee = $this->employeeRepository->find($id);
+
+        $user = $this->security->getUser();
 
         $form = $this->createForm(EmployeeEditType::class, $employee);
 
