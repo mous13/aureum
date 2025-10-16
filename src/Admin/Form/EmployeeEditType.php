@@ -38,6 +38,7 @@ class EmployeeEditType extends AbstractType
                 'label' => 'email verified',
                 'required' => false,
                 'mapped' => false,
+                'data' => false,
             ]);
     }
 }
