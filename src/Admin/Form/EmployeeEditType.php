@@ -32,7 +32,7 @@ class EmployeeEditType extends AbstractType
                 'label' => 'Role/Position',
                 'help' => 'e.g., Front Desk Manager, Concierge, etc.',
             ])
-            ->add('verified' CheckboxType::class, [
+            ->add('verified', CheckboxType::class, [
                 'label' => 'email verified',
                 'required' => false,
                 'mapped' => false,
