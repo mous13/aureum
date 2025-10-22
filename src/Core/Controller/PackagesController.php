@@ -7,7 +7,10 @@ use Citadel\Aureum\Core\Entity\PackageStatus;
 use Citadel\Aureum\Core\Form\PackageEditType;
 use Citadel\Aureum\Core\Form\PackageType;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
+use Citadel\Aureum\Core\Repository\PackageLogRepository;
 use Citadel\Aureum\Core\Repository\PackageRepository;
+use Citadel\Aureum\Core\Service\AureumService;
+use Citadel\Aureum\Core\Service\PackageLogService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,9 +21,12 @@ use Symfony\Bundle\SecurityBundle\Security;
 class PackagesController extends AbstractController
 {
     public function __construct(
-        readonly PackageRepository $packageRepository,
-        readonly Security $security,
-        readonly EmployeeRepository $employeeRepository,
+        private readonly PackageRepository $packageRepository,
+        private readonly Security $security,
+        private readonly EmployeeRepository $employeeRepository,
+        private readonly PackageLogService $logService,
+        private readonly PackageLogRepository $packageLogRepository,
+        private readonly AureumService $aureumService,
     ){
     }
 
@@ -44,6 +50,8 @@ class PackagesController extends AbstractController
             $package->setHotel($hotel);
             $this->packageRepository->save($package);
 
+            $this->logService->logCreated($package, $employee);
+
             return $this->redirectToRoute('aureum_packages');
         }
 
@@ -55,16 +63,25 @@ class PackagesController extends AbstractController
             $editForms[$pkg->getId()] = $editForm->createView();
         }
 
+        $packageLogs = [];
+        foreach($packages as $pkg) {
+            $packageLogs[$pkg->getId()] = $this->packageLogRepository->findByPackage($pkg);
+        }
+
         return $this->render('@CitadelAureum/core/packages/packages.html.twig',[
             'packages' => $packages,
             'form' => $form,
             'editForms' => $editForms,
+            'logs' => $packageLogs,
         ]);
     }
 
     #[Route('/packages/{id}/edit', name: 'packages_edit')]
     public function edit(Request $request, Package $package): Response
     {
+        $originalData = $this->logService->captureCurrentState($package);
+        $employee = $this->aureumService->getEmployee();
+
         $form = $this->createForm(PackageEditType::class, $package);
         $form->handleRequest($request);
 
@@ -73,9 +90,12 @@ class PackagesController extends AbstractController
             if($form->get('status')->getData() === true) {
                 $package->setStatus(PackageStatus::PICKED_UP);
             }
+
             $package->setUpdatedAt(new \DateTime());
 
             $this->packageRepository->save($package);
+
+            $this->logService->logUpdated($package, $originalData, $employee);
 
             $this->addFlash('success', 'Package collected');
         }

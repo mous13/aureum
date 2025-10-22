@@ -10,7 +10,6 @@
                 {{ form_widget(form.name) }}
                 {{ form_widget(form.description) }}
                 {{ form_widget(form.location) }}
-                {{ form_widget(form.employee) }}
             </div>
             <div class="mb-2">
                 {{ form_widget(form.note) }}
@@ -32,10 +31,18 @@
                 {% endblock %}
                 {% block tabpanels %}
                     <div id="received" class="card w-100">
-                        {% include '@CitadelAureum/core/packages/blocks/received.html.twig' with {'packages': packages} %}
+                        {% include '@CitadelAureum/core/packages/blocks/received.html.twig' with {
+                            'packages': packages,
+                            'logs': logs,
+                            'editForms': editForms,
+                        } %}
                     </div>
                     <div id="collected" class="card w-100">
-                        {% include '@CitadelAureum/core/packages/blocks/collected.html.twig' with {'packages': packages} %}
+                        {% include '@CitadelAureum/core/packages/blocks/collected.html.twig' with {
+                            'packages': packages,
+                            'logs': logs,
+                            'editForms': editForms,
+                        } %}
                     </div>
                     <div id="help" class="w-100">
                         {% include '@CitadelAureum/core/packages/blocks/help.html.twig' %}

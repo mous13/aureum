@@ -9,8 +9,17 @@
             <div class="card-title" style="background-color:#13233A;color:#ececec;">Edit Package - {{ package.name }}: {{ package.description }}</div>
             <div class="card-body">
                 {{ form_start(editForm) }}
+                <div class="flex gap-2 mb-2">
+                    {{ form_widget(editForm.name) }}
+                    {{ form_widget(editForm.description) }}
+                    {{ form_widget(editForm.location) }}
+                </div>
+                <div class="mb-2">
+                    {{ form_widget(editForm.note) }}
+                </div>
+                <div class="mb-2">
                     {{ form_row(editForm.status) }}
-                    {{ form_row(editForm.note) }}
+                </div>
                 <div class="flex gap-2">
                     <button type="submit" class="btn btn-primary" style="background-color:#1a3f5f;">
                         Save Changes

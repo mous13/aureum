@@ -6,8 +6,10 @@ namespace Citadel\Aureum\Core\Form;
 
 use Citadel\Aureum\Core\Entity\Employee;
 use Citadel\Aureum\Core\Entity\Package;
+use Citadel\Aureum\Core\Entity\PackageStatus;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -45,7 +47,6 @@ class PackageType extends AbstractType
                     'placeholder' => 'Location Stored'
                 ]
             ])
-            ->add('employee', HiddenType::class)
             ->add('note', TextType::class, [
                 'label' => '',
                 'attr' => [

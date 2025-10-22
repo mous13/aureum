@@ -21,7 +21,8 @@
                     <td>{{ package.employee.name }}</td>
                     <td>
                         {% include '@CitadelAureum/core/packages/blocks/package_notes.html.twig' with {
-                            'package': package
+                            'package': package,
+                            'logs': logs[package.id] ?? []
                         } %}
                         {% include '@CitadelAureum/core/packages/blocks/packages_edit.html.twig' with {
                             'package': package,
