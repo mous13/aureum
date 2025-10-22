@@ -3,7 +3,6 @@
 namespace Citadel\Aureum\Core\Controller;
 
 use Citadel\Aureum\Core\Entity\LostProperty;
-use Citadel\Aureum\Core\Entity\LostPropertyClass;
 use Citadel\Aureum\Core\Form\LostPropertyEditType;
 use Citadel\Aureum\Core\Form\LostPropertyType;
 use Citadel\Aureum\Core\Repository\LostPropertyLogRepository;
@@ -14,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class LostPropertyController extends AbstractController
 {
