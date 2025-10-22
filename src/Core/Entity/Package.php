@@ -29,8 +29,8 @@ class Package
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $note = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private bool $status = true;
+    #[ORM\Column(type: 'string', length: 255, enumType: PackageStatus::class)]
+    private PackageStatus $status;
 
     #[ORM\ManyToOne(inversedBy: 'packages')]
     #[ORM\JoinColumn(nullable: false)]
@@ -86,12 +86,12 @@ class Package
         $this->note = $note;
     }
 
-    public function isStatus(): bool
+    public function getStatus(): PackageStatus
     {
         return $this->status;
     }
 
-    public function setStatus(bool $status): void
+    public function setStatus(PackageStatus $status): void
     {
         $this->status = $status;
     }

@@ -12,7 +12,7 @@
             <th class="text-left"></th>
         </tr>
         {% for package in packages %}
-            {% if package.status == true %}
+            {% if package.status.value == 'received' %}
                 <tr>
                     <td>{{ package.createdAt|date('d/m/y H:i') }}</td>
                     <td>{{ package.name }}</td>

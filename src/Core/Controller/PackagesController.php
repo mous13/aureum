@@ -3,6 +3,7 @@
 namespace Citadel\Aureum\Core\Controller;
 
 use Citadel\Aureum\Core\Entity\Package;
+use Citadel\Aureum\Core\Entity\PackageStatus;
 use Citadel\Aureum\Core\Form\PackageEditType;
 use Citadel\Aureum\Core\Form\PackageType;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
@@ -38,6 +39,7 @@ class PackagesController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $package = $form->getData();
 
+            $package->setStatus(PackageStatus::RECEIVED);
             $package->setEmployee($employee);
             $package->setHotel($hotel);
             $this->packageRepository->save($package);
@@ -67,7 +69,10 @@ class PackagesController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $package->setStatus(!$form->get('status')->getData());
+
+            if($form->get('status')->getData() === true) {
+                $package->setStatus(PackageStatus::PICKED_UP);
+            }
             $package->setUpdatedAt(new \DateTime());
 
             $this->packageRepository->save($package);

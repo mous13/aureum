@@ -31,6 +31,7 @@ class PackageEditType extends AbstractType
                 'label' => 'Mark as Picked Up',
                 'required' => false,
                 'data' => false,
+                'mapped' => false,
             ])
             ->add('note', TextType::class, [
                 'label' => '',
