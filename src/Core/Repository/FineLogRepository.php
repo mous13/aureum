@@ -4,6 +4,7 @@ namespace Citadel\Aureum\Core\Repository;
 
 use Citadel\Aureum\Core\Entity\Fine;
 use Citadel\Aureum\Core\Entity\FineLog;
+use Citadel\Aureum\Core\Repository\AbstractLogRepository;
 
 /**
  * @extends AbstractLogRepository<FineLog>

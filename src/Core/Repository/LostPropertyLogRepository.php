@@ -4,6 +4,7 @@ namespace Citadel\Aureum\Core\Repository;
 
 use Citadel\Aureum\Core\Entity\LostProperty;
 use Citadel\Aureum\Core\Entity\LostPropertyLog;
+use Citadel\Aureum\Core\Repository\AbstractLogRepository;
 
 /**
  * @extends AbstractLogRepository<LostPropertyLog>
