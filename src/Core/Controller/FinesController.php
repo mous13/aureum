@@ -29,7 +29,7 @@ class FinesController extends AbstractController
         $user = $this->security->getUser();
         $employee = $this->employeeRepository->findOneBy(['user' => $user]);
         $hotel = $employee->getHotel();
-        $fines = $this->fineRepository->findBy(['hotel' => $hotel]);
+        $fines = $this->fineRepository->findAllOrderedByDate($hotel);
 
         $fine = new Fine();
         $form = $this->createForm(FineType::class, $fine);

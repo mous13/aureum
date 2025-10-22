@@ -31,7 +31,7 @@ class LostPropertyController extends AbstractController
     {
         $employee = $this->aureumService->getEmployee();
         $hotel = $this->aureumService->getHotel();
-        $lostProperties = $this->lostPropertyRepository->findBy(['hotel' => $hotel]);
+        $lostProperties = $this->lostPropertyRepository->findAllOrderedByDate($hotel);
 
         $lostProperty = new LostProperty();
         $form = $this->createForm(LostPropertyType::class, $lostProperty);

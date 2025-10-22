@@ -29,7 +29,7 @@ class PackagesController extends AbstractController
         $user = $this->security->getUser();
         $employee = $this->employeeRepository->findOneBy(['user' => $user]);
         $hotel = $employee->getHotel();
-        $packages = $this->packageRepository->findBy(['hotel' => $hotel]);
+        $packages = $this->packageRepository->findAllOrderedByDate($hotel);
 
         $package = new Package();
         $form = $this->createForm(PackageType::class, $package);

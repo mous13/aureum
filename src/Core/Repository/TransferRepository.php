@@ -24,7 +24,7 @@ class TransferRepository extends AbstractRepository
         return $this->createQueryBuilder('t')
             ->where('t.hotel = :hotel')
             ->setParameter('hotel', $hotel)
-            ->orderBy('t.date', 'ASC')
+            ->orderBy('t.date', 'DESC')
             ->getQuery()
             ->getResult();
     }
