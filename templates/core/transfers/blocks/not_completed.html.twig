@@ -43,7 +43,8 @@
                     <td>
                         <div class="flex">
                             {% include '@CitadelAureum/core/transfers/blocks/transfer_notes.html.twig' with {
-                                'transfer': transfer
+                                'transfer': transfer,
+                                'logs': logs[transfer.id] ?? []
                             } %}
                             {% if employee.role.value == "Concierge" %}
                                 {% include '@CitadelAureum/core/transfers/blocks/transfers_edit.html.twig' with {

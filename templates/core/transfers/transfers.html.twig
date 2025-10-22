@@ -1,19 +1,5 @@
 {% extends '@CitadelAureum/core/base.html.twig' %}
 {% block body %}
-    {% set statusIcon = {
-        'unconfirmed': 'question',
-        'confirmed': 'check-circle',
-        'cancelled': 'x-circle',
-        'completed': 'seal-check',
-    } %}
-
-    {% set statusColor = {
-        'unconfirmed': 'orange',
-        'confirmed': 'green',
-        'cancelled': 'red',
-        'completed': 'green',
-    } %}
-
     <div class="card">
         <div class="card-title luxury">
             New Job
@@ -60,15 +46,15 @@
                     <div id="not_completed" class="card w-100">
                         {% include '@CitadelAureum/core/transfers/blocks/not_completed.html.twig' with {
                             'transfers': transfers,
-                            'statusColor': statusColor,
-                            'statusIcon': statusIcon
+                            'editForms': editForms,
+                            'logs': logs
                         } %}
                     </div>
                     <div id="completed" class="card w-100">
                         {% include '@CitadelAureum/core/transfers/blocks/completed.html.twig' with {
                             'transfers': transfers,
-                            'statusColor': statusColor,
-                            'statusIcon': statusIcon
+                            'editForms': editForms,
+                            'logs': logs
                         } %}
                     </div>
                     <div id="help" class=" w-100">

@@ -12,29 +12,30 @@
                 <div class="">
                     Job Information
                     <div class="flex gap-2 mb-2 mt-2">
-                        {{ form_widget(editForm.date) }}
-                        {{ form_widget(editForm.email) }}
-                        {{ form_widget(editForm.driver) }}
-                        {{ form_widget(editForm.cost) }}
+                        {{ form_row(editForm.date) }}
+                        {{ form_row(editForm.driver) }}
+                        {{ form_row(editForm.cost) }}
                     </div>
                     <div  class="flex gap-2 mt-2 mb-2">
-                        {{ form_widget(editForm.pickup) }}
-                        {{ form_widget(editForm.dropoff) }}
+                        {{ form_row(editForm.pickup) }}
+                        {{ form_row(editForm.dropoff) }}
                     </div>
                     <div class="flex gap-2 mt-2 mb-2">
                         <div class="w-20">
-                            {{ form_widget(editForm.status) }}
+                            {{ form_row(editForm.status) }}
                         </div>
                         <div class="w-80">
-                            {{ form_widget(editForm.notes) }}
+                            {{ form_row(editForm.notes) }}
                         </div>
                     </div>
                 </div>
-                <div class="mt-5">
+                <div class="mt-5 mb-5 border-t">
                     Guest Details
-                    <div class="flex gap-2 mb-2">
-                        {{ form_widget(editForm.guest) }}
-                        {{ form_widget(editForm.number) }}
+                    <div class="flex gap-2 mb-2 mt-2">
+                        {{ form_row(editForm.guest) }}
+                        {{ form_row(editForm.number) }}
+                        {{ form_row(editForm.email) }}
+
                     </div>
                 </div>
                 <div class="flex gap-2">

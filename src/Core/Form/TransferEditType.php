@@ -33,7 +33,7 @@ class TransferEditType extends AbstractType
     {
         $builder
             ->add('status', ChoiceType::class, [
-                'label' => '',
+                'label' => 'Status',
                 'choices' => [
                     'Unconfirmed' => TransferStatus::UNCONFIRMED,
                     'Confirmed' => TransferStatus::CONFIRMED,
@@ -42,7 +42,7 @@ class TransferEditType extends AbstractType
                 ],
             ])
             ->add('notes', TextType::class, [
-                'label' => '',
+                'label' => 'Notes',
                 'attr' => [
                     'placeholder' => 'Notes'
                 ],
@@ -52,43 +52,43 @@ class TransferEditType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('guest', TextType::class, [
-                'label' => '',
+                'label' => 'Guest Name',
                 'attr' => [
                     'placeholder' => 'Guest Name'
                 ]
             ])
             ->add('number', TextType::class, [
-                'label' => '',
+                'label' => 'Guest Number',
                 'attr' => [
                     'placeholder' => 'Guest Number'
                 ]
             ])
             ->add('email', TextType::class, [
-                'label' => '',
+                'label' => 'Guest Email',
                 'attr' => [
                     'placeholder' => 'Guest Email'
                 ]
             ])
             ->add('pickup', TextType::class, [
-                'label' => '',
+                'label' => 'Pickup Location',
                 'attr' => [
                     'placeholder' => 'Pickup Location'
                 ]
             ])
             ->add('dropoff', TextType::class, [
-                'label' => '',
+                'label' => 'Drop Off Location',
                 'attr' => [
                     'placeholder' => 'Drop Off Location'
                 ]
             ])
             ->add('driver', TextType::class, [
-                'label' => '',
+                'label' => 'Driver',
                 'attr' => [
                     'placeholder' => 'Driver Name'
                 ]
             ])
             ->add('cost', TextType::class, [
-                'label' => '',
+                'label' => 'Cost',
                 'attr' => [
                     'placeholder' => 'Job Cost'
                 ]

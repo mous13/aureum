@@ -5,8 +5,11 @@ namespace Citadel\Aureum\Core\Controller;
 use Citadel\Aureum\Core\Entity\Transfer;
 use Citadel\Aureum\Core\Form\TransferEditType;
 use Citadel\Aureum\Core\Form\TransferType;
+use Citadel\Aureum\Core\Repository\EmployeeRepository;
 use Citadel\Aureum\Core\Repository\TransferRepository;
+use Citadel\Aureum\Core\Repository\TransferLogRepository;
 use Citadel\Aureum\Core\Service\AureumService;
+use Citadel\Aureum\Core\Service\TransferLogService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +22,10 @@ class TransfersController extends AbstractController
     public function __construct(
         private readonly TransferRepository $transferRepository,
         private readonly Security $security,
-        private readonly AureumService $aureumService
+        private readonly EmployeeRepository $employeeRepository,
+        private readonly TransferLogService $logService,
+        private readonly TransferLogRepository $transferLogRepository,
+        private readonly AureumService $aureumService,
     ){
     }
 
@@ -50,24 +56,36 @@ class TransfersController extends AbstractController
             $editForms[$tran->getId()] = $editForm->createView();
         }
 
+        $transferLogs = [];
+        foreach ($transfers as $tran) {
+            $transferLogs[$tran->getId()] = $this->transferLogRepository->findByTransfer($tran);
+        }
+
         return $this->render('@CitadelAureum/core/transfers/transfers.html.twig',[
             'transfers' => $transfers,
             'form' => $form,
             'editForms' => $editForms,
             'security' => $this->security,
             'employee' => $this->aureumService->getEmployee(),
+            'logs' => $transferLogs,
         ]);
     }
 
     #[Route('/transfers/{id}/edit', name: 'transfers_edit')]
     public function edit(Request $request, Transfer $transfer): Response
     {
+        $originalData = $this->logService->captureCurrentState($transfer);
+        $employee = $this->aureumService->getEmployee();
+
         $form = $this->createForm(TransferEditType::class, $transfer);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             $this->transferRepository->save($transfer);
+
+            $this->logService->logUpdated($transfer, $originalData, $employee);
+
             $this->addFlash('success', 'Transfer updated');
         }
         return $this->redirectToRoute('aureum_transfers');

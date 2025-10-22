@@ -37,7 +37,16 @@
                         {% endif %}
                     </td>
                     <td>{{ transfer.status.value }}</td>
-                    <td></td>
+                    <td>
+                        {% include '@CitadelAureum/core/transfers/blocks/transfer_notes.html.twig' with {
+                            'transfer': transfer,
+                            'logs': logs[transfer.id] ?? []
+                        } %}
+                        {% include '@CitadelAureum/core/transfers/blocks/transfers_edit.html.twig' with {
+                            'transfer': transfer,
+                            'editForm': editForms[transfer.id]
+                        } %}
+                    </td>
                 </tr>
             {% endif %}
         {% endfor %}
