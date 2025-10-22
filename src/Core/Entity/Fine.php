@@ -33,7 +33,7 @@ class Fine
     private Hotel $hotel;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $comment = null;
+    private ?string $note = null;
 
     #[ORM\Column(type: 'string', length: 255, enumType: FineStatus::class)]
     private FineStatus $status;
@@ -98,14 +98,14 @@ class Fine
         $this->hotel = $hotel;
     }
 
-    public function getComment(): ?string
+    public function getNote(): ?string
     {
-        return $this->comment;
+        return $this->note;
     }
 
-    public function setComment(?string $comment): void
+    public function setNote(?string $note): void
     {
-        $this->comment = $comment;
+        $this->note = $note;
     }
 
     public function getStatus(): FineStatus

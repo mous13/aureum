@@ -46,7 +46,7 @@ class FineType extends AbstractType
                     'placeholder' => 'Guest Email'
                 ]
             ])
-            ->add('comment', TextType::class, [
+            ->add('note', TextType::class, [
                 'label' => '',
                 'attr' => [
                     'placeholder' => 'Notes'

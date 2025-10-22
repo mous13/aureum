@@ -6,11 +6,18 @@
     {% endblock %}
     {% block modalContent %}
         <div class="card">
-            <div class="card-title" style="background-color:#13233A;color:#ececec;">Edit Package - {{ fine.name }}: {{ fine.comment }}</div>
-            <div class="card-body">
+            <div class="card-title" style="background-color:#13233A;color:#ececec;">Edit Package - {{ fine.name }}: {{ fine.note }}</div>
+            <div class="card-body flex gap-2 mb-2">
                 {{ form_start(editForm) }}
-                    {{ form_row(editForm.status) }}
-                    {{ form_row(editForm.comment) }}
+                <div class="flex gap-2 mb-2">
+                    {{ form_widget(editForm.number) }}
+                    {{ form_widget(editForm.name) }}
+                    {{ form_widget(editForm.email) }}
+                    {{ form_widget(editForm.status) }}
+                </div>
+                <div class="mb-2">
+                    {{ form_widget(editForm.note) }}
+                </div>
                 <div class="flex gap-2">
                     <button type="submit" class="btn btn-primary" style="background-color:#1a3f5f;">
                         Save Changes

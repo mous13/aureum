@@ -13,7 +13,7 @@
                 {{ form_widget(form.status) }}
             </div>
             <div class="mb-2">
-                {{ form_widget(form.comment) }}
+                {{ form_widget(form.note) }}
             </div>
             <div class="flex justify-end">
                 <button type="submit" class="luxury-light square btn btn-primary">Submit Fine</button>
@@ -32,10 +32,18 @@
                 {% endblock %}
                 {% block tabpanels %}
                     <div id="not_completed" class="card w-100">
-                        {% include '@CitadelAureum/core/fines/blocks/not_completed.html.twig' with {'fines': fines} %}
+                        {% include '@CitadelAureum/core/fines/blocks/not_completed.html.twig' with {
+                            'fines': fines,
+                            'logs': logs,
+                            'editForms': editForms
+                        } %}
                     </div>
                     <div id="completed" class="card w-100">
-                        {% include '@CitadelAureum/core/fines/blocks/completed.html.twig' with {'fines': fines} %}
+                        {% include '@CitadelAureum/core/fines/blocks/completed.html.twig' with {
+                            'fines': fines,
+                            'logs': logs,
+                            'editForms': editForms
+                        } %}
                     </div>
                     <div id="help">
                         {% include '@CitadelAureum/core/fines/blocks/help.html.twig' %}

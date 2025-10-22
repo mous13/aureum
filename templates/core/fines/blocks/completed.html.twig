@@ -23,7 +23,8 @@
                     <td>{{ fine.status.label }}</td>
                     <td>
                         {% include '@CitadelAureum/core/fines/blocks/fine_notes.html.twig' with {
-                            'fine': fine
+                            'fine': fine,
+                            'logs': logs[fine.id] ?? []
                         } %}
                     </td>
                 </tr>

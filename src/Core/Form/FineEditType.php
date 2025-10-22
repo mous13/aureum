@@ -29,6 +29,32 @@ class FineEditType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('number', TextType::class, [
+                'label' => '',
+                'attr' => [
+                    'placeholder' => 'Fine Number'
+                ],
+                'required' => false
+            ])
+            ->add('name', TextType::class, [
+                'label' => '',
+                'attr' => [
+                    'placeholder' => 'Guest Name'
+                ]
+            ])
+            ->add('email', TextType::class, [
+                'label' => '',
+                'attr' => [
+                    'placeholder' => 'Guest Email'
+                ]
+            ])
+            ->add('note', TextType::class, [
+                'label' => '',
+                'attr' => [
+                    'placeholder' => 'Notes'
+                ],
+                'required' => false
+            ])
             ->add('status', ChoiceType::class, [
                 'label' => '',
                 'choices' => [
@@ -36,13 +62,7 @@ class FineEditType extends AbstractType
                     'Appeal Submitted' => FineStatus::APPEAL_SUBMITTED,
                     'Appeal Completed' => FineStatus::APPEAL_COMPLETED,
                 ],
-            ])
-            ->add('comment', TextType::class, [
-                'label' => '',
-                'attr' => [
-                    'placeholder' => 'Notes'
-                ],
-                'required' => false
+                'placeholder' => 'Select Status',
             ]);
     }
 }
