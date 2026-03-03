@@ -20,8 +20,6 @@ final class Version20251007220940 extends AbstractMigration
         $this->addSql('ALTER TABLE aureum_fines ADD CONSTRAINT FK_9385E22EB03A8386 FOREIGN KEY (created_by_id) REFERENCES aureum_employees (id)');
         $this->addSql('ALTER TABLE aureum_fines ADD CONSTRAINT FK_9385E22E896DBBDE FOREIGN KEY (updated_by_id) REFERENCES aureum_employees (id)');
         $this->addSql('ALTER TABLE aureum_fines ADD CONSTRAINT FK_9385E22E3243BB18 FOREIGN KEY (hotel_id) REFERENCES aureum_hotels (id)');
-        $this->addSql('ALTER TABLE aureum_packages ADD CONSTRAINT FK_D093720B3243BB18 FOREIGN KEY (hotel_id) REFERENCES aureum_hotels (id)');
-        $this->addSql('CREATE INDEX IDX_D093720B3243BB18 ON aureum_packages (hotel_id)');
     }
 
     public function down(Schema $schema): void
@@ -30,7 +28,5 @@ final class Version20251007220940 extends AbstractMigration
         $this->addSql('ALTER TABLE aureum_fines DROP FOREIGN KEY FK_9385E22E896DBBDE');
         $this->addSql('ALTER TABLE aureum_fines DROP FOREIGN KEY FK_9385E22E3243BB18');
         $this->addSql('DROP TABLE aureum_fines');
-        $this->addSql('ALTER TABLE aureum_packages DROP FOREIGN KEY FK_D093720B3243BB18');
-        $this->addSql('DROP INDEX IDX_D093720B3243BB18 ON aureum_packages');
     }
 }
