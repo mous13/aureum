@@ -4,14 +4,9 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Form;
 
-use Citadel\Aureum\Core\Entity\Employee;
-use Citadel\Aureum\Core\Entity\FineStatus;
-use Citadel\Aureum\Core\Entity\Fine;
 use Citadel\Aureum\Core\Entity\Transfer;
 use Citadel\Aureum\Core\Entity\TransferStatus;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,7 +19,8 @@ class TransferEditType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => Transfer::class
+                'data_class' => Transfer::class,
+                'userTimezone' => 'UTC',
             ]
         );
     }
@@ -50,6 +46,8 @@ class TransferEditType extends AbstractType
             ])
             ->add('date', DateTimeType::class, [
                 'widget' => 'single_text',
+                'model_timezone' => 'UTC',
+                'view_timezone' => $options['userTimezone'],
             ])
             ->add('guest', TextType::class, [
                 'label' => 'Guest Name',

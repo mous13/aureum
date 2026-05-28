@@ -32,11 +32,12 @@ class TransfersController extends AbstractController
     #[Route('/transfers', name: 'transfers')]
     public function index(Request $request): Response
     {
+        $userTimezone = $this->security->getUser()->getTimeZone();
         $hotel = $this->aureumService->getHotel();
         $transfers = $this->transferRepository->findAllOrderedByDate($hotel);
 
         $transfer = new Transfer();
-        $form = $this->createForm(TransferType::class, $transfer);
+        $form = $this->createForm(TransferType::class, $transfer, ['userTimezone' => $userTimezone]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -51,7 +52,8 @@ class TransfersController extends AbstractController
         $editForms = [];
         foreach ($transfers as $tran) {
             $editForm = $this->createForm(TransferEditType::class, $tran, [
-                'action' => $this->generateUrl('aureum_transfers_edit', ['id' => $tran->getId()])
+                'action' => $this->generateUrl('aureum_transfers_edit', ['id' => $tran->getId()]),
+                'userTimezone' => $userTimezone,
             ]);
             $editForms[$tran->getId()] = $editForm->createView();
         }
@@ -74,10 +76,12 @@ class TransfersController extends AbstractController
     #[Route('/transfers/{id}/edit', name: 'transfers_edit')]
     public function edit(Request $request, Transfer $transfer): Response
     {
+
         $originalData = $this->logService->captureCurrentState($transfer);
         $employee = $this->aureumService->getEmployee();
 
-        $form = $this->createForm(TransferEditType::class, $transfer);
+
+        $form = $this->createForm(TransferEditType::class, $transfer, ['userTimezone' => $employee->getUser()->getTimezone()]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

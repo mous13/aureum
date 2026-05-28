@@ -23,7 +23,8 @@ class TransferType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => Transfer::class
+                'data_class' => Transfer::class,
+                'userTimezone' => 'UTC',
             ]
         );
     }
@@ -33,6 +34,8 @@ class TransferType extends AbstractType
         $builder
             ->add('date', DateTimeType::class, [
                 'widget' => 'single_text',
+                'model_timezone' => 'UTC',
+                'view_timezone' => $options['userTimezone'],
             ])
             ->add('guest', TextType::class, [
                 'label' => '',
