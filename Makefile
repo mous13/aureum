@@ -1,0 +1,28 @@
+.PHONY: quality
+quality:
+	@./vendor/bin/phpcs -s -p
+	@./vendor/bin/phpstan
+	@npm --prefix=./assets run lint
+
+.PHONY: quality-fix
+quality-fix:
+	@./vendor/bin/phpcbf
+
+.PHONY: tests
+tests:
+	make setup-tests
+	make run-tests
+
+.PHONY: setup-tests
+setup-tests:
+	@rm -rf tests/var
+	@cd tests && php bin/console doctrine:database:drop --force --if-exists --env=test
+	@cd tests && php bin/console doctrine:database:create --env=test
+	@cd tests && php bin/console doctrine:migrations:migrate --no-interaction --env=test
+	@cd tests && php bin/console forumify:platform:setting -k forumify.platform_installed --value true
+	@cd tests && php bin/console forumify:plugins:refresh --env=test
+	@cd tests && php bin/console forumify:plugins:activate citadel/aureum --env=test
+
+.PHONY: run-tests
+run-tests:
+	@./vendor/bin/phpunit
