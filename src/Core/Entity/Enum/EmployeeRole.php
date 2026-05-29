@@ -1,6 +1,8 @@
 <?php
 
-namespace Citadel\Aureum\Core\Entity;
+declare(strict_types=1);
+
+namespace Citadel\Aureum\Core\Entity\Enum;
 
 enum EmployeeRole: string
 {
