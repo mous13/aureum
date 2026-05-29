@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Controller;
 
 use Forumify\Core\Entity\User;
@@ -24,8 +26,8 @@ class SettingsController extends AbstractController
     ) {
     }
 
-    #[IsGranted('ROLE_USER')]
     #[Route('/settings', name: 'settings', priority: 10)]
+    #[IsGranted('ROLE_USER')]
     public function __invoke(Request $request): Response
     {
         $form = $this->createForm(AccountSettingsType::class, $this->getUser());

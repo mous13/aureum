@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Form;
 
-use Citadel\Aureum\Core\Entity\Employee;
-use Citadel\Aureum\Core\Entity\FineStatus;
+use Citadel\Aureum\Core\Entity\Enum\FineStatus;
 use Citadel\Aureum\Core\Entity\Fine;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class FineEditType extends AbstractType
 {
@@ -21,7 +18,7 @@ class FineEditType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => Fine::class
+                'data_class' => Fine::class,
             ]
         );
     }
@@ -32,28 +29,28 @@ class FineEditType extends AbstractType
             ->add('number', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Fine Number'
+                    'placeholder' => 'Fine Number',
                 ],
-                'required' => false
+                'required' => false,
             ])
             ->add('name', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Guest Name'
-                ]
+                    'placeholder' => 'Guest Name',
+                ],
             ])
             ->add('email', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Guest Email'
-                ]
+                    'placeholder' => 'Guest Email',
+                ],
             ])
             ->add('note', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Notes'
+                    'placeholder' => 'Notes',
                 ],
-                'required' => false
+                'required' => false,
             ])
             ->add('status', ChoiceType::class, [
                 'label' => '',

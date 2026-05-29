@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Admin\Component;
 
 use Citadel\Aureum\Core\Entity\Hotel;
@@ -14,7 +16,7 @@ class HotelTable extends AbstractDoctrineTable
 {
     public function __construct(
         private readonly HotelRepository $hotelRepository,
-    ){
+    ) {
     }
 
     protected function getEntityClass(): string
@@ -41,13 +43,13 @@ class HotelTable extends AbstractDoctrineTable
     private function renderActions(int $id): string
     {
         $actions = '';
-        if($this->security->isGranted('aureum.admin.hotels.manage')) {
+        if ($this->security->isGranted('aureum.admin.hotels.manage')) {
             $actions .= $this->renderAction('aureum_admin_employees_list_by_hotel', ['hotelId' => $id], 'person');
         }
-        if($this->security->isGranted('aureum.admin.hotels.manage')) {
+        if ($this->security->isGranted('aureum.admin.hotels.manage')) {
             $actions .= $this->renderAction('aureum_admin_hotels_edit', ['identifier' => $id], 'pencil-simple-line');
         }
-        if($this->security->isGranted('aureum.admin.hotels.delete')) {
+        if ($this->security->isGranted('aureum.admin.hotels.delete')) {
             $actions .= $this->renderAction('aureum_admin_hotels_delete', ['identifier' => $id], 'x');
         }
 

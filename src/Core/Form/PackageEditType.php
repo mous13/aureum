@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Form;
 
-use Citadel\Aureum\Core\Entity\Employee;
 use Citadel\Aureum\Core\Entity\Package;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,7 +17,7 @@ class PackageEditType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => Package::class
+                'data_class' => Package::class,
             ]
         );
     }
@@ -37,27 +34,27 @@ class PackageEditType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Guest Name'
-                ]
+                    'placeholder' => 'Guest Name',
+                ],
             ])
             ->add('description', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Package Description'
-                ]
+                    'placeholder' => 'Package Description',
+                ],
             ])
             ->add('location', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Location Stored'
-                ]
+                    'placeholder' => 'Location Stored',
+                ],
             ])
             ->add('note', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Notes'
+                    'placeholder' => 'Notes',
                 ],
-                'required' => false
+                'required' => false,
             ]);
     }
 }

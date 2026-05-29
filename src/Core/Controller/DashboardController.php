@@ -20,17 +20,17 @@ class DashboardController extends AbstractController
         readonly EmployeeRepository $employeeRepository,
         readonly HttpClientInterface $client,
         private readonly AureumService $aureumService,
-    ){
+    ) {
     }
 
     #[Route('/', name: 'dashboard', priority: 100)]
     public function index(): Response
     {
-        if(!$this->aureumService->isEmployee()){
+        if (!$this->aureumService->isEmployee()) {
             return $this->forward(PageController::class, ['urlKey' => '']);
         }
 
-        return $this->render('@CitadelAureum/core/dashboard.html.twig',[
+        return $this->render('@CitadelAureum/core/dashboard.html.twig', [
             'employee' => $this->aureumService->getEmployee(),
         ]);
     }

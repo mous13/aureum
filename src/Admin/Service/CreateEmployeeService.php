@@ -32,9 +32,7 @@ class CreateEmployeeService
 
         $user = $this->createUserFromEmployeeData($newEmployeeData);
 
-        $employee = $this->createEmployeeRecord($newEmployeeData, $user);
-
-        return $employee;
+        return $this->createEmployeeRecord($newEmployeeData, $user);
     }
 
     private function validateEmployeeData(NewEmployee $data): void

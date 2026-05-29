@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Form;
 
+use Citadel\Aureum\Core\Entity\Enum\TransferStatus;
 use Citadel\Aureum\Core\Entity\Transfer;
-use Citadel\Aureum\Core\Entity\TransferStatus;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class TransferEditType extends AbstractType
 {
@@ -40,9 +40,9 @@ class TransferEditType extends AbstractType
             ->add('notes', TextType::class, [
                 'label' => 'Notes',
                 'attr' => [
-                    'placeholder' => 'Notes'
+                    'placeholder' => 'Notes',
                 ],
-                'required' => false
+                'required' => false,
             ])
             ->add('date', DateTimeType::class, [
                 'widget' => 'single_text',
@@ -52,44 +52,44 @@ class TransferEditType extends AbstractType
             ->add('guest', TextType::class, [
                 'label' => 'Guest Name',
                 'attr' => [
-                    'placeholder' => 'Guest Name'
-                ]
+                    'placeholder' => 'Guest Name',
+                ],
             ])
             ->add('number', TextType::class, [
                 'label' => 'Guest Number',
                 'attr' => [
-                    'placeholder' => 'Guest Number'
-                ]
+                    'placeholder' => 'Guest Number',
+                ],
             ])
             ->add('email', TextType::class, [
                 'label' => 'Guest Email',
                 'attr' => [
-                    'placeholder' => 'Guest Email'
-                ]
+                    'placeholder' => 'Guest Email',
+                ],
             ])
             ->add('pickup', TextType::class, [
                 'label' => 'Pickup Location',
                 'attr' => [
-                    'placeholder' => 'Pickup Location'
-                ]
+                    'placeholder' => 'Pickup Location',
+                ],
             ])
             ->add('dropoff', TextType::class, [
                 'label' => 'Drop Off Location',
                 'attr' => [
-                    'placeholder' => 'Drop Off Location'
-                ]
+                    'placeholder' => 'Drop Off Location',
+                ],
             ])
             ->add('driver', TextType::class, [
                 'label' => 'Driver',
                 'attr' => [
-                    'placeholder' => 'Driver Name'
-                ]
+                    'placeholder' => 'Driver Name',
+                ],
             ])
             ->add('cost', TextType::class, [
                 'label' => 'Cost',
                 'attr' => [
-                    'placeholder' => 'Job Cost'
-                ]
+                    'placeholder' => 'Job Cost',
+                ],
             ]);
     }
 }

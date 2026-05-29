@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Citadel\Aureum\Core\Entity\Enum\EmployeeRole;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
+use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\User;
-
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
 #[ORM\Table(name: 'aureum_employees')]
@@ -47,6 +49,7 @@ class Employee
     {
         $this->role = $role;
     }
+
     public function getUser(): User
     {
         return $this->user;
@@ -65,5 +68,5 @@ class Employee
     public function setHotel(?Hotel $hotel): void
     {
         $this->hotel = $hotel;
-    } 
+    }
 }

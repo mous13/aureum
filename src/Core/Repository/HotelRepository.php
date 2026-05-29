@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Repository;
 
-use Exception;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Forumify\Core\Repository\AbstractRepository;
 
@@ -20,8 +19,7 @@ class HotelRepository extends AbstractRepository
 
     public function findByIdOrFail(int $id): Hotel
     {
-        $hotel = $this->find($id);
-        return $hotel;
+        return $this->find($id);
     }
 
     public function findByCode(string $code): ?Hotel

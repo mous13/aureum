@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Form;
 
 use Citadel\Aureum\Core\Entity\Employee;
-use Citadel\Aureum\Core\Entity\EmployeeRole;
+use Citadel\Aureum\Core\Entity\Enum\EmployeeRole;
+use Citadel\Aureum\Core\Entity\Enum\TransferStatus;
 use Citadel\Aureum\Core\Entity\Transfer;
-use Citadel\Aureum\Core\Entity\TransferStatus;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class TransferType extends AbstractType
 {
@@ -40,34 +40,34 @@ class TransferType extends AbstractType
             ->add('guest', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Guest Name'
-                ]
+                    'placeholder' => 'Guest Name',
+                ],
             ])
             ->add('number', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Guest Number'
+                    'placeholder' => 'Guest Number',
                 ],
                 'required' => false,
             ])
             ->add('email', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Guest Email'
+                    'placeholder' => 'Guest Email',
                 ],
                 'required' => false,
             ])
             ->add('pickup', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Pickup Location'
+                    'placeholder' => 'Pickup Location',
                 ],
                 'required' => false,
             ])
             ->add('dropoff', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Drop Off Location'
+                    'placeholder' => 'Drop Off Location',
                 ],
                 'required' => false,
             ])
@@ -85,23 +85,23 @@ class TransferType extends AbstractType
             ->add('driver', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Driver Name'
+                    'placeholder' => 'Driver Name',
                 ],
                 'required' => false,
             ])
             ->add('cost', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Job Cost'
+                    'placeholder' => 'Job Cost',
                 ],
                 'required' => false,
             ])
             ->add('notes', TextType::class, [
                 'label' => '',
                 'attr' => [
-                    'placeholder' => 'Notes'
+                    'placeholder' => 'Notes',
                 ],
-                'required' => false
+                'required' => false,
             ])
         ->add('status', ChoiceType::class, [
             'label' => '',

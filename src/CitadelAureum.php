@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum;
 
 use Forumify\Plugin\AbstractForumifyPlugin;
@@ -19,15 +21,14 @@ class CitadelAureum extends AbstractForumifyPlugin
     {
         return [
             'admin' => [
-                'view'
+                'view',
             ],
             'core' => [
                 'concierge' => [
                     'view',
-                    'manage'
-                ]
-            ]
+                    'manage',
+                ],
+            ],
         ];
     }
-
 }

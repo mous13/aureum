@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Repository;
 
 use Citadel\Aureum\Core\Entity\Hotel;
-use Exception;
 use Citadel\Aureum\Core\Entity\Transfer;
 use Forumify\Core\Repository\AbstractRepository;
 

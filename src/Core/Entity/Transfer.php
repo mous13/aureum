@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Entity;
 
+use Citadel\Aureum\Core\Entity\Enum\TransferStatus;
+use Citadel\Aureum\Core\Repository\TransferRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Citadel\Aureum\Core\Repository\TransferRepository;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 
 #[ORM\Entity(repositoryClass: TransferRepository::class)]

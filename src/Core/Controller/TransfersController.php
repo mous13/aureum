@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Controller;
 
 use Citadel\Aureum\Core\Entity\Transfer;
@@ -16,7 +18,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\SecurityBundle\Security;
 
-
 class TransfersController extends AbstractController
 {
     public function __construct(
@@ -26,7 +27,7 @@ class TransfersController extends AbstractController
         private readonly TransferLogService $logService,
         private readonly TransferLogRepository $transferLogRepository,
         private readonly AureumService $aureumService,
-    ){
+    ) {
     }
 
     #[Route('/transfers', name: 'transfers')]
@@ -63,7 +64,7 @@ class TransfersController extends AbstractController
             $transferLogs[$tran->getId()] = $this->transferLogRepository->findByTransfer($tran);
         }
 
-        return $this->render('@CitadelAureum/core/transfers/transfers.html.twig',[
+        return $this->render('@CitadelAureum/core/transfers/transfers.html.twig', [
             'transfers' => $transfers,
             'form' => $form,
             'editForms' => $editForms,
@@ -85,7 +86,6 @@ class TransfersController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->transferRepository->save($transfer);
 
             $this->logService->logUpdated($transfer, $originalData, $employee);

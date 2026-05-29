@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\MenuBuilder;
 
 use Forumify\Core\MenuBuilder\MenuManager;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Controller;
 
 use Citadel\Aureum\Core\Entity\LostProperty;
@@ -21,7 +23,7 @@ class LostPropertyController extends AbstractController
         private readonly AureumService $aureumService,
         private readonly LostPropertyLogService $logService,
         private readonly LostPropertyLogRepository $lostPropertyLogRepository,
-    ){
+    ) {
     }
 
     #[Route('/lostproperty', name: 'lost_property')]
@@ -50,7 +52,7 @@ class LostPropertyController extends AbstractController
         $editForms = [];
         foreach ($lostProperties as $lp) {
             $editForm = $this->createForm(LostPropertyEditType::class, $lp, [
-                'action' => $this->generateUrl('aureum_lost_property_edit', ['id' => $lp->getId()])
+                'action' => $this->generateUrl('aureum_lost_property_edit', ['id' => $lp->getId()]),
             ]);
             $editForms[$lp->getId()] = $editForm->createView();
         }
@@ -79,7 +81,6 @@ class LostPropertyController extends AbstractController
         $lostProperty = $form->getData();
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->lostPropertyRepository->save($lostProperty);
 
             $this->logService->logUpdated($lostProperty, $originalData, $employee);

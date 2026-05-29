@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Twig;
 
 use Citadel\Aureum\Core\MenuBuilder\AureumMenuManager;
@@ -14,14 +16,14 @@ class AureumExtension extends AbstractExtension
     public function __construct(
         private readonly AureumMenuManager $aureumMenuManager,
         private readonly EmployeeRepository $employeeRepository,
-    ){
+    ) {
     }
 
     public function getFunctions(): array
     {
         return [
             new TwigFunction('aureum_menu', $this->aureumMenuManager->getMenu(...)),
-            new TwigFunction('employee', [$this, 'getEmployee'])
+            new TwigFunction('employee', [$this, 'getEmployee']),
         ];
     }
 
@@ -29,5 +31,4 @@ class AureumExtension extends AbstractExtension
     {
         return $this->employeeRepository->findOneBy(['user' => $user]);
     }
-
 }

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Controller;
 
+use Citadel\Aureum\Core\Entity\Enum\PackageStatus;
 use Citadel\Aureum\Core\Entity\Package;
-use Citadel\Aureum\Core\Entity\PackageStatus;
 use Citadel\Aureum\Core\Form\PackageEditType;
 use Citadel\Aureum\Core\Form\PackageType;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
@@ -11,12 +13,11 @@ use Citadel\Aureum\Core\Repository\PackageLogRepository;
 use Citadel\Aureum\Core\Repository\PackageRepository;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\PackageLogService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\SecurityBundle\Security;
-
 
 class PackagesController extends AbstractController
 {
@@ -27,7 +28,7 @@ class PackagesController extends AbstractController
         private readonly PackageLogService $logService,
         private readonly PackageLogRepository $packageLogRepository,
         private readonly AureumService $aureumService,
-    ){
+    ) {
     }
 
     #[Route('/packages', name: 'packages')]
@@ -58,17 +59,17 @@ class PackagesController extends AbstractController
         $editForms = [];
         foreach ($packages as $pkg) {
             $editForm = $this->createForm(PackageEditType::class, $pkg, [
-                'action' => $this->generateUrl('aureum_packages_edit', ['id' => $pkg->getId()])
+                'action' => $this->generateUrl('aureum_packages_edit', ['id' => $pkg->getId()]),
             ]);
             $editForms[$pkg->getId()] = $editForm->createView();
         }
 
         $packageLogs = [];
-        foreach($packages as $pkg) {
+        foreach ($packages as $pkg) {
             $packageLogs[$pkg->getId()] = $this->packageLogRepository->findByPackage($pkg);
         }
 
-        return $this->render('@CitadelAureum/core/packages/packages.html.twig',[
+        return $this->render('@CitadelAureum/core/packages/packages.html.twig', [
             'packages' => $packages,
             'form' => $form,
             'editForms' => $editForms,
@@ -86,8 +87,7 @@ class PackagesController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            if($form->get('status')->getData() === true) {
+            if ($form->get('status')->getData() === true) {
                 $package->setStatus(PackageStatus::PICKED_UP);
             }
 

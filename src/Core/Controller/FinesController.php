@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Controller;
 
 use Citadel\Aureum\Core\Entity\Fine;
@@ -16,7 +18,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\SecurityBundle\Security;
 
-
 class FinesController extends AbstractController
 {
     public function __construct(
@@ -26,7 +27,7 @@ class FinesController extends AbstractController
         private readonly FineLogService $logService,
         private readonly FineLogRepository $fineLogRepository,
         private readonly AureumService $aureumService,
-    ){
+    ) {
     }
 
     #[Route('/fines', name: 'fines')]
@@ -57,7 +58,7 @@ class FinesController extends AbstractController
         $editForms = [];
         foreach ($fines as $fne) {
             $editForm = $this->createForm(FineEditType::class, $fne, [
-                'action' => $this->generateUrl('aureum_fines_edit', ['id' => $fne->getId()])
+                'action' => $this->generateUrl('aureum_fines_edit', ['id' => $fne->getId()]),
             ]);
             $editForms[$fne->getId()] = $editForm->createView();
         }
@@ -67,7 +68,7 @@ class FinesController extends AbstractController
             $fineLogs[$fne->getId()] = $this->fineLogRepository->findByFine($fne);
         }
 
-        return $this->render('@CitadelAureum/core/fines/fines.html.twig',[
+        return $this->render('@CitadelAureum/core/fines/fines.html.twig', [
             'fines' => $fines,
             'form' => $form,
             'editForms' => $editForms,

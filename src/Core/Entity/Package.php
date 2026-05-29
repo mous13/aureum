@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use Citadel\Aureum\Core\Entity\Enum\PackageStatus;
 use Citadel\Aureum\Core\Repository\PackageRepository;
+use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 

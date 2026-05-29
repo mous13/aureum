@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Admin\Form\DTO;
 
-use Citadel\Aureum\Core\Entity\EmployeeRole;
+use Citadel\Aureum\Core\Entity\Enum\EmployeeRole;
 use Citadel\Aureum\Core\Entity\Hotel;
 
 class NewEmployee

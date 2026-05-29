@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Admin\Form;
 
 use Citadel\Aureum\Core\Entity\Employee;
-use Citadel\Aureum\Core\Entity\EmployeeRole;
-use Citadel\Aureum\Core\Entity\Hotel;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Citadel\Aureum\Core\Entity\Enum\EmployeeRole;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class EmployeeEditType extends AbstractType
 {
@@ -28,7 +26,7 @@ class EmployeeEditType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Full Name'
+                'label' => 'Full Name',
             ])
             ->add('role', EnumType::class, [
                 'class' => EmployeeRole::class,

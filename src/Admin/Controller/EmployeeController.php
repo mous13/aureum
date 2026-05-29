@@ -117,7 +117,6 @@ class EmployeeController extends AbstractController
                 $this->addFlash('success', 'Employee created successfully.');
 
                 return $this->redirectToRoute($redirectRoute, $redirectParams);
-
             } catch (UserAlreadyExistsException) {
                 $this->addFlash('error', 'Username or email already exists. Please choose different values.');
             } catch (\InvalidArgumentException $e) {
@@ -183,7 +182,7 @@ class EmployeeController extends AbstractController
     {
         $employee = $this->employeeRepository->find($id);
         if (!$request->get('confirmed')) {
-            return  $this->render('@CitadelAureum/admin/employee/delete.html.twig', [
+            return $this->render('@CitadelAureum/admin/employee/delete.html.twig', [
                 'employee' => $employee,
             ]);
         }

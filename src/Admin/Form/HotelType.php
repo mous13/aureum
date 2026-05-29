@@ -15,9 +15,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class HotelType extends AbstractType
 {
-    public function __construct (
+    public function __construct(
         private readonly Packages $packages
-    ){
+    ) {
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -37,7 +37,7 @@ class HotelType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('code', TextType::class, [
-                'help' => 'This can be your property code or a made up code between 5-7 letters'
+                'help' => 'This can be your property code or a made up code between 5-7 letters',
             ])
             ->add('newImage', FileType::class, [
                 'mapped' => false,
@@ -55,7 +55,7 @@ class HotelType extends AbstractType
                     new Assert\Image(
                         maxSize: '1M',
                     ),
-                ]
+                ],
             ]);
     }
 }

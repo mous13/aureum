@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Service;
 
 use Citadel\Aureum\Core\Entity\Employee;
@@ -14,7 +16,7 @@ class AureumService
         private readonly Security $security,
         private readonly EmployeeRepository $employeeRepository,
         private readonly HotelRepository $hotelRepository,
-    ){
+    ) {
     }
 
     public function getEmployee(): ?Employee
@@ -23,6 +25,7 @@ class AureumService
 
         return $this->employeeRepository->findOneBy(['user' => $user]);
     }
+
     public function isEmployee(): bool
     {
         return $this->getEmployee() !== null;

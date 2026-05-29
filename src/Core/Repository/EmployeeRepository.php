@@ -31,8 +31,9 @@ class EmployeeRepository extends AbstractRepository
 
         return $qb;
     }
+
     /**
-     * @return Employee[]
+     * @return array<Employee>
      */
     public function findByHotel(Hotel $hotel): array
     {

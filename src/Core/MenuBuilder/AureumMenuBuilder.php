@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\MenuBuilder;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Forumify\Core\MenuBuilder\Menu;
 use Forumify\Core\MenuBuilder\MenuItem;
+
 class AureumMenuBuilder implements AureumMenuBuilderInterface
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
-    ){
+    ) {
     }
 
     public function build(Menu $menu): void

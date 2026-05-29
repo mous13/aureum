@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Admin\Form;
 
 use Citadel\Aureum\Admin\Form\DTO\NewEmployee;
-use Citadel\Aureum\Core\Entity\EmployeeRole;
+use Citadel\Aureum\Core\Entity\Enum\EmployeeRole;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Repository\HotelRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -57,11 +57,11 @@ class EmployeeType extends AbstractType
                 'type' => PasswordType::class,
                 'first_options' => [
                     'label' => 'Password',
-                    'attr' => ['autocomplete' => 'new-password']
+                    'attr' => ['autocomplete' => 'new-password'],
                 ],
                 'second_options' => [
                     'label' => 'Repeat Password',
-                    'attr' => ['autocomplete' => 'new-password']
+                    'attr' => ['autocomplete' => 'new-password'],
                 ],
             ])
             ->add('timezone', ChoiceType::class, [
@@ -70,8 +70,8 @@ class EmployeeType extends AbstractType
                 'placeholder' => 'Select a timezone',
                 'choices' => $this->getTimezones(),
                 'attr' => [
-                    'data-controller' => 'forumify--forumify-platform--client-timezone'
-                ]
+                    'data-controller' => 'forumify--forumify-platform--client-timezone',
+                ],
             ])
 
             ->add('name', TextType::class, [

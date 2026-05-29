@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Service;
+
 use Citadel\Aureum\Core\Entity\Employee;
-use Citadel\Aureum\Core\Entity\LogAction;
+use Citadel\Aureum\Core\Entity\Enum\LogAction;
 use Citadel\Aureum\Core\Entity\LostProperty;
 use Citadel\Aureum\Core\Entity\LostPropertyLog;
 use Citadel\Aureum\Core\Repository\LostPropertyLogRepository;
+
 class LostPropertyLogService
 {
     public function __construct(
         private LostPropertyLogRepository $logRepository,
-    ){
+    ) {
     }
 
     public function logCreated(LostProperty $lostProperty, Employee $employee): void
@@ -37,7 +41,7 @@ class LostPropertyLogService
     {
         $changes = $this->detectChanges($lostProperty, $originalData);
 
-        if(empty($changes)) {
+        if (empty($changes)) {
             return;
         }
 
@@ -46,7 +50,7 @@ class LostPropertyLogService
         $log->setPerformedBy($employee);
         $log->setHotel($employee->getHotel());
 
-        if(isset($changes['status']) && count($changes) === 1) {
+        if (isset($changes['status']) && count($changes) === 1) {
             $log->setAction(LogAction::STATUS_CHANGED);
         } else {
             $log->setAction(LogAction::UPDATED);
@@ -67,54 +71,54 @@ class LostPropertyLogService
             ];
         }
 
-         if ($originalData['description'] !== $new->getDescription()) {
-             $changes['description'] = [
-                 'old' => $originalData['description'],
-                 'new' => $new->getDescription(),
-             ];
-         }
+        if ($originalData['description'] !== $new->getDescription()) {
+            $changes['description'] = [
+                'old' => $originalData['description'],
+                'new' => $new->getDescription(),
+            ];
+        }
 
-         if ($originalData['location'] !== $new->getLocation()) {
-             $changes['location'] = [
-                 'old' => $originalData['location'],
-                 'new' => $new->getLocation(),
-             ];
-         }
+        if ($originalData['location'] !== $new->getLocation()) {
+            $changes['location'] = [
+                'old' => $originalData['location'],
+                'new' => $new->getLocation(),
+            ];
+        }
 
-         if ($originalData['storedLocation'] !== $new->getStoredLocation()) {
-             $changes['storedLocation'] = [
-                 'old' => $originalData['storedLocation'],
-                 'new' => $new->getStoredLocation(),
-             ];
-         }
+        if ($originalData['storedLocation'] !== $new->getStoredLocation()) {
+            $changes['storedLocation'] = [
+                'old' => $originalData['storedLocation'],
+                'new' => $new->getStoredLocation(),
+            ];
+        }
 
-         if ($originalData['status'] !== $new->getStatus()->value) {
-             $changes['status'] = [
-                 'old' => $originalData['status'],
-                 'new' => $new->getStatus()->value,
-             ];
-         }
+        if ($originalData['status'] !== $new->getStatus()->value) {
+            $changes['status'] = [
+                'old' => $originalData['status'],
+                'new' => $new->getStatus()->value,
+            ];
+        }
 
-         if ($originalData['guest'] !== $new->getGuest()) {
-             $changes['guest'] = [
-                 'old' => $originalData['guest'],
-                 'new' => $new->getGuest(),
-             ];
-         }
+        if ($originalData['guest'] !== $new->getGuest()) {
+            $changes['guest'] = [
+                'old' => $originalData['guest'],
+                'new' => $new->getGuest(),
+            ];
+        }
 
-         if ($originalData['contact'] !== $new->getContact()) {
-             $changes['contact'] = [
-                 'old' => $originalData['contact'],
-                 'new' => $new->getContact(),
-             ];
-         }
+        if ($originalData['contact'] !== $new->getContact()) {
+            $changes['contact'] = [
+                'old' => $originalData['contact'],
+                'new' => $new->getContact(),
+            ];
+        }
 
-         if ($originalData['note'] !== $new->getNote()) {
-             $changes['note'] = [
-                 'old' => $originalData['note'],
-                 'new' => $new->getNote(),
-             ];
-         }
+        if ($originalData['note'] !== $new->getNote()) {
+            $changes['note'] = [
+                'old' => $originalData['note'],
+                'new' => $new->getNote(),
+            ];
+        }
          return $changes;
     }
 
@@ -130,7 +134,7 @@ class LostPropertyLogService
             'reportedByName' => $lostProperty->getReportedBy()->getName(),
             'guest' => $lostProperty->getGuest(),
             'contact' => $lostProperty->getContact(),
-            'note' => $lostProperty->getNote()
+            'note' => $lostProperty->getNote(),
         ];
     }
 }

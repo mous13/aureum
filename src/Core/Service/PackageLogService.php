@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Service;
 
 use Citadel\Aureum\Core\Entity\Employee;
-use Citadel\Aureum\Core\Entity\LogAction;
+use Citadel\Aureum\Core\Entity\Enum\LogAction;
 use Citadel\Aureum\Core\Entity\Package;
 use Citadel\Aureum\Core\Entity\PackageLog;
 use Citadel\Aureum\Core\Repository\PackageLogRepository;
@@ -12,7 +14,7 @@ class PackageLogService
 {
     public function __construct(
         private PackageLogRepository $packageLogRepository,
-    ){
+    ) {
     }
 
     public function logCreated(Package $package, Employee $employee): void
@@ -38,7 +40,7 @@ class PackageLogService
     {
         $changes = $this->detectChanges($package, $originalData);
 
-        if(empty($changes)) {
+        if (empty($changes)) {
             return;
         }
 
@@ -47,7 +49,7 @@ class PackageLogService
         $log->setPerformedBy($employee);
         $log->setHotel($package->getHotel());
 
-        if(isset($changes['status']) && count($changes) === 1){
+        if (isset($changes['status']) && count($changes) === 1) {
             $log->setAction(LogAction::STATUS_CHANGED);
         } else {
             $log->setAction(LogAction::UPDATED);
@@ -61,35 +63,35 @@ class PackageLogService
     {
         $changes = [];
 
-        if($originalData['name'] !== $new->getName()) {
+        if ($originalData['name'] !== $new->getName()) {
             $changes['name'] = [
                 'old' => $originalData['name'],
                 'new' => $new->getName(),
             ];
         }
 
-        if($originalData['description'] !== $new->getDescription()) {
+        if ($originalData['description'] !== $new->getDescription()) {
             $changes['description'] = [
                 'old' => $originalData['description'],
                 'new' => $new->getDescription(),
             ];
         }
 
-        if($originalData['location'] !== $new->getLocation()) {
+        if ($originalData['location'] !== $new->getLocation()) {
             $changes['location'] = [
                 'old' => $originalData['location'],
                 'new' => $new->getLocation(),
             ];
         }
 
-        if($originalData['note'] !== $new->getNote()) {
+        if ($originalData['note'] !== $new->getNote()) {
             $changes['note'] = [
                 'old' => $originalData['note'],
                 'new' => $new->getNote(),
             ];
         }
 
-        if($originalData['status'] !== $new->getStatus()->getLabel()) {
+        if ($originalData['status'] !== $new->getStatus()->getLabel()) {
             $changes['status'] = [
                 'old' => $originalData['status'],
                 'new' => $new->getStatus()->getLabel(),
