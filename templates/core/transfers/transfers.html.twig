@@ -40,6 +40,7 @@
                 {% block tabs %}
                     <button type="button" class="luxury-light square btn-link" data-tab-id="not_completed">Not Completed</button>
                     <button type="button" class="luxury-light square btn-link" data-tab-id="completed">Completed</button>
+                    <button type="button" class="luxury-light square btn-link" data-tab-id="cancelled">Cancelled</button>
                     <button type="button" class="luxury-light square btn-link btn-icon" data-tab-id="help">Help</button>
                 {% endblock %}
                 {% block tabpanels %}
@@ -52,6 +53,13 @@
                     </div>
                     <div id="completed" class="card w-100">
                         {% include '@CitadelAureum/core/transfers/blocks/completed.html.twig' with {
+                            'transfers': transfers,
+                            'editForms': editForms,
+                            'logs': logs
+                        } %}
+                    </div>
+                    <div id="cancelled" class="card w-100">
+                        {% include '@CitadelAureum/core/transfers/blocks/cancelled.html.twig' with {
                             'transfers': transfers,
                             'editForms': editForms,
                             'logs': logs

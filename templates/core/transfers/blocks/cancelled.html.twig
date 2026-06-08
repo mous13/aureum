@@ -1,5 +1,5 @@
 <div class="card-title" style="background-color:#13233A;color:#ececec;">
-    Completed Jobs
+    Cancelled Jobs
 </div>
 <div class="card-body">
     <table>
@@ -21,7 +21,7 @@
             <th class="text-left"></th>
         </tr>
         {% for transfer in transfers %}
-            {% if transfer.status.value === 'completed'  %}
+            {% if transfer.status.value === 'cancelled'  %}
                 <tr>
                     <td>{{ transfer.date|date('d/m/y H:i') }}</td>
                     <td>{{ transfer.guest }}</td>

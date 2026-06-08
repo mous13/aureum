@@ -21,7 +21,7 @@
             <th class="text-left"></th>
         </tr>
         {% for transfer in transfers %}
-            {% if transfer.status.value != 'completed'  %}
+            {% if transfer.status.value != 'completed' and transfer.status.value != 'cancelled'  %}
                 <tr>
                     <td>{{ transfer.date|date('d/m/y H:i') }}</td>
                     <td>{{ transfer.guest }}</td>
