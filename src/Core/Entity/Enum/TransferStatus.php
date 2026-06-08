@@ -15,7 +15,7 @@ enum TransferStatus: string
     public function getLabel(): string
     {
         return match ($this) {
-            self::UNCONFIRMED => 'unconfirmed',
+            self::UNCONFIRMED => 'Unconfirmed',
             self::CONFIRMED => 'Confirmed',
             self::COMPLETED => 'Completed',
             self::CANCELLED => 'Cancelled',

@@ -7,6 +7,14 @@
     color:#F4F1EA;
 }
 
+.text-luxury-light {
+  color:#1a3f5f;
+}
+
+.text-luxury-light-alternative {
+    color: #7863ac;
+}
+
 .btn-link.luxury-light {
     background-color:#1a3f5f;
     color:#F4F1EA;
@@ -89,4 +97,8 @@ body {
 }
 .overdue {
     background-color: red;
+}
+
+.group-title {
+    color:#97acc9;
 }

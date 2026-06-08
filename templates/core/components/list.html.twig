@@ -1,0 +1,20 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% set title = (translationPrefix ~ 'plural')|trans|title %}
+{% block title_page %}
+    {{ title }}
+{% endblock %}
+{% block body %}
+    <h2>
+        {{ title }}
+        {% if capabilities.create %}
+            <a
+                    class="btn-primary btn-small btn-icon"
+                    aria-label="{{ 'admin.crud.create'|trans({ single: (translationPrefix ~ 'single')|trans }) }}"
+                    href="{{ path(route ~ '_create') }}"
+            >
+                <i class="ph ph-plus"></i>
+            </a>
+        {% endif %}
+    </h2>
+    {{ component(table, { hotelId: hotelId }) }}
+{% endblock %}

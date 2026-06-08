@@ -19,25 +19,38 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
     {
         $url = $this->urlGenerator->generate(...);
 
-        $menu
-            ->addItem(new MenuItem('Dashboard', $url('aureum_dashboard'), [
-                'icon' => 'ph ph-house',
-            ]))
-            ->addItem(new MenuItem('Packages', $url('aureum_packages'), [
+
+        $general = new Menu('GENERAL', ['icon' => 'ph ph-squares-four'], [
+            new MenuItem('Packages', $url('aureum_packages'), [
                 'icon' => 'ph ph-package',
-            ]))
-            ->addItem(new MenuItem('Transfers', $url('aureum_transfers'), [
+            ]),
+            new MenuItem('Transfers', $url('aureum_transfers'), [
                 'icon' => 'ph ph-car',
-            ]))
-            ->addItem(new MenuItem('Lost Property', $url('aureum_lost_property'), [
+            ]),
+            new MenuItem('Lost Property', $url('aureum_lost_property'), [
                 'icon' => 'ph ph-t-shirt',
-            ]))
-            ->addItem(new MenuItem('Fines', $url('aureum_fines'), [
+            ]),
+            new MenuItem('Fines', $url('aureum_fines'), [
                 'icon' => 'ph ph-article',
-            ]))
-            ->addItem(new MenuItem('Settings', $url('forumify_core_settings'), [
+            ]),
+        ]);
+
+        $menu->addItem($general);
+
+        $directory = new Menu('DIRECTORY', ['icon' => 'ph-folder-open'], [
+            new MenuItem('Restaurants', $url('aureum_restaurants_list'), [
+                'icon' => 'ph ph-bowl-steam',
+            ]),
+        ]);
+
+        $menu->addItem($directory);
+
+        $settings = new Menu('SETTINGS', ['icon' => 'ph ph-gear'], [
+            new MenuItem('Settings', $url('forumify_core_settings'), [
                 'icon' => 'ph ph-gear',
-            ]))
-        ;
+            ]),
+        ]);
+
+        $menu->addItem($settings);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Citadel\Aureum\Core\Entity;
 
 use DateTime;
@@ -39,6 +41,9 @@ class Hotel
     #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Transfer::class, cascade: ['persist', 'remove'])]
     private Collection $transfers;
 
+    #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Restaurant::class, cascade: ['persist', 'remove'])]
+    private Collection $restaurants;
+
     public function __construct()
     {
         $this->employees = new ArrayCollection();
@@ -46,6 +51,7 @@ class Hotel
         $this->packages = new ArrayCollection();
         $this->fines = new ArrayCollection();
         $this->transfers = new ArrayCollection();
+        $this->restaurants = new ArrayCollection();
     }
 
     public function getCode(): string
@@ -98,10 +104,12 @@ class Hotel
 
     public function addEmployee(Employee $employee): void
     {
-        if (!$this->employees->contains($employee)) {
-            $this->employees->add($employee);
-            $employee->setHotel($this);
+        if ($this->employees->contains($employee)) {
+            return;
         }
+
+        $this->employees->add($employee);
+        $employee->setHotel($this);
     }
 
     public function getPackages(): Collection
@@ -122,5 +130,15 @@ class Hotel
     public function setFines(Collection $fines): void
     {
         $this->fines = $fines;
+    }
+
+    public function getRestaurants(): Collection
+    {
+        return $this->restaurants;
+    }
+
+    public function setRestaurants(Collection $restaurants): void
+    {
+        $this->restaurants = $restaurants;
     }
 }

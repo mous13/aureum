@@ -1,0 +1,49 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">
+            New Restaurant
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            <div class="flex gap-2 mb-2">
+                {{ form_widget(form.name) }}
+                {{ form_widget(form.neighbourhood) }}
+                {{ form_widget(form.street) }}
+            </div>
+            <div class="flex gap-2 mb-2">
+                <div class="flex-grow">{{ form_widget(form.cuisines) }}</div>
+                <div class="flex-grow">{{ form_widget(form.mealPeriods) }}</div>
+                <div class="flex-grow">{{ form_widget(form.dietaryRequirements) }}</div>
+                <div class="flex-grow">{{ form_widget(form.tags) }}</div>
+            </div>
+            <div class="mb-2">
+                {{ form_widget(form.connections) }}
+            </div>
+            <div class="flex gap-2 justify-end">
+                <button type="submit" class="luxury-light square btn btn-primary">Submit Restaurant</button>
+                {% embed '@Forumify/components/menu.html.twig' with {
+                    placement: 'bottom-end',
+                    hideAdornment: false,
+                    buttonClass: 'btn-primary btn luxury-light square'
+                } %}
+                    {% block button_text %}<i class="ph ph-gear"></i>{% endblock %}
+                    {% block menu_items %}
+                        <a class="btn-link" href="{{ path('aureum_tags_create') }}">New Tag</a>
+                        <a class="btn-link" href="{{ path('aureum_cuisines_create') }}">New Cuisine</a>
+                    {% endblock %}
+                {% endembed %}
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+    <div class="mt-5">
+        {{ component('RestaurantTable', { hotelId: hotelId }) }}
+        <div class="mt-2">
+            <div><i class="ph ph-thumbs-up text-luxury-light"></i><span class="text-italic text-small">- Upvoting a restaurant will add +2 to it's score.</span></div>
+            <div><i class="ph ph-thumbs-down text-luxury-light"></i><span class="text-italic text-small">- Downvoting will add -1 to it's score.</span></div>
+            <div><i class="ph-fill ph-sparkle text-luxury-light"></i><span class="text-italic text-small">- Concierge has a connection, hover over the icon to see.</span></div>
+            <div><i class="ph-fill ph-tag text-luxury-light-alternative"></i><span class="text-italic text-small">- Restaurant has an ongoing deal/event</span></div>
+        </div>
+    </div>
+{% endblock %}

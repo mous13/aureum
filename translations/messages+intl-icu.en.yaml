@@ -8,3 +8,15 @@ aureum:
       crud:
         plural: 'employees'
         single: 'employee'
+  cuisine:
+    admin:
+      cuisine:
+        crud:
+          single: 'cuisine'
+          plural: 'cuisines'
+  tag:
+    admin:
+      tag:
+        crud:
+          single: 'tag'
+          plural: 'tags'
