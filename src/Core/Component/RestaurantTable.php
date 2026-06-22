@@ -174,7 +174,7 @@ class RestaurantTable extends AbstractDoctrineTable
     private function renderBoxes(array $items): string
     {
         $boxes = implode('', array_map(
-            fn($item) => '<div class="box text-small">' . $item . '</div>',
+            fn($item) => '<div class="text-small">' . $item . '</div>',
             $items
         ));
 
