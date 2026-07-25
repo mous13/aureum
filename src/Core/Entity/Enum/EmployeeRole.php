@@ -10,4 +10,12 @@ enum EmployeeRole: string
     case RECEPTION = 'Reception';
     case CONCIERGE = 'Concierge';
     case NIGHTS = 'Nights';
+
+    public function canManageEvents(): bool
+    {
+        return match ($this) {
+            self::MANAGER, self::CONCIERGE => true,
+            self::RECEPTION, self::NIGHTS => false,
+        };
+    }
 }
