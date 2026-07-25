@@ -8,6 +8,7 @@ use Citadel\Aureum\Core\Entity\Enum\DietaryRequirements;
 use Citadel\Aureum\Core\Entity\Enum\MealPeriods;
 use Citadel\Aureum\Core\Entity\Restaurant;
 use Citadel\Aureum\Core\Form\RestaurantType;
+use Citadel\Aureum\Core\Repository\EventRepository;
 use Citadel\Aureum\Core\Repository\RestaurantLogRepository;
 use Citadel\Aureum\Core\Repository\RestaurantRepository;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
@@ -23,12 +24,15 @@ class RestaurantTable extends AbstractDoctrineTable
     #[LiveProp]
     public int $hotelId;
 
+    private ?array $restaurantWithEvents = null;
+
     public function __construct(
         private readonly RestaurantRepository $restaurantRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RestaurantLogRepository $restaurantLogRepository,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
+        private readonly EventRepository $eventRepository,
     ) {
     }
 
@@ -202,8 +206,11 @@ class RestaurantTable extends AbstractDoctrineTable
 
     private function renderName(string $name, Restaurant $restaurant): string
     {
-        $connections = $restaurant->getConnections();
+        if ($this->hasUpcomingEvent($restaurant)) {
+            $name .= ' <i class="ph-fill ph-tag text-luxury-light-alternative"></i>';
+        }
 
+        $connections = $restaurant->getConnections();
         if ($connections->isEmpty()) {
             return $name;
         }
@@ -242,5 +249,14 @@ class RestaurantTable extends AbstractDoctrineTable
             'restaurant' => $restaurant,
             'editForm' => $editForm->createView(),
         ]);
+    }
+
+    private function hasUpcomingEvent(Restaurant $restaurant): bool
+    {
+        if ($this->restaurantWithEvents === null) {
+            $this->restaurantWithEvents = $this->eventRepository->findRestaurantsWithActiveEvents($restaurant->getHotel());
+        }
+
+        return in_array($restaurant->getId(), $this->restaurantWithEvents, true);
     }
 }

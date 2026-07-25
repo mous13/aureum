@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Component;
 
 use Citadel\Aureum\Core\Entity\Enum\EventType;
-use Citadel\Aureum\Core\Entity\Enum\EmployeeRole;
 use Citadel\Aureum\Core\Entity\Event;
 use Citadel\Aureum\Core\Form\EventFormType;
 use Citadel\Aureum\Core\Repository\EventRepository;
@@ -19,7 +18,6 @@ use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
-
 
 #[AsLiveComponent('Aureum\\EventCalendar', '@CitadelAureum/core/components/event_calendar.html.twig')]
 class EventComponent extends AbstractController
@@ -141,12 +139,14 @@ class EventComponent extends AbstractController
         }
 
         return $this->createForm(EventFormType::class, $event, [
+            'hotel' => $this->aureumService->getHotel(),
             'userTimezone' => $this->aureumService->getEmployee()->getUser()->getTimezone(),
         ]);
     }
 
     private function findEditEvent(): ?Event
     {
+
         if ($this->editEventId === null) {
             return null;
         }
@@ -159,6 +159,7 @@ class EventComponent extends AbstractController
 
         return $event;
     }
+
     public function getWeekStart(): \DateTimeImmutable
     {
         return $this->resolveWeekStart($this->week);
@@ -203,10 +204,12 @@ class EventComponent extends AbstractController
 
     private function denyUnlessAllowed(): void
     {
+        
         if (!$this->canEdit()) {
             throw new AccessDeniedException('you cannot manage events.');
         }
     }
+
     private function resolveWeekStart(string $week): \DateTimeImmutable
     {
         if ($week !== '') {

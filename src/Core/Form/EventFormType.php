@@ -6,6 +6,9 @@ namespace Citadel\Aureum\Core\Form;
 
 use Citadel\Aureum\Core\Entity\Enum\EventType;
 use Citadel\Aureum\Core\Entity\Event;
+use Citadel\Aureum\Core\Entity\Restaurant;
+use Citadel\Aureum\Core\Repository\RestaurantRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -22,9 +25,12 @@ class EventFormType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => Event::class,
+                'hotel' => null,
                 'userTimezone' => 'UTC',
             ]
         );
+
+        $resolver->setRequired('hotel');
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -48,6 +54,17 @@ class EventFormType extends AbstractType
             ->add('link', UrlType::class, [
                 'default_protocol' => 'https',
                 'required' => false,
+            ])
+            ->add('restaurant', EntityType::class, [
+                'class' => Restaurant::class,
+                'choice_label' => 'name',
+                'required' => false,
+                'placeholder' => 'No restaurant',
+                'query_builder' => static fn (RestaurantRepository $repository) => $repository
+                    ->createQueryBuilder('r')
+                    ->where('r.hotel = :hotel')
+                    ->setParameter('hotel', $options['hotel'])
+                    ->orderBy('r.name', 'ASC'),
             ])
         ;
     }

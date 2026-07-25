@@ -37,6 +37,10 @@ class Event
     #[ORM\ManyToOne(targetEntity: Employee::class)]
     private Employee $createdBy;
 
+    #[ORM\ManyToOne(targetEntity: Restaurant::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Restaurant $restaurant = null;
+
     public function getName(): string
     {
         return $this->name;
@@ -105,5 +109,15 @@ class Event
     public function setCreatedBy(Employee $createdBy): void
     {
         $this->createdBy = $createdBy;
+    }
+
+    public function getRestaurant(): ?Restaurant
+    {
+        return $this->restaurant;
+    }
+
+    public function setRestaurant(?Restaurant $restaurant): void
+    {
+        $this->restaurant = $restaurant;
     }
 }
