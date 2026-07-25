@@ -2,15 +2,17 @@
     <div class="card">
         <div class="card-title items-center justify-between">
             <div class="text-large">Weekly Events Planner</div>
-            <button
-                    type="button"
-                    class="btn-icon btn-link {{ this.editorMode ? 'active' }}"
-                    title="{{ this.editorMode ? 'Exit editor mode' : 'Editor mode' }}"
-                    data-action="live#action"
-                    data-live-action-param="toggleEditor"
-            >
-                <i class="ph ph-pencil-simple-line"></i>
-            </button>
+            {% if this.canEdit %}
+                <button
+                        type="button"
+                        class="btn-icon btn-link {{ this.editorMode ? 'active' }}"
+                        title="{{ this.editorMode ? 'Exit editor mode' : 'Editor mode' }}"
+                        data-action="live#action"
+                        data-live-action-param="toggleEditor"
+                >
+                    <i class="ph ph-pencil-simple-line"></i>
+                </button>
+            {% endif %}
         </div>
         <div class="card-body">
             <div class="flex items-center gap-2 mb-2">
@@ -51,10 +53,19 @@
                                 </button>
                             {% endif %}
                         </div>
-
                         {% for event in day.events %}
                             <div class="box text-small mb-2" style="background-color:{{ event.type.color }};">
-                                <p>{{ event.eventDate|date('H:i') }}</p>
+                                <div class="flex justify-between items-center">
+                                    <p>{{ event.eventDate|date('H:i') }}</p>
+                                    {% if this.editorMode %}
+                                        <button type="button" class="btn-icon btn-link" title="Edit event"
+                                                data-action="live#action"
+                                                data-live-action-param="openEdit"
+                                                data-live-event-id-param="{{ event.id }}">
+                                            <i class="ph ph-pencil-simple-line"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
                                 <p>{{ event.name }}</p>
                             </div>
                         {% endfor %}
@@ -64,13 +75,17 @@
         </div>
     </div>
 
-    {% if this.createDay %}
+    {% if this.createDay or this.editEventId %}
         <div class="modal-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:100;">
             <div class="card" style="min-width:420px; max-width:90vw;">
                 <div class="card-title items-center justify-between">
-                    New Event - {{ this.createDay|date('l j F') }}
+                    {% if this.editEventId %}
+                        Edit Event - {{ this.editEvent.name }}
+                    {% else %}
+                        New Event - {{ this.createDay|date('l j F') }}
+                    {% endif %}
                     <button type="button" class="btn-icon btn-link" title="Close"
-                            data-action="live#action" data-live-action-param="closeCreate">
+                            data-action="live#action" data-live-action-param="closeModal">
                         <i class="ph ph-x"></i>
                     </button>
                 </div>
@@ -85,8 +100,20 @@
                         {{ form_row(form.description) }}
                         {{ form_row(form.link) }}
                     </div>
-                    <div class="flex justify-end">
-                        <button type="submit" class="luxury-light square btn btn-primary">Add event</button>
+                    <div class="flex gap-2 justify-end">
+                        <button type="submit" class="luxury-light square btn btn-primary">
+                            {{ this.editEventId ? 'Save changes' : 'Add event' }}
+                        </button>
+                        {% if this.editEventId %}
+                            <button type="button" class="btn btn-outlined"
+                                    data-action="live#action"
+                                    data-live-action-param="delete"
+                                    data-live-confirm-param="Delete this event? This cannot be undone.">
+                                <i class="ph ph-trash"></i> Delete
+                            </button>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
                     </div>
                     {{ form_end(form) }}
                 </div>
