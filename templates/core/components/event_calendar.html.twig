@@ -1,0 +1,96 @@
+<div {{ attributes }}>
+    <div class="card">
+        <div class="card-title items-center justify-between">
+            <div class="text-large">Weekly Events Planner</div>
+            <button
+                    type="button"
+                    class="btn-icon btn-link {{ this.editorMode ? 'active' }}"
+                    title="{{ this.editorMode ? 'Exit editor mode' : 'Editor mode' }}"
+                    data-action="live#action"
+                    data-live-action-param="toggleEditor"
+            >
+                <i class="ph ph-pencil-simple-line"></i>
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="flex items-center gap-2 mb-2">
+                <button type="button" class="btn-icon btn-link" title="Previous week"
+                        data-action="live#action" data-live-action-param="changeWeek" data-live-direction-param="-1">
+                    <i class="ph ph-caret-left"></i>
+                </button>
+                <div>{{ this.weekStart|date('j F') }} - {{ this.weekEnd|date('j F') }}</div>
+                <button type="button" class="btn-icon btn-link" title="Next week"
+                        data-action="live#action" data-live-action-param="changeWeek" data-live-direction-param="1">
+                    <i class="ph ph-caret-right"></i>
+                </button>
+            </div>
+
+            <div class="flex gap-5">
+                {% for type in this.eventTypes %}
+                    <div>
+                        <i class="ph-fill ph-circle" style="color:{{ type.color }};"></i> {{ type.label }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="week">
+                {% for day in this.days %}
+                    {% set dayKey = day.date|date('Y-m-d') %}
+                    <div class="day">
+                        <div class="flex justify-between">
+                            <div>
+                                <p class="day__name">{{ day.date|date('D')|upper }}</p>
+                                <p class="day__date">{{ day.date|date('j') }}</p>
+                            </div>
+                            {% if this.editorMode %}
+                                <button type="button" class="btn-icon btn-link" title="Add event"
+                                        data-action="live#action"
+                                        data-live-action-param="openCreate"
+                                        data-live-day-param="{{ dayKey }}">
+                                    <i class="ph ph-plus"></i>
+                                </button>
+                            {% endif %}
+                        </div>
+
+                        {% for event in day.events %}
+                            <div class="box text-small mb-2" style="background-color:{{ event.type.color }};">
+                                <p>{{ event.eventDate|date('H:i') }}</p>
+                                <p>{{ event.name }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% if this.createDay %}
+        <div class="modal-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:100;">
+            <div class="card" style="min-width:420px; max-width:90vw;">
+                <div class="card-title items-center justify-between">
+                    New Event - {{ this.createDay|date('l j F') }}
+                    <button type="button" class="btn-icon btn-link" title="Close"
+                            data-action="live#action" data-live-action-param="closeCreate">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, { attr: { 'data-action': 'live#action:prevent', 'data-live-action-param': 'save' } }) }}
+                    <div class="flex gap-2 mb-2">
+                        {{ form_row(form.name) }}
+                        {{ form_row(form.type) }}
+                        {{ form_row(form.eventDate) }}
+                    </div>
+                    <div class="mb-2">
+                        {{ form_row(form.description) }}
+                        {{ form_row(form.link) }}
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="luxury-light square btn btn-primary">Add event</button>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>

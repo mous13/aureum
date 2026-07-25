@@ -41,6 +41,9 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
             new MenuItem('Restaurants', $url('aureum_restaurants_list'), [
                 'icon' => 'ph ph-bowl-steam',
             ]),
+            new MenuItem('Events', $url('aureum_events_calendar'), [
+                'icon' => 'ph ph-calendar',
+            ]),
         ]);
 
         $menu->addItem($directory);

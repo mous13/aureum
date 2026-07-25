@@ -1,0 +1,28 @@
+{% embed '@Forumify/components/modal.html.twig' %}
+    {% block modalOpenButton %}
+        <button type="button" class="btn-link btn-icon">
+            <i class="ph ph-plus"></i>
+        </button>
+    {% endblock %}
+    {% block modalContent %}
+        <div class="card">
+            <div class="card-title">New Event - {{ date|date('l j F') }}</div>
+            <div class="card-body">
+                {{ form_start(form) }}
+                <div class="flex gap-2 mb-2">
+                    {{ form_row(form.name) }}
+                    {{ form_row(form.type) }}
+                    {{ form_row(form.eventDate) }}
+                </div>
+                <div class="">
+                    {{ form_row(form.description) }}
+                    {{ form_row(form.link) }}
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="luxury-light square btn btn-primary">Add event</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    {% endblock %}
+{% endembed %}

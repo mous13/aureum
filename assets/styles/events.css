@@ -1,0 +1,10 @@
+.week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.day {
+    padding: 16px 10px;
+    border-right: var(--border, 1px solid black);
+}
+.day:last-child {border-right:none;}
