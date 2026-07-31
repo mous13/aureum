@@ -1,7 +1,7 @@
 <div {{ attributes }}>
     <div class="card">
-        <div class="card-title items-center justify-between">
-            <div class="text-large">Weekly Events Planner</div>
+        <div class="card-title items-center justify-between luxury">
+            <div>Weekly Events Planner</div>
             {% if this.canEdit %}
                 <button
                         type="button"
@@ -15,7 +15,7 @@
             {% endif %}
         </div>
         <div class="card-body">
-            <div class="flex items-center gap-2 mb-2">
+            <div class="flex items-center justify-center gap-2 mb-2">
                 <button type="button" class="btn-icon btn-link" title="Previous week"
                         data-action="live#action" data-live-action-param="changeWeek" data-live-direction-param="-1">
                     <i class="ph ph-caret-left"></i>
@@ -26,24 +26,13 @@
                     <i class="ph ph-caret-right"></i>
                 </button>
             </div>
-
-            <div class="flex gap-5">
-                {% for type in this.eventTypes %}
-                    <div>
-                        <i class="ph-fill ph-circle" style="color:{{ type.color }};"></i> {{ type.label }}
-                    </div>
-                {% endfor %}
-            </div>
-
             <div class="week">
                 {% for day in this.days %}
                     {% set dayKey = day.date|date('Y-m-d') %}
                     <div class="day">
-                        <div class="flex justify-between">
-                            <div>
-                                <p class="day__name">{{ day.date|date('D')|upper }}</p>
-                                <p class="day__date">{{ day.date|date('j') }}</p>
-                            </div>
+                        <div class="flex justify-start gap-2 items-center mb-2">
+                            <p class="day__name text-small">{{ day.date|date('D')|upper }}</p>
+                            <p class="day__date text-bold">{{ day.date|date('j') }}</p>
                             {% if this.editorMode %}
                                 <button type="button" class="btn-icon btn-link" title="Add event"
                                         data-action="live#action"
@@ -54,20 +43,7 @@
                             {% endif %}
                         </div>
                         {% for event in day.events %}
-                            <div class="box text-small mb-2" style="background-color:{{ event.type.color }};">
-                                <div class="flex justify-between items-center">
-                                    <p>{{ event.eventDate|date('H:i') }}</p>
-                                    {% if this.editorMode %}
-                                        <button type="button" class="btn-icon btn-link" title="Edit event"
-                                                data-action="live#action"
-                                                data-live-action-param="openEdit"
-                                                data-live-event-id-param="{{ event.id }}">
-                                            <i class="ph ph-pencil-simple-line"></i>
-                                        </button>
-                                    {% endif %}
-                                </div>
-                                <p style="color:white;">{{ event.name }}</p>
-                            </div>
+                            {% include '@CitadelAureum/core/events/blocks/event.html.twig' with { event } %}
                         {% endfor %}
                     </div>
                 {% endfor %}
@@ -76,9 +52,9 @@
     </div>
 
     {% if this.createDay or this.editEventId %}
-        <div class="modal-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:100;">
-            <div class="card" style="min-width:420px; max-width:90vw;">
-                <div class="card-title items-center justify-between">
+        <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="{{ this.editEventId ? 'Edit event' : 'New event' }}">
+            <div class="card modal-overlay__card">
+                <div class="card-title luxury items-center justify-between">
                     {% if this.editEventId %}
                         Edit Event - {{ this.editEvent.name }}
                     {% else %}
@@ -94,7 +70,8 @@
                     <div class="flex gap-2 mb-2">
                         {{ form_row(form.name) }}
                         {{ form_row(form.type) }}
-                        {{ form_row(form.eventDate) }}
+                        {{ form_row(form.start) }}
+                        {{ form_row(form.end) }}
                     </div>
                     <div class="mb-2">
                         {{ form_row(form.description) }}
@@ -112,8 +89,6 @@
                                     data-live-confirm-param="Delete this event? This cannot be undone.">
                                 <i class="ph ph-trash"></i> Delete
                             </button>
-                        {% else %}
-                            <span></span>
                         {% endif %}
                     </div>
                     {{ form_end(form) }}

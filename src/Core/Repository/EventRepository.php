@@ -30,12 +30,12 @@ class EventRepository extends AbstractRepository
     {
         return $this->createQueryBuilder('e')
             ->where('e.hotel = :hotel')
-            ->andWhere('e.eventDate >= :start')
-            ->andWhere('e.eventDate < :end')
+            ->andWhere('e.start >= :start')
+            ->andWhere('e.start < :end')
             ->setParameter('hotel', $hotel)
             ->setParameter('start', $start)
             ->setParameter('end', $end->modify('+1 day'))
-            ->orderBy('e.eventDate', 'ASC')
+            ->orderBy('e.start', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -48,8 +48,8 @@ class EventRepository extends AbstractRepository
             ->select('DISTINCT IDENTITY(e.restaurant) AS restaurantId')
             ->where('e.hotel = :hotel')
             ->andWhere('e.restaurant IS NOT NULL')
-            ->andWhere('e.eventDate >= :todayStart')
-            ->andWhere('e.eventDate < :tomorrowStart')
+            ->andWhere('e.start >= :todayStart')
+            ->andWhere('e.start < :tomorrowStart')
             ->setParameter('hotel', $hotel)
             ->setParameter('todayStart', $today)
             ->setParameter('tomorrowStart', $today->modify('+1 day'))

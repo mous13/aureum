@@ -135,7 +135,7 @@ class EventComponent extends AbstractController
             $day = $this->createDay !== null
                 ? \DateTimeImmutable::createFromFormat('!Y-m-d', $this->createDay)
                 : false;
-            $event->setEventDate(($day ?: $this->getWeekStart())->setTime(18, 0));
+            $event->setStart(($day ?: $this->getWeekStart())->setTime(18, 0));
         }
 
         return $this->createForm(EventFormType::class, $event, [
@@ -186,7 +186,7 @@ class EventComponent extends AbstractController
         }
 
         foreach ($events as $event) {
-            $days[$event->getEventDate()->format('Y-m-d')]['events'][] = $event;
+            $days[$event->getStart()->format('Y-m-d')]['events'][] = $event;
         }
 
         return array_values($days);

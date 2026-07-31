@@ -43,10 +43,16 @@ class EventFormType extends AbstractType
                 'class' => EventType::class,
                 'choice_label' => static fn(EventType $type) => $type->getLabel(),
             ])
-            ->add('eventDate', DateTimeType::class, [
+            ->add('start', DateTimeType::class, [
                 'widget' => 'single_text',
                 'model_timezone' => 'UTC',
                 'view_timezone' => $options['userTimezone'],
+            ])
+            ->add('end', DateTimeType::class, [
+                'widget' => 'single_text',
+                'model_timezone' => 'UTC',
+                'view_timezone' => $options['userTimezone'],
+                'required' => false,
             ])
             ->add('description', TextareaType::class, [
                 'required' => false,

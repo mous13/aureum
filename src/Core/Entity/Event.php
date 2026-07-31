@@ -23,10 +23,14 @@ class Event
     private EventType $type;
 
     #[ORM\Column(type: 'datetime_immutable', index: true)]
-    private \DateTimeImmutable $eventDate;
+    private \DateTimeImmutable $start;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'datetime_immutable', nullable: true, index: true)]
+    private ?\DateTimeImmutable $end = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $link = null;
 
@@ -61,14 +65,24 @@ class Event
         $this->type = $type;
     }
 
-    public function getEventDate(): \DateTimeImmutable
+    public function getStart(): \DateTimeImmutable
     {
-        return $this->eventDate;
+        return $this->start;
     }
 
-    public function setEventDate(\DateTimeImmutable $eventDate): void
+    public function setStart(\DateTimeImmutable $start): void
     {
-        $this->eventDate = $eventDate;
+        $this->start = $start;
+    }
+
+    public function getEnd(): ?\DateTimeImmutable
+    {
+        return $this->end;
+    }
+
+    public function setEnd(?\DateTimeImmutable $end): void
+    {
+        $this->end = $end;
     }
 
     public function getDescription(): ?string
