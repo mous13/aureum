@@ -41,6 +41,12 @@ class Room
     #[ORM\Column(type: 'boolean')]
     private bool $hasStairs = false;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $interconnecting = false;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $lastLet = false;
+
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comments = null;
 
@@ -125,6 +131,26 @@ class Room
     public function setHasStairs(bool $hasStairs): void
     {
         $this->hasStairs = $hasStairs;
+    }
+
+    public function isInterconnecting(): bool
+    {
+        return $this->interconnecting;
+    }
+
+    public function setInterconnecting(bool $interconnecting): void
+    {
+        $this->interconnecting = $interconnecting;
+    }
+
+    public function isLastLet(): bool
+    {
+        return $this->lastLet;
+    }
+
+    public function setLastLet(bool $lastLet): void
+    {
+        $this->lastLet = $lastLet;
     }
 
     public function getCells(): array

@@ -3,7 +3,8 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
     static targets = [
         'grid', 'panel', 'panelTitle', 'error', 'deleteBtn', 'modeBtn',
-        'roomFields', 'number', 'roomType', 'bathroomStyle', 'viewSelect', 'bedSize', 'hasStairs', 'roomComments',
+        'roomFields', 'number', 'roomType', 'bathroomStyle', 'viewSelect', 'bedSize', 'hasStairs',
+        'interconnecting', 'lastLet', 'roomComments',
         'featureFields', 'featureLabel', 'hasSteps', 'stepsWrapper',
         'storageFields', 'department', 'contents', 'commentsWrapper', 'featureComments',
     ];
@@ -201,6 +202,8 @@ export default class extends Controller {
             this.viewSelectTarget.value = shape.view;
             this.bedSizeTarget.value = shape.bedSize;
             this.hasStairsTarget.checked = shape.hasStairs;
+            this.interconnectingTarget.checked = shape.interconnecting;
+            this.lastLetTarget.checked = shape.lastLet;
             this.roomCommentsTarget.value = shape.comments ?? '';
             this.rooms = this.rooms.filter((r) => r !== shape);
             this.openPanel(`Edit Room ${shape.number}`);
@@ -235,6 +238,8 @@ export default class extends Controller {
         this.numberTarget.value = '';
         this.featureLabelTarget.value = '';
         this.hasStairsTarget.checked = false;
+        this.interconnectingTarget.checked = false;
+        this.lastLetTarget.checked = false;
         this.hasStepsTarget.checked = false;
         this.roomCommentsTarget.value = '';
         this.departmentTarget.value = '';
@@ -259,6 +264,8 @@ export default class extends Controller {
                 view: this.viewSelectTarget.value,
                 bedSize: this.bedSizeTarget.value,
                 hasStairs: this.hasStairsTarget.checked,
+                interconnecting: this.interconnectingTarget.checked,
+                lastLet: this.lastLetTarget.checked,
                 comments: this.roomCommentsTarget.value.trim() || null,
                 cells,
             };

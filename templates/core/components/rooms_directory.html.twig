@@ -47,6 +47,16 @@
                     <option value="1">With Stairs</option>
                     <option value="0">Without Stairs</option>
                 </select>
+                <select data-model="interconnecting">
+                    <option value="">Interconnecting: Any</option>
+                    <option value="1">Interconnecting</option>
+                    <option value="0">Not Interconnecting</option>
+                </select>
+                <select data-model="lastLet">
+                    <option value="">Last Let: Any</option>
+                    <option value="1">Last Let</option>
+                    <option value="0">Not Last Let</option>
+                </select>
             </div>
 
             <div>
@@ -84,6 +94,8 @@
                                     data-room-view="{{ room.view.value }}"
                                     data-room-bed="{{ room.bedSize.value }}"
                                     data-steps="{{ room.hasStairs ? 'Yes' : 'No' }}"
+                                    data-interconnecting="{{ room.interconnecting ? 'Yes' : 'No' }}"
+                                    data-last-let="{{ room.lastLet ? 'Yes' : 'No' }}"
                                     data-comments="{{ room.comments }}"
                                     role="button"
                                     tabindex="0"
@@ -144,6 +156,10 @@
                         <dd data-room-modal-target="viewValue"></dd>
                         <dt>Bed Size</dt>
                         <dd data-room-modal-target="bed"></dd>
+                        <dt>Interconnecting</dt>
+                        <dd data-room-modal-target="interconnecting"></dd>
+                        <dt>Last Let</dt>
+                        <dd data-room-modal-target="lastLet"></dd>
                     </dl>
                     <dl class="room-modal-details" data-room-modal-target="featureSection">
                         <dt>Type</dt>

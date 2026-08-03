@@ -50,6 +50,12 @@ class RoomsDirectory
     #[LiveProp(writable: true, url: true)]
     public string $stairs = '';
 
+    #[LiveProp(writable: true, url: true)]
+    public string $interconnecting = '';
+
+    #[LiveProp(writable: true, url: true)]
+    public string $lastLet = '';
+
     /** @var array<string, bool>|null */
     private ?array $occupancy = null;
 
@@ -76,6 +82,8 @@ class RoomsDirectory
         $this->view = null;
         $this->bedSize = null;
         $this->stairs = '';
+        $this->interconnecting = '';
+        $this->lastLet = '';
     }
 
     /**
@@ -110,7 +118,9 @@ class RoomsDirectory
             || $this->bathroomStyle !== null && $this->bathroomStyle !== ''
             || $this->view !== null && $this->view !== ''
             || $this->bedSize !== null && $this->bedSize !== ''
-            || $this->stairs !== '';
+            || $this->stairs !== ''
+            || $this->interconnecting !== ''
+            || $this->lastLet !== '';
     }
 
     /**
@@ -325,6 +335,14 @@ class RoomsDirectory
         }
 
         if ($this->stairs !== '' && $room->hasStairs() !== ($this->stairs === '1')) {
+            return false;
+        }
+
+        if ($this->interconnecting !== '' && $room->isInterconnecting() !== ($this->interconnecting === '1')) {
+            return false;
+        }
+
+        if ($this->lastLet !== '' && $room->isLastLet() !== ($this->lastLet === '1')) {
             return false;
         }
 

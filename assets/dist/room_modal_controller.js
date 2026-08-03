@@ -4,7 +4,7 @@ export default class extends Controller {
     static targets = [
         'title', 'roomSection', 'featureSection', 'storageSection', 'stepsSection', 'commentsSection',
         'type', 'bathroom', 'viewValue', 'bed', 'featureType', 'steps',
-        'department', 'contents', 'comments',
+        'department', 'contents', 'comments', 'interconnecting', 'lastLet',
     ];
 
     connect() {
@@ -30,6 +30,8 @@ export default class extends Controller {
             this.bathroomTarget.textContent = cell.dataset.roomBathroom;
             this.viewValueTarget.textContent = cell.dataset.roomView;
             this.bedTarget.textContent = cell.dataset.roomBed;
+            this.interconnectingTarget.textContent = cell.dataset.interconnecting;
+            this.lastLetTarget.textContent = cell.dataset.lastLet;
         } else {
             this.featureTypeTarget.textContent = cell.dataset.featureType;
         }

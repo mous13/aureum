@@ -107,6 +107,8 @@ class FloorController extends AbstractController
             'view' => $room->getView()->value,
             'bedSize' => $room->getBedSize()->value,
             'hasStairs' => $room->hasStairs(),
+            'interconnecting' => $room->isInterconnecting(),
+            'lastLet' => $room->isLastLet(),
             'comments' => $room->getComments(),
             'cells' => $room->getCells(),
         ], $this->roomRepository->findByFloor($floor));
@@ -179,6 +181,8 @@ class FloorController extends AbstractController
             $room->setView(RoomView::from($data['view'] ?? ''));
             $room->setBedSize(BedSize::from($data['bedSize'] ?? ''));
             $room->setHasStairs((bool)($data['hasStairs'] ?? false));
+            $room->setInterconnecting((bool)($data['interconnecting'] ?? false));
+            $room->setLastLet((bool)($data['lastLet'] ?? false));
             $room->setComments($this->nullableText($data['comments'] ?? null));
             $room->setCells($cells);
         } catch (\ValueError) {
