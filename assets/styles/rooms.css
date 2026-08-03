@@ -41,14 +41,15 @@
 }
 
 .rooms-grid {
+    --cell-size: 2.5rem;
     display: grid;
-    grid-template-columns: repeat(var(--grid-w), 2.5rem);
-    grid-template-rows: repeat(var(--grid-h), 2.5rem);
+    grid-template-columns: repeat(var(--grid-w), var(--cell-size));
+    grid-template-rows: repeat(var(--grid-h), var(--cell-size));
     gap: 0;
     background:
             linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
             linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
-    background-size: 2.5rem 2.5rem;
+    background-size: var(--cell-size) var(--cell-size);
     border: 1px solid rgba(0, 0, 0, 0.12);
     width: fit-content;
     user-select: none;
@@ -82,11 +83,17 @@
 .room-label {
     position: absolute;
     top: 2px;
-    left: 4px;
+    left: 3px;
+    width: calc(var(--label-span, 1) * var(--cell-size) - 6px);
+    max-height: calc(var(--cell-size) - 4px);
+    overflow: hidden;
     font-size: 0.7rem;
     font-weight: 600;
+    line-height: 1.05;
     pointer-events: none;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    hyphens: auto;
 }
 
 .room-modal-details {

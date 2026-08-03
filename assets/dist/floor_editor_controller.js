@@ -87,7 +87,12 @@ export default class extends Controller {
                     if (this.isLabelCell(shape.cells, x, y)) {
                         const text = kind === 'room' ? shape.number : (shape.label || shape.type);
                         const steps = kind === 'feature' && shape.hasSteps ? ' \u25B2' : '';
-                        cell.innerHTML = `<span class="room-label">${text}${steps}</span>`;
+                        const label = document.createElement('span');
+                        label.className = 'room-label';
+                        label.style.setProperty('--label-span', this.labelSpan(shape.cells, x, y, occupied));
+                        label.title = text;
+                        label.textContent = `${text}${steps}`;
+                        cell.appendChild(label);
                     }
                     cell.addEventListener('pointerdown', () => this.editShape(hit));
                 } else {
@@ -115,6 +120,17 @@ export default class extends Controller {
             if (occupied !== null && !occupied.has(`${cx}:${cy}`)) cls += ` wall-${side}`;
         }
         return cls;
+    }
+
+    labelSpan(cells, x, y, occupied) {
+        const has = (cx, cy) => cells.some(([rx, ry]) => rx === cx && ry === cy);
+        let span = 1;
+        while (x + span < this.widthValue) {
+            const key = `${x + span}:${y}`;
+            if (!has(x + span, y) && occupied.has(key)) break;
+            span++;
+        }
+        return span;
     }
 
     isLabelCell(cells, x, y) {

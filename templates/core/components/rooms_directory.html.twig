@@ -90,7 +90,7 @@
                                     aria-label="Room {{ room.number }}"
                             >
                                 {% if cell.label %}
-                                    <span class="room-label">{{ room.number }}</span>
+                                    <span class="room-label" style="--label-span: {{ cell.span }};" title="{{ room.number }}">{{ room.number }}</span>
                                 {% endif %}
                             </div>
                         {% endfor %}
@@ -115,7 +115,7 @@
                                     aria-label="{{ feature.displayName }}"
                             >
                                 {% if cell.label %}
-                                    <span class="room-label feature-label">
+                                    <span class="room-label feature-label" style="--label-span: {{ cell.span }};" title="{{ feature.displayName }}">
                                         {{ feature.displayName }}{% if feature.hasSteps %} <i class="ph ph-steps" title="Has steps"></i>{% endif %}
                                     </span>
                                 {% endif %}

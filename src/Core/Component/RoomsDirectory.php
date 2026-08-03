@@ -50,6 +50,9 @@ class RoomsDirectory
     #[LiveProp(writable: true, url: true)]
     public string $stairs = '';
 
+    /** @var array<string, bool>|null */
+    private ?array $occupancy = null;
+
     public function __construct(
         private readonly HotelRepository $hotelRepository,
         private readonly FloorRepository $floorRepository,
@@ -114,7 +117,7 @@ class RoomsDirectory
      * @return array<int, array{
      *     room: Room,
      *     matches: bool,
-     *     cells: array<int, array{x: int, y: int, edges: string, label: bool}>
+     *     cells: array<int, array{x: int, y: int, edges: string, label: bool, span: int}>
      * }>
      */
     public function getRoomTiles(): array
@@ -124,12 +127,14 @@ class RoomsDirectory
             return [];
         }
 
+        $occupied = $this->getFloorOccupancy($floor);
+
         $tiles = [];
         foreach ($this->roomRepository->findByFloor($floor) as $room) {
             $tiles[] = [
                 'room' => $room,
                 'matches' => $this->matchesFilters($room),
-                'cells' => $this->computeCells($room->getCells()),
+                'cells' => $this->computeCells($room->getCells(), $occupied, $floor->getGridWidth()),
             ];
         }
 
@@ -139,7 +144,7 @@ class RoomsDirectory
     /***
      * @return array<int, array{
      *     feature: FloorFeature,
-     *     cells: array<int, array{x: int, y: int, edges: string, label: bool}>
+     *     cells: array<int, array{x: int, y: int, edges: string, label: bool, span: int}>
      * }>
      */
     public function getFeatureTiles(): array
@@ -149,27 +154,17 @@ class RoomsDirectory
             return [];
         }
 
-        $occupied = [];
-        foreach ($this->roomRepository->findByFloor($floor) as $room) {
-            foreach ($room->getCells() as [$x, $y]) {
-                $occupied["{$x}:{$y}"] = true;
-            }
-        }
-
-        $features = $this->floorFeatureRepository->findByFloor($floor);
-        foreach ($features as $feature) {
-            foreach ($feature->getCells() as [$x, $y]) {
-                $occupied["{$x}:{$y}"] = true;
-            }
-        }
+        $occupied = $this->getFloorOccupancy($floor);
 
         $tiles = [];
-        foreach ($features as $feature) {
+        foreach ($this->floorFeatureRepository->findByFloor($floor) as $feature) {
             $tiles[] = [
                 'feature' => $feature,
                 'cells' => $this->computeCells(
                     $feature->getCells(),
-                    $feature->getType() === FeatureType::HALLWAY ? $occupied : null,
+                    $occupied,
+                    $floor->getGridWidth(),
+                    $feature->getType() === FeatureType::HALLWAY,
                 ),
             ];
         }
@@ -179,11 +174,15 @@ class RoomsDirectory
 
     /**
      * @param array<int, array{0: int, 1: int}> $rawCells
-     * @param array<string, bool>|null $floorOccupied
-     * @return array<int, array{x: int, y: int, edges: string, label: bool}>
+     * @param array<string, bool> $floorOccupied
+     * @return array<int, array{x: int, y: int, edges: string, label: bool, span: int}>
      */
-    private function computeCells(array $rawCells, ?array $floorOccupied = null): array
-    {
+    private function computeCells(
+        array $rawCells,
+        array $floorOccupied,
+        int $gridWidth,
+        bool $wallEdges = false,
+    ): array {
         $occupied = [];
         foreach ($rawCells as [$x, $y]) {
             $occupied["{$x}:{$y}"] = true;
@@ -193,6 +192,19 @@ class RoomsDirectory
         foreach ($rawCells as [$x, $y]) {
             if ($labelCell === null || $y < $labelCell[1] || ($y === $labelCell[1] && $x < $labelCell[0])) {
                 $labelCell = [$x, $y];
+            }
+        }
+
+        $labelSpan = 1;
+        if ($labelCell !== null) {
+            [$labelX, $labelY] = $labelCell;
+            while ($labelX + $labelSpan < $gridWidth) {
+                $key = ($labelX + $labelSpan) . ':' . $labelY;
+                if (!isset($occupied[$key]) && isset($floorOccupied[$key])) {
+                    break;
+                }
+
+                $labelSpan++;
             }
         }
 
@@ -212,20 +224,48 @@ class RoomsDirectory
                 }
 
                 $edges .= " edge-{$side}";
-                if ($floorOccupied !== null && !isset($floorOccupied[$key])) {
+                if ($wallEdges && !isset($floorOccupied[$key])) {
                     $edges .= " wall-{$side}";
                 }
             }
+
+            $isLabel = $labelCell !== null && $x === $labelCell[0] && $y === $labelCell[1];
 
             $cells[] = [
                 'x' => $x,
                 'y' => $y,
                 'edges' => trim($edges),
-                'label' => $labelCell !== null && $x === $labelCell[0] && $y === $labelCell[1],
+                'label' => $isLabel,
+                'span' => $isLabel ? $labelSpan : 1,
             ];
         }
 
         return $cells;
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    private function getFloorOccupancy(Floor $floor): array
+    {
+        if ($this->occupancy !== null) {
+            return $this->occupancy;
+        }
+
+        $occupied = [];
+        foreach ($this->roomRepository->findByFloor($floor) as $room) {
+            foreach ($room->getCells() as [$x, $y]) {
+                $occupied["{$x}:{$y}"] = true;
+            }
+        }
+
+        foreach ($this->floorFeatureRepository->findByFloor($floor) as $feature) {
+            foreach ($feature->getCells() as [$x, $y]) {
+                $occupied["{$x}:{$y}"] = true;
+            }
+        }
+
+        return $this->occupancy = $occupied;
     }
 
     public function getMatchCount(): int
