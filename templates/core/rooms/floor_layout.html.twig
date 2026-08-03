@@ -48,7 +48,7 @@
                         <label>Room Type
                             <select data-floor-editor-target="roomType">
                                 {% for roomType in roomTypes %}
-                                    <option value="{{ roomType.id }}">{{ roomType.name }}</option>
+                                    <option value="{{ roomType.id }}">{{ roomType.code }} - {{ roomType.name }}</option>
                                 {% else %}
                                     <option value="">No room types defined</option>
                                 {% endfor %}
