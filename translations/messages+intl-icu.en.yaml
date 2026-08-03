@@ -32,3 +32,9 @@ aureum:
         crud:
           single: 'role'
           plural: 'roles'
+  announcement:
+    admin:
+      announcement:
+        crud:
+          single: 'announcement'
+          plural: 'announcements'

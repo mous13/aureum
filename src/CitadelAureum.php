@@ -22,6 +22,10 @@ class CitadelAureum extends AbstractForumifyPlugin
         return [
             'admin' => [
                 'view',
+                'announcements' => [
+                    'view',
+                    'manage',
+                ],
             ],
             'core' => [
                 'concierge' => [

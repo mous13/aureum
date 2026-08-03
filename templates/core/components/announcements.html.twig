@@ -1,0 +1,14 @@
+{% set announcements = this.announcements %}
+{% if announcements is not empty %}
+    <div class="flex flex-col gap-2 mb-4">
+        {% for announcement in announcements %}
+            <div class="{{ announcement.severity.alertClass }}">
+                <p class="flex items-center gap-2 text-bold">
+                    <i class="{{ announcement.severity.icon }}"></i>
+                    {{ announcement.title }}
+                </p>
+                <p>{{ announcement.message|nl2br }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
