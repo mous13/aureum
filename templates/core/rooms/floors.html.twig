@@ -1,0 +1,57 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">New Floor</div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            <div class="flex gap-2 mb-2">
+                {{ form_widget(form.name) }}
+                {{ form_row(form.position) }}
+                {{ form_row(form.gridWidth) }}
+                {{ form_row(form.gridHeight) }}
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="luxury-light square btn btn-primary">Create Floor</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <div class="card mt-5">
+        <div class="card-title luxury">Floors</div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Grid</th>
+                    <th>Rooms</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for floor in floors %}
+                    <tr>
+                        <td>{{ floor.name }}</td>
+                        <td>{{ floor.position }}</td>
+                        <td>{{ floor.gridWidth }} × {{ floor.gridHeight }}</td>
+                        <td>{{ floor.rooms|length }}</td>
+                        <td class="flex gap-2 justify-end">
+                            <a class="btn btn-primary luxury-light square" href="{{ path('aureum_floors_layout', { id: floor.id }) }}">
+                                <i class="ph ph-grid-four"></i> Edit Layout
+                            </a>
+                            <a class="btn btn-link" href="{{ path('aureum_floors_edit', { id: floor.id }) }}">Edit</a>
+                            <form method="post" action="{{ path('aureum_floors_delete', { id: floor.id }) }}" onsubmit="return confirm('Delete this floor and all its rooms?')">
+                                <button type="submit" class="btn btn-link">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5">No floors yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

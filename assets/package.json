@@ -9,6 +9,20 @@
         "fetch": "eager",
         "enabled": true,
         "autoimport": {}
+      },
+      "room-modal": {
+        "main": "dist/room_modal_controller.js",
+        "name": "room-modal",
+        "fetch": "eager",
+        "enabled": true,
+        "autoimport": {}
+      },
+      "floor-editor": {
+        "main": "dist/floor_editor_controller.js",
+        "name": "floor-editor",
+        "fetch": "eager",
+        "enabled": true,
+        "autoimport": {}
       }
     },
     "importmap": {

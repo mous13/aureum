@@ -1,0 +1,113 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block body %}
+    <div
+            class="card"
+            data-controller="floor-editor"
+            data-floor-editor-width-value="{{ floor.gridWidth }}"
+            data-floor-editor-height-value="{{ floor.gridHeight }}"
+            data-floor-editor-rooms-value="{{ rooms|json_encode|e('html_attr') }}"
+            data-floor-editor-features-value="{{ features|json_encode|e('html_attr') }}"
+            data-floor-editor-room-save-url-value="{{ path('aureum_floors_room_save', { id: floor.id }) }}"
+            data-floor-editor-room-delete-url-value="{{ path('aureum_floors_room_delete', { floorId: floor.id, id: '__ID__' }) }}"
+            data-floor-editor-feature-save-url-value="{{ path('aureum_floors_feature_save', { id: floor.id }) }}"
+            data-floor-editor-feature-delete-url-value="{{ path('aureum_floors_feature_delete', { floorId: floor.id, id: '__ID__' }) }}"
+    >
+        <div class="card-title luxury flex justify-between">
+            <span>Layout: {{ floor.name }}</span>
+            <a class="btn btn-link" href="{{ path('aureum_floors_list') }}">Back to floors</a>
+        </div>
+        <div class="card-body">
+            <div class="rooms-editor-toolbar">
+                <span class="text-small">Paint mode:</span>
+                <button type="button" class="btn mode-btn active" data-floor-editor-target="modeBtn" data-mode="room" data-action="floor-editor#setMode">Room</button>
+                <button type="button" class="btn mode-btn" data-floor-editor-target="modeBtn" data-mode="Hallway" data-action="floor-editor#setMode">Hallway</button>
+                <button type="button" class="btn mode-btn" data-floor-editor-target="modeBtn" data-mode="Elevator" data-action="floor-editor#setMode">Elevator</button>
+                <button type="button" class="btn mode-btn" data-floor-editor-target="modeBtn" data-mode="Storage" data-action="floor-editor#setMode">Storage</button>
+                <button type="button" class="btn mode-btn" data-floor-editor-target="modeBtn" data-mode="Stairs" data-action="floor-editor#setMode">Stairs</button>
+            </div>
+            <p class="text-small mb-2">
+                Click and drag on empty squares to paint, then fill in the details.
+                Click an existing room or feature to edit or delete it.
+            </p>
+            <div class="rooms-editor-layout">
+                <div class="rooms-editor-grid-wrapper">
+                    <div
+                            class="rooms-grid editable"
+                            data-floor-editor-target="grid"
+                            style="--grid-w: {{ floor.gridWidth }}; --grid-h: {{ floor.gridHeight }};"
+                    ></div>
+                </div>
+
+                <aside class="rooms-editor-panel" data-floor-editor-target="panel" hidden>
+                    <h4 data-floor-editor-target="panelTitle">New Room</h4>
+
+                    <div class="rooms-editor-fields" data-floor-editor-target="roomFields">
+                        <label>Room Number
+                            <input type="text" data-floor-editor-target="number" maxlength="20">
+                        </label>
+                        <label>Room Type
+                            <select data-floor-editor-target="roomType">
+                                {% for roomType in roomTypes %}
+                                    <option value="{{ roomType.id }}">{{ roomType.name }}</option>
+                                {% else %}
+                                    <option value="">No room types defined</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label>Bathroom Style
+                            <select data-floor-editor-target="bathroomStyle">
+                                {% for option in options.bathroomStyle %}<option>{{ option }}</option>{% endfor %}
+                            </select>
+                        </label>
+                        <label>View
+                            <select data-floor-editor-target="viewSelect">
+                                {% for option in options.view %}<option>{{ option }}</option>{% endfor %}
+                            </select>
+                        </label>
+                        <label>Bed Size
+                            <select data-floor-editor-target="bedSize">
+                                {% for option in options.bedSize %}<option>{{ option }}</option>{% endfor %}
+                            </select>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" data-floor-editor-target="hasStairs"> Has Stairs
+                        </label>
+                        <label>Comments <span class="text-small">(optional)</span>
+                            <textarea rows="3" data-floor-editor-target="roomComments"></textarea>
+                        </label>
+                    </div>
+
+                    <div class="rooms-editor-fields" data-floor-editor-target="featureFields" hidden>
+                        <label>Label <span class="text-small">(optional, e.g. "Service Lift")</span>
+                            <input type="text" data-floor-editor-target="featureLabel" maxlength="50">
+                        </label>
+                        <label class="checkbox" data-floor-editor-target="stepsWrapper">
+                            <input type="checkbox" data-floor-editor-target="hasSteps"> Has Steps
+                        </label>
+
+                        <div class="rooms-editor-fields" data-floor-editor-target="storageFields" hidden>
+                            <label>Department
+                                <input type="text" data-floor-editor-target="department" maxlength="100">
+                            </label>
+                            <label>Contents
+                                <textarea rows="3" data-floor-editor-target="contents"></textarea>
+                            </label>
+                        </div>
+
+                        <label data-floor-editor-target="commentsWrapper">Comments <span class="text-small">(optional)</span>
+                            <textarea rows="3" data-floor-editor-target="featureComments"></textarea>
+                        </label>
+                    </div>
+
+                    <p class="rooms-editor-error" data-floor-editor-target="error" hidden></p>
+
+                    <div class="flex gap-2 justify-end">
+                        <button type="button" class="btn btn-link" data-action="floor-editor#cancel">Cancel</button>
+                        <button type="button" class="btn btn-link" data-action="floor-editor#deleteShape" data-floor-editor-target="deleteBtn" hidden>Delete</button>
+                        <button type="button" class="btn btn-primary luxury-light square" data-action="floor-editor#saveShape">Save</button>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+{% endblock %}
