@@ -112,8 +112,6 @@ class EmployeeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $employee = $this->createEmployeeService->createEmployee($newEmployee);
-
                 $this->addFlash('success', 'Employee created successfully.');
 
                 return $this->redirectToRoute($redirectRoute, $redirectParams);
@@ -123,7 +121,6 @@ class EmployeeController extends AbstractController
                 $this->addFlash('error', $e->getMessage());
             } catch (\Exception $e) {
                 $this->addFlash('error', 'An error occurred while creating the employee. Please try again.');
-                // Log the actual error for debugging
                 error_log('Employee creation error: ' . $e->getMessage());
             }
         }

@@ -1,4 +1,5 @@
 import "../styles/frontend.css";
+import "../styles/events.css";
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {

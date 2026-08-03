@@ -1,0 +1,40 @@
+{% embed '@CitadelAureum/components/modal.html.twig' %}
+    {% block modalOpenButton %}
+        <div class="event-box mb-2" role="button" tabindex="0" style="--type: var(--type-{{ event.type.value }});">
+            <div class="event-box__meta items-center">
+                <span class="event-box__mark"></span>
+                <span class="event-box__time">{{ event.start|date('H:i') }}</span>
+                <span class="event-box__type text-uppercase text-extra-small text-bold">{{ event.type.label }}</span>
+                {% if this.editorMode %}
+                    <button type="button" class="btn-link btn-icon" title="Edit event"
+                            data-action="live#action:stop"
+                            data-live-action-param="openEdit"
+                            data-live-event-id-param="{{ event.id }}">
+                        <i class="ph ph-pencil-simple-line"></i>
+                    </button>
+                {% endif %}
+            </div>
+            <p class="event-box__name">{{ event.name }}</p>
+        </div>
+    {% endblock %}
+    {% block modalContent %}
+        <div class="card">
+            <div class="card-title luxury">Event Information</div>
+            <div class="card-body">
+                <div class="flex gap-2 items-center mb-2">
+                    <div class="event-box__mark" style="--type: var(--type-{{ event.type.value }});"></div>
+                    <div>{{ event.type.label }}</div>
+                </div>
+                <div class="text-large">{{ event.name }}</div>
+                {% set sameDay = event.start|date('Y-m-d') == event.end|date('Y-m-d') %}
+                <div class="text-small">{{ event.start|date('F j Y, H:i') }} - {{ event.end|date(sameDay ? 'H:i' : 'F j Y, H:i') }}</div>
+                <div class="mt-4">{{ event.description|nl2br }}</div>
+                {% if event.link %}
+                    <div class="flex gap-2 justify-end">
+                        <a href="{{ event.link }}" class="luxury-light square btn btn-primary" target="_blank" rel="noopener noreferrer">View Event</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endblock %}
+{% endembed %}
