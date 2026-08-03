@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Admin\Form;
 
 use Citadel\Aureum\Core\Entity\Employee;
-use Citadel\Aureum\Core\Entity\Enum\EmployeeRole;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,9 +26,10 @@ class EmployeeEditType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Full Name',
             ])
-            ->add('role', EnumType::class, [
-                'class' => EmployeeRole::class,
-                'label' => 'Role',
+            ->add('hotelAdmin', CheckboxType::class, [
+                'label' => 'Hotel admin',
+                'required' => false,
+                'help' => 'Hotel admins have every permission and manage roles and modules for their hotel.',
             ])
             ->add('verified', CheckboxType::class, [
                 'label' => 'email verified',

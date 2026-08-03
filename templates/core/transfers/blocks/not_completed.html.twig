@@ -13,7 +13,7 @@
             <th class="text-left">Concierge</th>
             <th class="text-left">Driver</th>
             <th class="text-left">
-                {% if employee.role.value == "Concierge" %}
+                {% if is_granted('aureum.module.transfers.manage') %}
                     Cost
                 {% endif %}
             </th>
@@ -32,7 +32,7 @@
                     <td>{{ transfer.middleman.name }}</td>
                     <td>{{ transfer.driver }}</td>
                     <td>
-                        {% if employee.role.value == "Concierge" %}
+                        {% if is_granted('aureum.module.transfers.manage') %}
                             {{ transfer.cost }}
                         {% endif %}
                     </td>
@@ -46,7 +46,7 @@
                                 'transfer': transfer,
                                 'logs': logs[transfer.id] ?? []
                             } %}
-                            {% if employee.role.value == "Concierge" %}
+                            {% if is_granted('aureum.module.transfers.manage') %}
                                 {% include '@CitadelAureum/core/transfers/blocks/transfers_edit.html.twig' with {
                                     'transfer': transfer,
                                     'editForm': editForms[transfer.id]

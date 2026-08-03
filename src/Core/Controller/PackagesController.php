@@ -18,7 +18,9 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('aureum.module.packages.view')]
 class PackagesController extends AbstractController
 {
     public function __construct(
@@ -44,6 +46,7 @@ class PackagesController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->denyAccessUnlessGranted('aureum.module.packages.manage');
             $package = $form->getData();
 
             $package->setStatus(PackageStatus::RECEIVED);
@@ -78,6 +81,7 @@ class PackagesController extends AbstractController
     }
 
     #[Route('/packages/{id}/edit', name: 'packages_edit')]
+    #[IsGranted('aureum.module.packages.manage')]
     public function edit(Request $request, Package $package): Response
     {
         $originalData = $this->logService->captureCurrentState($package);

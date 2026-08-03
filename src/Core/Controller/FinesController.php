@@ -14,10 +14,12 @@ use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\FineLogService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\SecurityBundle\Security;
 
+#[IsGranted('aureum.module.fines.view')]
 class FinesController extends AbstractController
 {
     public function __construct(
@@ -43,6 +45,7 @@ class FinesController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->denyAccessUnlessGranted('aureum.module.fines.manage');
             $fine = $form->getData();
 
             $fine->setCreatedAt(new \DateTime());
@@ -77,6 +80,7 @@ class FinesController extends AbstractController
     }
 
     #[Route('/fines/{id}/edit', name: 'fines_edit')]
+    #[IsGranted('aureum.module.fines.manage')]
     public function edit(Request $request, Fine $fine): Response
     {
         $originalData = $this->logService->captureCurrentState($fine);

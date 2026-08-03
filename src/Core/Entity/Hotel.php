@@ -53,8 +53,18 @@ class Hotel
     #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: RoomType::class, cascade: ['persist', 'remove'])]
     private Collection $roomTypes;
 
+    #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: HotelRole::class, cascade: ['persist', 'remove'])]
+    private Collection $roles;
+
+    /**
+     * @var array<string>
+     */
+    #[ORM\Column(type: 'json')]
+    private array $enabledModules = [];
+
     public function __construct()
     {
+        $this->roles = new ArrayCollection();
         $this->floors = new ArrayCollection();
         $this->roomTypes = new ArrayCollection();
         $this->employees = new ArrayCollection();
@@ -188,5 +198,39 @@ class Hotel
     public function setRoomTypes(Collection $roomTypes): void
     {
         $this->roomTypes = $roomTypes;
+    }
+
+    /**
+     * @return Collection<int, HotelRole>
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(Collection $roles): void
+    {
+        $this->roles = $roles;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getEnabledModules(): array
+    {
+        return $this->enabledModules;
+    }
+
+    /**
+     * @param array<string> $enabledModules
+     */
+    public function setEnabledModules(array $enabledModules): void
+    {
+        $this->enabledModules = array_values(array_unique($enabledModules));
+    }
+
+    public function isModuleEnabled(Enum\Module $module): bool
+    {
+        return in_array($module->value, $this->enabledModules, true);
     }
 }

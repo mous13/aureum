@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Component;
 
-use Citadel\Aureum\Core\Entity\RoomType;
+use Citadel\Aureum\Core\Entity\HotelRole;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
-#[AsLiveComponent('Aureum\RoomTypeTable', '@CitadelAureum/core/components/table.html.twig')]
-#[IsGranted('aureum.module.rooms.manage')]
-class RoomTypeTable extends AbstractDoctrineTable
+#[AsLiveComponent('Aureum\HotelRoleTable', '@CitadelAureum/core/components/table.html.twig')]
+#[IsGranted('aureum.rbac.manage')]
+class HotelRoleTable extends AbstractDoctrineTable
 {
     #[LiveProp]
     public int $hotelId;
 
     protected function getEntityClass(): string
     {
-        return RoomType::class;
+        return HotelRole::class;
     }
 
     protected function getQuery(array $search): QueryBuilder
@@ -33,26 +33,29 @@ class RoomTypeTable extends AbstractDoctrineTable
     protected function buildTable(): void
     {
         $this
-            ->addColumn('code', [
-                'field' => 'code',
-                'sortable' => true,
-                'searchable' => true,
-            ])
             ->addColumn('name', [
                 'field' => 'name',
                 'sortable' => true,
                 'searchable' => true,
+                'renderer' => static fn (mixed $name): string => htmlspecialchars((string)$name, ENT_QUOTES),
             ])
-            ->addColumn('archived', [
-                'field' => 'archived',
-                'sortable' => true,
+            ->addColumn('permissions', [
+                'field' => 'permissions',
+                'sortable' => false,
                 'searchable' => false,
-                'renderer' => static fn (mixed $archived): string => $archived ? 'Yes' : 'No',
+                'renderer' => static fn (mixed $permissions): string => htmlspecialchars(
+                    implode(', ', (array)$permissions),
+                    ENT_QUOTES,
+                ),
             ])
             ->addActionColumn(fn (mixed $id): string => $this->renderAction(
-                'aureum_room_types_edit',
+                'aureum_roles_edit',
                 ['identifier' => $id],
                 'pencil-simple-line',
+            ) . $this->renderAction(
+                'aureum_roles_delete',
+                ['identifier' => $id],
+                'trash',
             ))
         ;
     }

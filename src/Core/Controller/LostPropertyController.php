@@ -13,9 +13,11 @@ use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\LostPropertyLogService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
+#[IsGranted('aureum.module.lost_property.view')]
 class LostPropertyController extends AbstractController
 {
     public function __construct(
@@ -38,6 +40,7 @@ class LostPropertyController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->denyAccessUnlessGranted('aureum.module.lost_property.manage');
             $lostProperty = $form->getData();
 
             $lostProperty->setReportedBy($this->aureumService->getEmployee());
@@ -71,6 +74,7 @@ class LostPropertyController extends AbstractController
     }
 
     #[Route('/lostproperty/{id}/edit', name: 'lost_property_edit')]
+    #[IsGranted('aureum.module.lost_property.manage')]
     public function edit(Request $request, LostProperty $lostProperty): Response
     {
         $originalData = $this->logService->captureCurrentState($lostProperty);

@@ -112,6 +112,8 @@ class EmployeeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
+                $this->createEmployeeService->createEmployee($newEmployee);
+
                 $this->addFlash('success', 'Employee created successfully.');
 
                 return $this->redirectToRoute($redirectRoute, $redirectParams);

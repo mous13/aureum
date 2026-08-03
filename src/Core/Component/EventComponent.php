@@ -12,6 +12,7 @@ use Citadel\Aureum\Core\Service\AureumService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -20,6 +21,7 @@ use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent('Aureum\\EventCalendar', '@CitadelAureum/core/components/event_calendar.html.twig')]
+#[IsGranted('aureum.module.events.view')]
 class EventComponent extends AbstractController
 {
     use DefaultActionTrait;
@@ -199,7 +201,7 @@ class EventComponent extends AbstractController
 
     public function canEdit(): bool
     {
-        return $this->aureumService->getEmployee()->getRole()->canManageEvents();
+        return $this->isGranted('aureum.module.events.manage');
     }
 
     private function denyUnlessAllowed(): void

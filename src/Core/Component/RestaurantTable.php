@@ -14,11 +14,13 @@ use Citadel\Aureum\Core\Repository\RestaurantRepository;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Twig\Environment;
 
 #[AsLiveComponent('RestaurantTable', '@Forumify/components/table/table.html.twig')]
+#[IsGranted('aureum.module.restaurants.view')]
 class RestaurantTable extends AbstractDoctrineTable
 {
     #[LiveProp]

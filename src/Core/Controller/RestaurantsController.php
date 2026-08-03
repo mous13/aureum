@@ -15,9 +15,11 @@ use Citadel\Aureum\Core\Service\VotingService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 
 #[Route('/restaurants', name: 'restaurants_')]
+#[IsGranted('aureum.module.restaurants.view')]
 class RestaurantsController extends AbstractController
 {
     public function __construct(
@@ -41,6 +43,7 @@ class RestaurantsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->denyAccessUnlessGranted('aureum.module.restaurants.manage');
             $restaurant = $form->getData();
             $restaurant->setHotel($hotel);
             $this->restaurantRepository->save($restaurant);
@@ -56,6 +59,7 @@ class RestaurantsController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit')]
+    #[IsGranted('aureum.module.restaurants.manage')]
     public function edit(Request $request, Restaurant $restaurant): Response
     {
         $originalData = $this->logService->captureCurrentState($restaurant);

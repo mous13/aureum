@@ -9,7 +9,6 @@ use Citadel\Aureum\Core\Entity\Enum\BedSize;
 use Citadel\Aureum\Core\Entity\Enum\FeatureType;
 use Citadel\Aureum\Core\Entity\Enum\RoomView;
 use Citadel\Aureum\Core\Entity\Floor;
-use Citadel\Aureum\Core\Entity\FloorFeature;
 use Citadel\Aureum\Core\Entity\Room;
 use Citadel\Aureum\Core\Entity\RoomType as RoomTypeEntity;
 use Citadel\Aureum\Core\Repository\FloorFeatureRepository;
@@ -25,7 +24,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent('RoomsDirectory', '@CitadelAureum/core/components/rooms_directory.html.twig')]
-#[IsGranted('aureum.core.rooms.view')]
+#[IsGranted('aureum.module.rooms.view')]
 class RoomsDirectory
 {
     use DefaultActionTrait;

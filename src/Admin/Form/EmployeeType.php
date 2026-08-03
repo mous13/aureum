@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Admin\Form;
 
 use Citadel\Aureum\Admin\Form\DTO\NewEmployee;
-use Citadel\Aureum\Core\Entity\Enum\EmployeeRole;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Repository\HotelRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -78,9 +77,10 @@ class EmployeeType extends AbstractType
                 'label' => 'Full Name',
                 'help' => 'The employee\'s display name',
             ])
-            ->add('role', EnumType::class, [
-                'class' => EmployeeRole::class,
-                'label' => 'Role',
+            ->add('hotelAdmin', CheckboxType::class, [
+                'label' => 'Hotel admin',
+                'required' => false,
+                'help' => 'Hotel admins have every permission and manage roles and modules for their hotel.',
             ]);
 
         if ($hotelId !== null) {
