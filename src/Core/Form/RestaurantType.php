@@ -7,7 +7,6 @@ namespace Citadel\Aureum\Core\Form;
 use Citadel\Aureum\Core\Entity\Cuisine;
 use Citadel\Aureum\Core\Entity\Employee;
 use Citadel\Aureum\Core\Entity\Enum\DietaryRequirements;
-use Citadel\Aureum\Core\Entity\Enum\EmployeeRole;
 use Citadel\Aureum\Core\Entity\Enum\MealPeriods;
 use Citadel\Aureum\Core\Entity\Restaurant;
 use Citadel\Aureum\Core\Entity\Tag;
@@ -101,10 +100,9 @@ class RestaurantType extends AbstractType
                 'autocomplete' => true,
                 'query_builder' => function (EmployeeRepository $repository) use ($options) {
                     return $repository->createQueryBuilder('e')
-                        ->where('e.role = :role')
-                        ->andWhere('e.hotel = :hotel')
-                        ->setParameter('role', EmployeeRole::CONCIERGE)
-                        ->setParameter('hotel', $options['hotel']);
+                        ->where('e.hotel = :hotel')
+                        ->setParameter('hotel', $options['hotel'])
+                        ->orderBy('e.name', 'ASC');
                 },
                 'attr' => [
                     'placeholder' => 'Select Concierge, Leave Blank If No Connections',

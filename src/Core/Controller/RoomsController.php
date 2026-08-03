@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/rooms', name: 'rooms_')]
-#[IsGranted('aureum.core.rooms.view')]
+#[IsGranted('aureum.module.rooms.view')]
 class RoomsController extends AbstractController
 {
     public function __construct(

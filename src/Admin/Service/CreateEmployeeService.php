@@ -53,10 +53,6 @@ class CreateEmployeeService
             throw new \InvalidArgumentException('Employee name is required');
         }
 
-        if (empty($data->getRole())) {
-            throw new \InvalidArgumentException('Employee role is required');
-        }
-
         if ($data->getHotel() === null) {
             throw new \InvalidArgumentException('Hotel is required');
         }
@@ -77,7 +73,7 @@ class CreateEmployeeService
     {
         $employee = new Employee();
         $employee->setName($data->getName());
-        $employee->setRole($data->getRole());
+        $employee->setHotelAdmin($data->isHotelAdmin());
         $employee->setUser($user);
         $employee->setHotel($data->getHotel());
 

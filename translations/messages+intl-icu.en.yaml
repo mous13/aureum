@@ -26,3 +26,9 @@ aureum:
         crud:
           single: 'room type'
           plural: 'room types'
+  hotel_role:
+    admin:
+      hotel_role:
+        crud:
+          single: 'role'
+          plural: 'roles'

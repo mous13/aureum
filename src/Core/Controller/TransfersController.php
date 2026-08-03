@@ -14,10 +14,12 @@ use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\TransferLogService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\SecurityBundle\Security;
 
+#[IsGranted('aureum.module.transfers.view')]
 class TransfersController extends AbstractController
 {
     public function __construct(
@@ -38,10 +40,14 @@ class TransfersController extends AbstractController
         $transfers = $this->transferRepository->findAllOrderedByDate($hotel);
 
         $transfer = new Transfer();
-        $form = $this->createForm(TransferType::class, $transfer, ['userTimezone' => $userTimezone]);
+        $form = $this->createForm(TransferType::class, $transfer, [
+            'userTimezone' => $userTimezone,
+            'hotel' => $hotel,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->denyAccessUnlessGranted('aureum.module.transfers.manage');
             $transfer = $form->getData();
 
             $transfer->setHotel($hotel);
@@ -75,6 +81,7 @@ class TransfersController extends AbstractController
     }
 
     #[Route('/transfers/{id}/edit', name: 'transfers_edit')]
+    #[IsGranted('aureum.module.transfers.manage')]
     public function edit(Request $request, Transfer $transfer): Response
     {
 

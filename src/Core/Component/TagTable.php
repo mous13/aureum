@@ -7,11 +7,13 @@ namespace Citadel\Aureum\Core\Component;
 use Citadel\Aureum\Core\Entity\Tag;
 use Citadel\Aureum\Core\Repository\TagRepository;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Doctrine\ORM\QueryBuilder;
 
 #[AsLiveComponent('Aureum\TagTable', '@CitadelAureum/core/components/table.html.twig')]
+#[IsGranted('aureum.module.restaurants.manage')]
 class TagTable extends AbstractDoctrineTable
 {
     #[LiveProp]

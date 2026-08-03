@@ -8,10 +8,12 @@ use Citadel\Aureum\Core\Entity\Cuisine;
 use Citadel\Aureum\Core\Repository\CuisineRepository;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
 #[AsLiveComponent('Aureum\CuisineTable', '@CitadelAureum/core/components/table.html.twig')]
+#[IsGranted('aureum.module.restaurants.manage')]
 class CuisineTable extends AbstractDoctrineTable
 {
     #[LiveProp]

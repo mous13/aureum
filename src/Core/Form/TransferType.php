@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Form;
 
 use Citadel\Aureum\Core\Entity\Employee;
-use Citadel\Aureum\Core\Entity\Enum\EmployeeRole;
 use Citadel\Aureum\Core\Entity\Enum\TransferStatus;
 use Citadel\Aureum\Core\Entity\Transfer;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
@@ -27,6 +26,7 @@ class TransferType extends AbstractType
                 'userTimezone' => 'UTC',
             ]
         );
+        $resolver->setRequired('hotel');
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -75,10 +75,11 @@ class TransferType extends AbstractType
                 'class' => Employee::class,
                 'choice_label' => 'name',
                 'label' => '',
-                'query_builder' => function (EmployeeRepository $repository) {
+                'query_builder' => function (EmployeeRepository $repository) use ($options) {
                     return $repository->createQueryBuilder('e')
-                        ->where('e.role = :role')
-                        ->setParameter('role', EmployeeRole::CONCIERGE);
+                        ->where('e.hotel = :hotel')
+                        ->setParameter('hotel', $options['hotel'])
+                        ->orderBy('e.name', 'ASC');
                 },
                 'placeholder' => 'Select Concierge',
             ])

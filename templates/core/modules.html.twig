@@ -1,0 +1,15 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title_page %}Modules{% endblock %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">Modules</div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <div class="flex justify-end mt-4">
+                <button type="submit" class="btn btn-primary luxury-light square">Save</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
