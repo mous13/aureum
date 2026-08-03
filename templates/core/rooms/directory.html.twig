@@ -1,0 +1,11 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">
+            Rooms Directory
+        </div>
+        <div class="card-body">
+            {{ component('RoomsDirectory', { hotelId: hotelId }) }}
+        </div>
+    </div>
+{% endblock %}

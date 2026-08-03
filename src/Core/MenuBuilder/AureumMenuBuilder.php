@@ -20,7 +20,7 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
         $url = $this->urlGenerator->generate(...);
 
 
-        $general = new Menu('GENERAL', ['icon' => 'ph ph-squares-four'], [
+        $general = new Menu('GENERAL', ['icon' => ''], [
             new MenuItem('Packages', $url('aureum_packages'), [
                 'icon' => 'ph ph-package',
             ]),
@@ -37,9 +37,13 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
 
         $menu->addItem($general);
 
-        $directory = new Menu('DIRECTORY', ['icon' => 'ph-folder-open'], [
+        $directory = new Menu('DIRECTORY', ['icon' => ''], [
             new MenuItem('Restaurants', $url('aureum_restaurants_list'), [
                 'icon' => 'ph ph-bowl-steam',
+            ]),
+            new MenuItem('Rooms Directory', $url('aureum_rooms_directory'), [
+                'icon' => 'ph ph-door',
+                'permission' => 'aureum.core.rooms.view',
             ]),
             new MenuItem('Events', $url('aureum_events_calendar'), [
                 'icon' => 'ph ph-calendar',
@@ -48,7 +52,20 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
 
         $menu->addItem($directory);
 
-        $settings = new Menu('SETTINGS', ['icon' => 'ph ph-gear'], [
+        $manager = new Menu('MANAGER', ['icon' => ''], [
+            new MenuItem('Manage Floors', $url('aureum_floors_list'), [
+                'icon' => 'ph ph-blueprint',
+                'permission' => 'aureum.core.rooms.manage',
+            ]),
+            new MenuItem('Room Types', $url('aureum_room_types_list'), [
+                'icon' => 'ph ph-bed',
+                'permission' => 'aureum.core.rooms.manage',
+            ]),
+        ]);
+
+        $menu->addItem($manager);
+
+        $settings = new Menu('SETTINGS', ['icon' => ''], [
             new MenuItem('Settings', $url('forumify_core_settings'), [
                 'icon' => 'ph ph-gear',
             ]),

@@ -1,0 +1,23 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">Edit Floor: {{ floor.name }}</div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            <div class="flex gap-2 mb-2">
+                {{ form_widget(form.name) }}
+                {{ form_row(form.position) }}
+                {{ form_row(form.gridWidth) }}
+                {{ form_row(form.gridHeight) }}
+            </div>
+            <p class="text-small">
+                Shrinking the grid does not move existing rooms; rooms outside the new bounds will fail
+                validation next time they are edited.
+            </p>
+            <div class="flex justify-end">
+                <button type="submit" class="luxury-light square btn btn-primary">Save</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,269 @@
+.rooms-directory [hidden],
+.rooms-editor-layout [hidden] {
+    display: none !important;
+}
+
+.rooms-directory-layout {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.rooms-floor-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 10rem;
+}
+
+.floor-nav-btn.active {
+    font-weight: 600;
+    border-left: 3px solid var(--c-primary, #b08d4f);
+}
+
+.rooms-plan-wrapper {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+}
+
+.rooms-filters {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.rooms-match-count {
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+.rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-w), 2.5rem);
+    grid-template-rows: repeat(var(--grid-h), 2.5rem);
+    gap: 0;
+    background:
+            linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+    background-size: 2.5rem 2.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    width: fit-content;
+    user-select: none;
+}
+
+.rooms-grid.editable {
+    touch-action: none;
+}
+
+.room-cell {
+    position: relative;
+    background: var(--c-primary-light, #e8dcc8);
+    cursor: pointer;
+}
+
+.room-cell.edge-t { border-top: 2px solid var(--c-primary, #b08d4f); }
+.room-cell.edge-b { border-bottom: 2px solid var(--c-primary, #b08d4f); }
+.room-cell.edge-l { border-left: 2px solid var(--c-primary, #b08d4f); }
+.room-cell.edge-r { border-right: 2px solid var(--c-primary, #b08d4f); }
+
+.room-cell.dimmed {
+    background: rgba(0, 0, 0, 0.05);
+    filter: grayscale(1);
+    opacity: 0.5;
+}
+
+.room-cell:hover:not(.dimmed) {
+    filter: brightness(0.95);
+}
+
+.room-label {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.room-modal-details {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 1.5rem;
+    margin: 0;
+}
+
+.room-modal-details dt {
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+.room-modal-details dd {
+    margin: 0;
+    text-align: right;
+}
+
+.room-modal-details + .room-modal-details {
+    margin-top: 0.4rem;
+}
+
+.room-modal-comments {
+    margin-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 0.75rem;
+}
+
+.room-modal-comments h5 {
+    margin: 0 0 0.25rem;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+.room-modal-comments p {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+
+.rooms-editor-layout {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.rooms-editor-grid-wrapper {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+}
+
+.grid-cell {
+    cursor: crosshair;
+}
+
+.grid-cell.selected {
+    background: rgba(176, 141, 79, 0.35);
+    outline: 1px dashed var(--c-primary, #b08d4f);
+    outline-offset: -1px;
+}
+
+.rooms-editor-panel {
+    min-width: 16rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.rooms-editor-panel label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+}
+
+.rooms-editor-panel label.checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rooms-editor-error {
+    color: #b3261e;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+@media (max-width: 800px) {
+    .rooms-directory-layout,
+    .rooms-editor-layout {
+        flex-direction: column;
+    }
+
+    .rooms-floor-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+
+.feature-cell {
+    position: relative;
+    cursor: pointer;
+}
+
+.feature-hallway {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.feature-hallway.edge-t { border-top: 2px dashed rgba(0, 0, 0, 0.25); }
+.feature-hallway.edge-b { border-bottom: 2px dashed rgba(0, 0, 0, 0.25); }
+.feature-hallway.edge-l { border-left: 2px dashed rgba(0, 0, 0, 0.25); }
+.feature-hallway.edge-r { border-right: 2px dashed rgba(0, 0, 0, 0.25); }
+
+.feature-hallway.wall-t { border-top: 2px solid #000; }
+.feature-hallway.wall-b { border-bottom: 2px solid #000; }
+.feature-hallway.wall-l { border-left: 2px solid #000; }
+.feature-hallway.wall-r { border-right: 2px solid #000; }
+
+.feature-elevator {
+    background: rgba(90, 110, 140, 0.22);
+}
+
+.feature-elevator.edge-t { border-top: 2px solid rgba(70, 90, 120, 0.7); }
+.feature-elevator.edge-b { border-bottom: 2px solid rgba(70, 90, 120, 0.7); }
+.feature-elevator.edge-l { border-left: 2px solid rgba(70, 90, 120, 0.7); }
+.feature-elevator.edge-r { border-right: 2px solid rgba(70, 90, 120, 0.7); }
+
+.feature-storage {
+    background: rgba(120, 100, 60, 0.15);
+}
+
+.feature-storage.edge-t { border-top: 2px solid rgba(120, 100, 60, 0.5); }
+.feature-storage.edge-b { border-bottom: 2px solid rgba(120, 100, 60, 0.5); }
+.feature-storage.edge-l { border-left: 2px solid rgba(120, 100, 60, 0.5); }
+.feature-storage.edge-r { border-right: 2px solid rgba(120, 100, 60, 0.5); }
+
+.feature-stairs {
+    background: repeating-linear-gradient(
+            45deg,
+            rgba(0, 0, 0, 0.10) 0 5px,
+            rgba(0, 0, 0, 0.03) 5px 10px
+    );
+}
+
+.feature-stairs.edge-t { border-top: 2px solid rgba(0, 0, 0, 0.35); }
+.feature-stairs.edge-b { border-bottom: 2px solid rgba(0, 0, 0, 0.35); }
+.feature-stairs.edge-l { border-left: 2px solid rgba(0, 0, 0, 0.35); }
+.feature-stairs.edge-r { border-right: 2px solid rgba(0, 0, 0, 0.35); }
+
+.feature-label {
+    color: rgba(0, 0, 0, 0.55);
+    font-weight: 500;
+}
+
+
+.rooms-editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+
+.mode-btn.active {
+    border-color: var(--c-primary, #b08d4f);
+    color: var(--c-primary, #b08d4f);
+    font-weight: 600;
+}
+
+.rooms-editor-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}

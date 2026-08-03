@@ -20,3 +20,9 @@ aureum:
         crud:
           single: 'tag'
           plural: 'tags'
+  room_type:
+    admin:
+      room_type:
+        crud:
+          single: 'room type'
+          plural: 'room types'

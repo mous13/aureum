@@ -47,8 +47,16 @@ class Hotel
     #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Event::class, cascade: ['persist', 'remove'])]
     private Collection $events;
 
+    #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Floor::class, cascade: ['persist', 'remove'])]
+    private Collection $floors;
+
+    #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: RoomType::class, cascade: ['persist', 'remove'])]
+    private Collection $roomTypes;
+
     public function __construct()
     {
+        $this->floors = new ArrayCollection();
+        $this->roomTypes = new ArrayCollection();
         $this->employees = new ArrayCollection();
         $this->joinDate = new DateTime();
         $this->packages = new ArrayCollection();
@@ -154,5 +162,31 @@ class Hotel
     public function setEvents(Collection $events): void
     {
         $this->events = $events;
+    }
+
+    /**
+     * @return Collection<int, Floor>
+     */
+    public function getFloors(): Collection
+    {
+        return $this->floors;
+    }
+
+    public function setFloors(Collection $floors): void
+    {
+        $this->floors = $floors;
+    }
+
+    /**
+     * @return Collection<int, RoomType>
+     */
+    public function getRoomTypes(): Collection
+    {
+        return $this->roomTypes;
+    }
+
+    public function setRoomTypes(Collection $roomTypes): void
+    {
+        $this->roomTypes = $roomTypes;
     }
 }

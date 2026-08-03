@@ -28,6 +28,10 @@ class CitadelAureum extends AbstractForumifyPlugin
                     'view',
                     'manage',
                 ],
+                'rooms' => [
+                    'view',
+                    'manage',
+                ],
             ],
         ];
     }

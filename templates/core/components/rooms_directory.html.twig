@@ -1,0 +1,170 @@
+<div {{ attributes.defaults({ 'class': 'rooms-directory', 'data-controller': 'room-modal' }) }}>
+    <div class="rooms-directory-layout">
+        <nav class="rooms-floor-nav">
+            {% for floor in this.floors %}
+                <button
+                        type="button"
+                        class="btn btn-primary floor-nav-btn {{ this.floor and floor.id == this.floor.id ? 'active' : '' }}"
+                        data-live-action-param="selectFloor"
+                        data-live-floor-id-param="{{ floor.id }}"
+                        data-action="live#action"
+                >
+                    {{ floor.name }}
+                </button>
+            {% else %}
+                <p class="text-small">No floors have been created yet.</p>
+            {% endfor %}
+        </nav>
+
+        <div class="rooms-plan-wrapper">
+            <div class="rooms-filters">
+                <select data-model="roomTypeId">
+                    <option value="">Room Type</option>
+                    {% for roomType in this.roomTypes %}
+                        <option value="{{ roomType.id }}">{{ roomType.name }}</option>
+                    {% endfor %}
+                </select>
+                <select data-model="bathroomStyle">
+                    <option value="">Bathroom</option>
+                    {% for option in this.filterOptions.bathroomStyle %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
+                <select data-model="view">
+                    <option value="">View</option>
+                    {% for option in this.filterOptions.view %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
+                <select data-model="bedSize">
+                    <option value="">Bed Size</option>
+                    {% for option in this.filterOptions.bedSize %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
+                <select data-model="stairs">
+                    <option value="">Stairs: Any</option>
+                    <option value="1">With Stairs</option>
+                    <option value="0">Without Stairs</option>
+                </select>
+            </div>
+
+            <div>
+                {% if this.hasActiveFilters %}
+                    <button
+                            type="button"
+                            class="btn btn-link"
+                            data-live-action-param="clearFilters"
+                            data-action="live#action"
+                    >
+                        Clear
+                    </button>
+                    <span class="rooms-match-count">
+                        {{ this.matchCount }} of {{ this.totalCount }} rooms match
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if this.floor %}
+                <div
+                        class="rooms-grid"
+                        style="--grid-w: {{ this.floor.gridWidth }}; --grid-h: {{ this.floor.gridHeight }};"
+                >
+                    {% for tile in this.roomTiles %}
+                        {% set room = tile.room %}
+                        {% for cell in tile.cells %}
+                            <div
+                                    class="room-cell {{ cell.edges }} {{ tile.matches ? 'match' : 'dimmed' }}"
+                                    style="grid-column: {{ cell.x + 1 }}; grid-row: {{ cell.y + 1 }};"
+                                    data-action="click->room-modal#open"
+                                    data-kind="room"
+                                    data-title="Room {{ room.number }}"
+                                    data-room-type="{{ room.roomType.name }}"
+                                    data-room-bathroom="{{ room.bathroomStyle.value }}"
+                                    data-room-view="{{ room.view.value }}"
+                                    data-room-bed="{{ room.bedSize.value }}"
+                                    data-steps="{{ room.hasStairs ? 'Yes' : 'No' }}"
+                                    data-comments="{{ room.comments }}"
+                                    role="button"
+                                    tabindex="0"
+                                    aria-label="Room {{ room.number }}"
+                            >
+                                {% if cell.label %}
+                                    <span class="room-label">{{ room.number }}</span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+
+                    {% for tile in this.featureTiles %}
+                        {% set feature = tile.feature %}
+                        {% for cell in tile.cells %}
+                            <div
+                                    class="feature-cell feature-{{ feature.type.name|lower }} {{ cell.edges }}"
+                                    style="grid-column: {{ cell.x + 1 }}; grid-row: {{ cell.y + 1 }};"
+                                    data-action="click->room-modal#open"
+                                    data-kind="feature"
+                                    data-title="{{ feature.displayName }}"
+                                    data-feature-type="{{ feature.type.value }}"
+                                    data-steps="{{ feature.hasSteps ? 'Yes' : 'No' }}"
+                                    data-department="{{ feature.department }}"
+                                    data-contents="{{ feature.contents }}"
+                                    data-comments="{{ feature.comments }}"
+                                    role="button"
+                                    tabindex="0"
+                                    aria-label="{{ feature.displayName }}"
+                            >
+                                {% if cell.label %}
+                                    <span class="room-label feature-label">
+                                        {{ feature.displayName }}{% if feature.hasSteps %} <i class="ph ph-steps" title="Has steps"></i>{% endif %}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>31x32
+
+    {% embed '@Forumify/components/modal.html.twig' %}
+        {% block modalOpenButton %}
+            <button type="button" hidden aria-hidden="true" tabindex="-1"></button>
+        {% endblock %}
+        {% block modalContent %}
+            <div class="card">
+                <div class="card-title luxury" data-room-modal-target="title"></div>
+                <div class="card-body">
+                    <dl class="room-modal-details" data-room-modal-target="roomSection">
+                        <dt>Room Type</dt>
+                        <dd data-room-modal-target="type"></dd>
+                        <dt>Bathroom Style</dt>
+                        <dd data-room-modal-target="bathroom"></dd>
+                        <dt>View</dt>
+                        <dd data-room-modal-target="viewValue"></dd>
+                        <dt>Bed Size</dt>
+                        <dd data-room-modal-target="bed"></dd>
+                    </dl>
+                    <dl class="room-modal-details" data-room-modal-target="featureSection">
+                        <dt>Type</dt>
+                        <dd data-room-modal-target="featureType"></dd>
+                    </dl>
+                    <dl class="room-modal-details" data-room-modal-target="storageSection">
+                        <dt>Department</dt>
+                        <dd data-room-modal-target="department"></dd>
+                        <dt>Contents</dt>
+                        <dd data-room-modal-target="contents"></dd>
+                    </dl>
+                    <dl class="room-modal-details" data-room-modal-target="stepsSection">
+                        <dt>Steps</dt>
+                        <dd data-room-modal-target="steps"></dd>
+                    </dl>
+                    <div class="room-modal-comments" data-room-modal-target="commentsSection">
+                        <h5>Comments</h5>
+                        <p data-room-modal-target="comments"></p>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+</div>
