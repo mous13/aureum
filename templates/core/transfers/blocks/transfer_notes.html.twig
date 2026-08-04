@@ -54,7 +54,7 @@
                                                                 </li>
                                                             {% else %}
                                                                 <li>
-                                                                    <span class="text-bold">{{ field|title }}:</span> {{ change }}
+                                                                    <span class="text-bold">{{ field|title }}:</span> {{ change is iterable ? change|join(', ') : change }}
                                                                 </li>
                                                             {% endif %}
                                                         {% endfor %}
