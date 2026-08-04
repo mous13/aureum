@@ -26,13 +26,31 @@ abstract class AbstractLogRepository extends AbstractRepository
             ->getResult();
     }
 
-    public function findRecentByHotel(Hotel $hotel): array
+    public function findRecentByHotel(Hotel $hotel, ?int $limit = null): array
     {
-        return $this->createQueryBuilder('l')
+        $qb = $this->createQueryBuilder('l')
             ->where('l.hotel = :hotel')
             ->setParameter('hotel', $hotel)
-            ->orderBy('l.createdAt', 'DESC')
+            ->orderBy('l.createdAt', 'DESC');
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function countByHotelBetween(Hotel $hotel, \DateTime $from, \DateTime $to): int
+    {
+        return (int)$this->createQueryBuilder('l')
+            ->select('COUNT(l.id)')
+            ->where('l.hotel = :hotel')
+            ->andWhere('l.createdAt >= :from')
+            ->andWhere('l.createdAt < :to')
+            ->setParameter('hotel', $hotel)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
             ->getQuery()
-            ->getResult();
+            ->getSingleScalarResult();
     }
 }

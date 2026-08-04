@@ -1,4 +1,5 @@
 import "../styles/frontend.css";
+import "../styles/dashboard.css";
 import "../styles/events.css";
 import "../styles/rooms.css";
 import { Controller } from '@hotwired/stimulus';

@@ -1,34 +1,120 @@
 {% extends '@CitadelAureum/core/base.html.twig' %}
 {% block body %}
-    {% set pc = 0 %}
+    {% set tz = app.user.timeZone %}
+    {% set hour = 'now'|date('G', tz) %}
+    {% set greeting = hour < 12 ? 'Good morning' : (hour < 18 ? 'Good afternoon' : 'Good evening') %}
 
-    {% for package in employee.hotel.packages %}
+    <div class="au-dash">
+        <header class="au-dash-masthead">
+            <h1 class="au-dash-greeting">{{ greeting }}, {{ employee.name }}</h1>
+            <p class="au-dash-meta">
+                <strong>{{ employee.hotel.name }}</strong>
+                &middot; {{ 'now'|date('l j F Y', tz) }}
+            </p>
+        </header>
 
-    {% endfor %}
-    <div class="flex justify-center">
-        <div class=" w-20 text-center">
-                <div class="">{{ employee.name }}</div>
-                <div class="">{{ employee.hotel.name }}</div>
-        </div>
-    </div>
+        <div class="au-bento">
+            <section class="au-cell au-cell-attention" aria-labelledby="au-attention-title">
+                <h2 class="au-cell-title" id="au-attention-title">Needs attention</h2>
+                {% if attention is not empty %}
+                    <ul class="au-attention-list">
+                        {% for item in attention %}
+                            <li class="au-attention-item{{ item.count == 0 ? ' is-clear' }}">
+                                <a class="au-attention-link" href="{{ path(item.route) }}">
+                                    <span class="au-attention-count">{{ item.count }}</span>
+                                    <span class="au-attention-label">
+                                        <i class="ph {{ item.icon }}"></i>
+                                        {{ item.label }}
+                                    </span>
+                                    <span class="au-attention-go">{{ item.count > 0 ? 'Open' : 'Clear' }}</span>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="au-empty">No modules available to you yet.</p>
+                {% endif %}
+            </section>
 
-    <div class="flex justify-center">
-        <div class="box text-center m-10 w-10">
-            <div style="font-size:30px;"><i class="ph ph-package"></i></div>
-            <div>15</div>
-            <div class="text-small">Packages in Storage</div>
-        </div>
+            <section class="au-cell au-cell-pulse" aria-labelledby="au-pulse-title">
+                <h2 class="au-cell-title" id="au-pulse-title">This week</h2>
+                {% if pulse is not empty %}
+                    <div class="au-pulse">
+                        {% for stat in pulse %}
+                            <div class="au-pulse-stat">
+                                <div class="au-pulse-figure">{{ stat.thisWeek }}</div>
+                                <div class="au-pulse-module">{{ stat.module.label }}</div>
+                                <div class="au-pulse-delta{{ stat.delta > 0 ? ' is-up' }}">
+                                    {% if stat.delta > 0 %}
+                                        &uarr; {{ stat.delta }} vs last week
+                                    {% elseif stat.delta < 0 %}
+                                        &darr; {{ -stat.delta }} vs last week
+                                    {% else %}
+                                        level with last week
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="au-empty">No activity to report.</p>
+                {% endif %}
+            </section>
 
-        <div class="box text-center m-10 w-10">
-            <div style="font-size:30px;"><i class="ph ph-car"></i></div>
-            <div>15</div>
-            <div class="text-small">Transfers Confirmed</div>
-        </div>
+            <section class="au-cell au-cell-activity" aria-labelledby="au-activity-title">
+                <h2 class="au-cell-title" id="au-activity-title">Recent activity</h2>
+                {% if activity is not empty %}
+                    <ul class="au-activity-list">
+                        {% for entry in activity %}
+                            <li class="au-activity-item">
+                                <span class="au-activity-line">
+                                    <strong>{{ entry.log.performedBy.name }}</strong>
+                                    {{ entry.log.action.label|lower }}
+                                    &middot; {{ entry.module.label }}
+                                </span>
+                                <span class="au-activity-when">{{ entry.log.createdAt|date('j M · H:i', tz) }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="au-empty">Nothing has happened here yet.</p>
+                {% endif %}
+            </section>
 
-        <div class="box text-center m-10 w-10">
-            <div style="font-size:30px;"><i class="ph ph-article"></i></div>
-            <div>15</div>
-            <div class="text-small">15 Fines Not Completed</div>
+            <section class="au-cell au-cell-announce" aria-labelledby="au-announce-title">
+                <h2 class="au-cell-title" id="au-announce-title">Announcements</h2>
+                {% if announcements is not empty %}
+                    {% for announcement in announcements %}
+                        <article class="au-announcement is-{{ announcement.severity.value }}">
+                            <h3 class="au-announcement-title">{{ announcement.title }}</h3>
+                            <p class="au-announcement-body">{{ announcement.message }}</p>
+                            <p class="au-announcement-meta">
+                                {{ announcement.module.label }}
+                                &middot; {{ announcement.createdAt|date('j M', tz) }}
+                            </p>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <p class="au-empty">No announcements right now.</p>
+                {% endif %}
+            </section>
+
+            <section class="au-cell au-cell-events" aria-labelledby="au-events-title">
+                <h2 class="au-cell-title" id="au-events-title">Coming up</h2>
+                {% if events is not empty %}
+                    {% for event in events %}
+                        <div class="au-event">
+                            <span class="au-event-date">{{ event.start|date('j M', tz) }}</span>
+                            <span>
+                                <span class="au-event-name">{{ event.name }}</span>
+                                <span class="au-event-type">&middot; {{ event.type.label }}</span>
+                            </span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="au-empty">No upcoming events on the calendar.</p>
+                {% endif %}
+            </section>
         </div>
     </div>
 {% endblock %}
