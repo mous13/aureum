@@ -45,16 +45,16 @@
                                                                 <li>
                                                                     <strong>{{ field|title }}:</strong>
                                                                     <span style="text-decoration: line-through; color: #999;">
-                                                                    {{ change.old ?? 'empty' }}
+                                                                    {{ change.old is iterable ? change.old|join(', ') : (change.old ?? 'empty') }}
                                                                 </span>
                                                                     <i class="ph ph-arrow-right"></i>
                                                                     <span style="color: #28a745;">
-                                                                    {{ change.new ?? 'empty' }}
+                                                                    {{ change.new is iterable ? change.new|join(', ') : (change.new ?? 'empty') }}
                                                                 </span>
                                                                 </li>
                                                             {% else %}
                                                                 <li>
-                                                                    <span class="text-bold">{{ field|title }}:</span> {{ change }}
+                                                                    <span class="text-bold">{{ field|title }}:</span> {{ change is iterable ? change|join(', ') : change }}
                                                                 </li>
                                                             {% endif %}
                                                         {% endfor %}
