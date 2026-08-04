@@ -1,0 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap");
+
+:root {
+    --au-paper: var(--c-elevation-1, oklch(97% 0.005 85));
+    --au-paper-2: var(--c-hover, oklch(94% 0.006 85));
+    --au-rule: var(--border-color, oklch(88% 0.006 85));
+    --au-neutral: var(--c-text-secondary, oklch(52% 0.01 85));
+    --au-muted: var(--c-text-secondary, oklch(42% 0.01 80));
+    --au-ink: var(--c-text-primary, oklch(22% 0.01 70));
+    --au-accent: oklch(58% 0.13 85);
+    --au-accent-deep: oklch(44% 0.11 85);
+    --au-focus: oklch(52% 0.15 85);
+    --au-warning: var(--c-warning, oklch(52% 0.13 70));
+    --au-critical: var(--c-error, oklch(44% 0.14 25));
+    --au-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.05), 0 1px 5px 0 rgba(0, 0, 0, 0.05);
+
+    --au-font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+
+    --au-text-xs: 0.72rem;
+    --au-text-sm: 0.85rem;
+    --au-text-base: 1rem;
+    --au-text-md: 1.25rem;
+    --au-text-lg: 1.563rem;
+    --au-text-xl: 1.953rem;
+    --au-text-2xl: 2.441rem;
+
+    --au-space-2xs: 0.25rem;
+    --au-space-xs: 0.5rem;
+    --au-space-sm: 0.75rem;
+    --au-space-md: 1rem;
+    --au-space-lg: 1.5rem;
+    --au-space-xl: 2rem;
+    --au-space-2xl: 3rem;
+
+    --au-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --au-dur-short: 180ms;
+
+    --au-radius: var(--border-radius, 3px);
+}
