@@ -20,8 +20,8 @@
     --type-arts_culture:      oklch(54% 0.05 165);
     --type-family_seasonal:    oklch(58% 0.09 45);
 
-    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
-    --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 72px;
+    --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+    --space-5: 1.5rem; --space-6: 2rem; --space-7: 3rem; --space-8: 4.5rem;
 
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --dur-micro: 120ms;
@@ -45,10 +45,10 @@
 }
 .event-box__meta {
     display: flex; align-items: center; gap: var(--space-2);
-    min-height: 20px;
+    min-height: 1.25rem;
 }
 .event-box__mark {
-    width: 8px; height: 8px; border-radius: 1px; flex: none;
+    width: 0.5rem; height: 0.5rem; border-radius: 1px; flex: none;
     background: var(--type, var(--color-neutral));
 }
 .event-box__time {
@@ -77,7 +77,7 @@
     z-index: 100;
 }
 .modal-overlay__card {
-    min-width: 420px;
+    min-width: 26.25rem;
     max-width: 90vw;
 }
 
@@ -87,7 +87,7 @@
 }
 
 .day {
-    padding: 16px 10px;
+    padding: 1rem 0.625rem;
     border-right: var(--border, 1px solid black);
 }
 

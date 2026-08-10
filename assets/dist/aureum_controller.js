@@ -1,3 +1,4 @@
+import "../styles/scaling.css";
 import "../styles/frontend.css";
 import "../styles/dashboard.css";
 import "../styles/events.css";
