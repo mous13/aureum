@@ -17,7 +17,30 @@
             <a class="btn btn-link" href="{{ path('aureum_floors_list') }}">Back to floors</a>
         </div>
         <div class="card-body">
-            <div class="rooms-editor-toolbar">
+            <div class="rooms-view-toggle" role="group" aria-label="Editor view">
+                <button
+                        type="button"
+                        class="btn btn-primary view-toggle-btn"
+                        data-floor-editor-target="viewBtn"
+                        data-view="plan"
+                        data-action="floor-editor#setView"
+                        aria-pressed="true"
+                >
+                    <i class="ph ph-blueprint"></i> Floor Plan
+                </button>
+                <button
+                        type="button"
+                        class="btn btn-link view-toggle-btn"
+                        data-floor-editor-target="viewBtn"
+                        data-view="list"
+                        data-action="floor-editor#setView"
+                        aria-pressed="false"
+                >
+                    <i class="ph ph-list-bullets"></i> Rooms List
+                </button>
+            </div>
+
+            <div class="rooms-editor-toolbar" data-floor-editor-target="planOnly">
                 <span class="text-small">Paint mode:</span>
                 <button type="button" class="btn mode-btn active" data-floor-editor-target="modeBtn" data-mode="room" data-action="floor-editor#setMode">Room</button>
                 <button type="button" class="btn mode-btn" data-floor-editor-target="modeBtn" data-mode="Hallway" data-action="floor-editor#setMode">Hallway</button>
@@ -25,17 +48,45 @@
                 <button type="button" class="btn mode-btn" data-floor-editor-target="modeBtn" data-mode="Storage" data-action="floor-editor#setMode">Storage</button>
                 <button type="button" class="btn mode-btn" data-floor-editor-target="modeBtn" data-mode="Stairs" data-action="floor-editor#setMode">Stairs</button>
             </div>
-            <p class="text-small mb-2">
+            <p class="text-small mb-2" data-floor-editor-target="planOnly">
                 Click and drag on empty squares to paint, then fill in the details.
                 Click an existing room or feature to edit or delete it.
             </p>
             <div class="rooms-editor-layout">
-                <div class="rooms-editor-grid-wrapper">
+                <div class="rooms-editor-grid-wrapper" data-floor-editor-target="planOnly">
                     <div
                             class="rooms-grid editable"
                             data-floor-editor-target="grid"
                             style="--grid-w: {{ floor.gridWidth }}; --grid-h: {{ floor.gridHeight }};"
                     ></div>
+                </div>
+
+                <div class="rooms-list-view" data-floor-editor-target="listView" hidden>
+                    <input
+                            type="search"
+                            class="rooms-list-search"
+                            placeholder="Search room number or type"
+                            aria-label="Search rooms"
+                            data-floor-editor-target="listSearch"
+                            data-action="input->floor-editor#renderList"
+                    >
+                    <table class="table rooms-list-table">
+                        <thead>
+                        <tr>
+                            <th>Room</th>
+                            <th>Room Type</th>
+                            <th>Bathroom</th>
+                            <th>View</th>
+                            <th>Bed Size</th>
+                            <th>Stairs</th>
+                            <th>Interconnecting</th>
+                            <th>Last Let</th>
+                            <th>Comments</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody data-floor-editor-target="roomList"></tbody>
+                    </table>
                 </div>
 
                 <aside class="rooms-editor-panel" data-floor-editor-target="panel" hidden>

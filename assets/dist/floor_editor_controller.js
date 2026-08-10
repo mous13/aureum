@@ -7,6 +7,7 @@ export default class extends Controller {
         'interconnecting', 'lastLet', 'roomComments',
         'featureFields', 'featureLabel', 'hasSteps', 'stepsWrapper',
         'storageFields', 'department', 'contents', 'commentsWrapper', 'featureComments',
+        'viewBtn', 'planOnly', 'listView', 'listSearch', 'roomList',
     ];
 
     static values = {
@@ -27,6 +28,12 @@ export default class extends Controller {
         this.selection = new Set();
         this.editing = null;
         this.painting = false;
+        this.view = 'plan';
+
+        this.roomTypeNames = new Map();
+        for (const option of this.roomTypeTarget.options) {
+            if (option.value) this.roomTypeNames.set(Number(option.value), option.textContent.trim());
+        }
 
         this.renderGrid();
 
@@ -111,7 +118,83 @@ export default class extends Controller {
                 this.gridTarget.appendChild(cell);
             }
         }
+
+        this.renderList();
     }
+
+    setView(event) {
+        this.view = event.currentTarget.dataset.view === 'list' ? 'list' : 'plan';
+
+        this.viewBtnTargets.forEach((btn) => {
+            const active = btn.dataset.view === this.view;
+            btn.classList.toggle('btn-primary', active);
+            btn.classList.toggle('btn-link', !active);
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+
+        this.planOnlyTargets.forEach((el) => { el.hidden = this.view === 'list'; });
+        this.listViewTarget.hidden = this.view !== 'list';
+
+        if (this.view === 'list') this.renderList();
+    }
+
+    renderList() {
+        if (!this.hasRoomListTarget) return;
+
+        const filter = this.hasListSearchTarget ? this.listSearchTarget.value.trim().toLowerCase() : '';
+        const editing = this.editing?.kind === 'room' ? this.editing.shape : null;
+        const rooms = [...this.rooms, ...(editing !== null ? [editing] : [])]
+            .sort((a, b) => `${a.number}`.localeCompare(`${b.number}`, undefined, { numeric: true }));
+
+        this.roomListTarget.innerHTML = '';
+        let shown = 0;
+
+        for (const room of rooms) {
+            const typeName = this.roomTypeNames.get(room.roomTypeId) ?? '';
+            if (filter !== '' && !`${room.number} ${typeName}`.toLowerCase().includes(filter)) continue;
+
+            const row = document.createElement('tr');
+            if (room === editing) row.className = 'editing';
+            for (const value of [
+                room.number,
+                typeName,
+                room.bathroomStyle,
+                room.view,
+                room.bedSize,
+                room.hasStairs ? 'Yes' : '—',
+                room.interconnecting ? 'Yes' : '—',
+                room.lastLet ? 'Yes' : '—',
+                room.comments ?? '',
+            ]) {
+                const cell = document.createElement('td');
+                cell.textContent = value;
+                row.appendChild(cell);
+            }
+
+            const actions = document.createElement('td');
+            actions.className = 'text-right';
+            const editBtn = document.createElement('button');
+            editBtn.type = 'button';
+            editBtn.className = 'btn btn-link btn-small';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => this.editShape({ kind: 'room', shape: room }));
+            actions.appendChild(editBtn);
+            row.appendChild(actions);
+
+            this.roomListTarget.appendChild(row);
+            shown++;
+        }
+
+        if (shown === 0) {
+            const row = document.createElement('tr');
+            const cell = document.createElement('td');
+            cell.colSpan = 10;
+            cell.textContent = rooms.length === 0 ? 'No rooms on this floor yet.' : 'No rooms match your search.';
+            row.appendChild(cell);
+            this.roomListTarget.appendChild(row);
+        }
+    }
+
     edgeClasses(cells, x, y, occupied = null) {
         const has = (cx, cy) => cells.some(([rx, ry]) => rx === cx && ry === cy);
         let cls = '';
@@ -188,6 +271,12 @@ export default class extends Controller {
     }
 
     editShape(hit) {
+        if (this.editing !== null) {
+            this.editing.kind === 'room'
+                ? this.rooms.push(this.editing.shape)
+                : this.features.push(this.editing.shape);
+        }
+
         this.editing = hit;
         const { kind, shape } = hit;
         this.selection = new Set(shape.cells.map(([x, y]) => `${x}:${y}`));
