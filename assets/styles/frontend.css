@@ -42,13 +42,13 @@ body {
 }
 
 .navigation.luxury {
-    width:200px;
+    width:12.5rem;
 }
 
 .luxury .btn-link {
     border-radius:unset;
     padding:unset;
-    font-size:16px;
+    font-size:1rem;
 }
 .luxury .btn-link i {
     margin-right:unset;
@@ -59,22 +59,22 @@ body {
     display: flex;
     font-weight: 300;
     padding: var(--spacing-3) 0;
-    font-size:25px;
+    font-size:1.5625rem;
 }
 .header-logo span {
     font-family: 'Sageffine', sans-serif;
     color:#1a3f5f;
 }
 .header-logo img {
-    height: 32px;
-    width: 32px;
+    height: 2rem;
+    width: 2rem;
 }
 
 .navigation.luxury .navigation-section .navigation-cluster {
 
 }
 .navigation-cluster {
-    padding-bottom:25px;
+    padding-bottom:1.5625rem;
     border-radius:10px;
 }
 
@@ -85,14 +85,14 @@ body {
     font-weight:300;
     color: #ececec;
     background-color:#1a3f5f52;
-    padding:2px;
+    padding:0.125rem;
     box-shadow: 0 1px 0 rgba(26, 63, 95, 0.32);
 }
 .navigation .border-b {
     box-shadow: 0 1px 0 rgb(26, 63, 95);
 }
 .header {
-    height:56px;
+    height:3.5rem;
     box-shadow: 0 1px 0 rgb(236, 236, 236);
 }
 .overdue {
