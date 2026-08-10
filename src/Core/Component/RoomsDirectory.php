@@ -29,8 +29,14 @@ class RoomsDirectory
 {
     use DefaultActionTrait;
 
+    public const MODE_PLAN = 'plan';
+    public const MODE_LIST = 'list';
+
     #[LiveProp]
     public int $hotelId;
+
+    #[LiveProp(writable: true, url: true)]
+    public string $mode = self::MODE_PLAN;
 
     #[LiveProp(writable: true)]
     public ?int $floorId = null;
@@ -72,6 +78,17 @@ class RoomsDirectory
     public function selectFloor(#[LiveArg] int $floorId): void
     {
         $this->floorId = $floorId;
+    }
+
+    #[LiveAction]
+    public function setMode(#[LiveArg] string $mode): void
+    {
+        $this->mode = $mode === self::MODE_LIST ? self::MODE_LIST : self::MODE_PLAN;
+    }
+
+    public function isListMode(): bool
+    {
+        return $this->mode === self::MODE_LIST;
     }
 
     #[LiveAction]
