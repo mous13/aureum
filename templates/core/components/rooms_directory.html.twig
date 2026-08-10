@@ -1,4 +1,30 @@
 <div {{ attributes.defaults({ 'class': 'rooms-directory', 'data-controller': 'room-modal' }) }}>
+    <div class="rooms-view-toggle" role="group" aria-label="Rooms view">
+        <button
+                type="button"
+                class="btn {{ this.listMode ? 'btn-link' : 'btn-primary' }} view-toggle-btn"
+                aria-pressed="{{ this.listMode ? 'false' : 'true' }}"
+                data-action="live#action"
+                data-live-action-param="setMode"
+                data-live-mode-param="plan"
+        >
+            <i class="ph ph-blueprint"></i> Floor Plan
+        </button>
+        <button
+                type="button"
+                class="btn {{ this.listMode ? 'btn-primary' : 'btn-link' }} view-toggle-btn"
+                aria-pressed="{{ this.listMode ? 'true' : 'false' }}"
+                data-action="live#action"
+                data-live-action-param="setMode"
+                data-live-mode-param="list"
+        >
+            <i class="ph ph-list-bullets"></i> Rooms List
+        </button>
+    </div>
+
+    {% if this.listMode %}
+        {{ component('Aureum\\RoomTable', { hotelId: this.hotelId }) }}
+    {% else %}
     <div class="rooms-directory-layout">
         <nav class="rooms-floor-nav">
             {% for floor in this.floors %}
@@ -137,7 +163,8 @@
                 </div>
             {% endif %}
         </div>
-    </div>31x32
+    </div>
+    {% endif %}
 
     {% embed '@Forumify/components/modal.html.twig' %}
         {% block modalOpenButton %}
