@@ -3,6 +3,18 @@
     display: none !important;
 }
 
+.rooms-view-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.view-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
 .rooms-directory-layout {
     display: flex;
     gap: 1.5rem;
@@ -145,6 +157,30 @@
     flex: 1;
     min-width: 0;
     overflow-x: auto;
+}
+
+.rooms-list-view {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+}
+
+.rooms-list-search {
+    margin-bottom: 0.75rem;
+    max-width: 20rem;
+}
+
+.rooms-list-table td {
+    vertical-align: middle;
+}
+
+.rooms-list-table tr.editing {
+    background: rgba(176, 141, 79, 0.15);
+}
+
+.rooms-editor-toolbar[hidden],
+.rooms-editor-grid-wrapper[hidden] {
+    display: none !important;
 }
 
 .grid-cell {
