@@ -98,10 +98,11 @@ class RoomTable extends AbstractDoctrineTable
             ])
             ->addColumn('comments', [
                 'label' => 'Comments',
+                'class' => 'text-small',
                 'field' => 'comments',
                 'sortable' => false,
                 'searchable' => true,
-                'renderer' => $this->renderText(...),
+                'renderer' => $this->renderComments(...),
             ])
         ;
     }
@@ -114,6 +115,20 @@ class RoomTable extends AbstractDoctrineTable
     private function renderEnum(mixed $value): string
     {
         return $this->renderText($value instanceof \BackedEnum ? $value->value : $value);
+    }
+
+    private function renderComments(mixed $value): string
+    {
+        $comments = trim((string)($value ?? ''));
+        if ($comments === '') {
+            return '';
+        }
+
+        return sprintf(
+            '<span title="%s">%s</span>',
+            htmlspecialchars($comments, ENT_QUOTES),
+            htmlspecialchars(mb_strimwidth($comments, 0, 40, '…'), ENT_QUOTES),
+        );
     }
 
     private function renderBoolean(mixed $value): string
