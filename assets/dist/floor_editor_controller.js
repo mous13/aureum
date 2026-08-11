@@ -4,9 +4,9 @@ export default class extends Controller {
     static targets = [
         'grid', 'panel', 'panelTitle', 'error', 'deleteBtn', 'modeBtn',
         'roomFields', 'number', 'roomType', 'bathroomStyle', 'viewSelect', 'bedSize', 'hasStairs',
-        'interconnecting', 'lastLet', 'roomComments',
+        'interconnecting', 'lastLet',
         'featureFields', 'featureLabel', 'hasSteps', 'stepsWrapper',
-        'storageFields', 'department', 'contents', 'commentsWrapper', 'featureComments',
+        'storageFields', 'department', 'contents',
         'viewBtn', 'planOnly', 'listView', 'listSearch', 'roomList',
     ];
 
@@ -164,7 +164,6 @@ export default class extends Controller {
                 room.hasStairs ? 'Yes' : '—',
                 room.interconnecting ? 'Yes' : '—',
                 room.lastLet ? 'Yes' : '—',
-                room.comments ?? '',
             ]) {
                 const cell = document.createElement('td');
                 cell.textContent = value;
@@ -188,7 +187,7 @@ export default class extends Controller {
         if (shown === 0) {
             const row = document.createElement('tr');
             const cell = document.createElement('td');
-            cell.colSpan = 10;
+            cell.colSpan = 9;
             cell.textContent = rooms.length === 0 ? 'No rooms on this floor yet.' : 'No rooms match your search.';
             row.appendChild(cell);
             this.roomListTarget.appendChild(row);
@@ -259,7 +258,6 @@ export default class extends Controller {
     syncFeatureFields(type) {
         const isStorage = type === 'Storage';
         this.storageFieldsTarget.hidden = !isStorage;
-        this.commentsWrapperTarget.hidden = isStorage;
         this.stepsWrapperTarget.hidden = type !== 'Hallway';
     }
 
@@ -293,7 +291,6 @@ export default class extends Controller {
             this.hasStairsTarget.checked = shape.hasStairs;
             this.interconnectingTarget.checked = shape.interconnecting;
             this.lastLetTarget.checked = shape.lastLet;
-            this.roomCommentsTarget.value = shape.comments ?? '';
             this.rooms = this.rooms.filter((r) => r !== shape);
             this.openPanel(`Edit Room ${shape.number}`);
         } else {
@@ -303,7 +300,6 @@ export default class extends Controller {
             this.hasStepsTarget.checked = shape.hasSteps;
             this.departmentTarget.value = shape.department ?? '';
             this.contentsTarget.value = shape.contents ?? '';
-            this.featureCommentsTarget.value = shape.comments ?? '';
             this.syncFeatureFields(shape.type);
             this.features = this.features.filter((f) => f !== shape);
             this.openPanel(`Edit ${shape.label || shape.type}`);
@@ -330,10 +326,8 @@ export default class extends Controller {
         this.interconnectingTarget.checked = false;
         this.lastLetTarget.checked = false;
         this.hasStepsTarget.checked = false;
-        this.roomCommentsTarget.value = '';
         this.departmentTarget.value = '';
         this.contentsTarget.value = '';
-        this.featureCommentsTarget.value = '';
         this.panelTarget.hidden = true;
         this.renderGrid();
     }
@@ -355,7 +349,6 @@ export default class extends Controller {
                 hasStairs: this.hasStairsTarget.checked,
                 interconnecting: this.interconnectingTarget.checked,
                 lastLet: this.lastLetTarget.checked,
-                comments: this.roomCommentsTarget.value.trim() || null,
                 cells,
             };
             if (payload.number === '') return this.showError('Room number is required');
@@ -371,7 +364,6 @@ export default class extends Controller {
                 hasSteps: type === 'Stairs' ? true : this.hasStepsTarget.checked,
                 department: isStorage ? this.departmentTarget.value.trim() || null : null,
                 contents: isStorage ? this.contentsTarget.value.trim() || null : null,
-                comments: isStorage ? null : this.featureCommentsTarget.value.trim() || null,
                 cells,
             };
             await this.post(this.featureSaveUrlValue, payload, (id) => this.features.push({ ...payload, id }));
