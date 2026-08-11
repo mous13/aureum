@@ -34,9 +34,6 @@ class FloorFeature
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $contents = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $comments = null;
-
     #[ORM\Column(type: 'json')]
     private array $cells = [];
 
@@ -58,16 +55,6 @@ class FloorFeature
     public function setContents(?string $contents): void
     {
         $this->contents = $contents;
-    }
-
-    public function getComments(): ?string
-    {
-        return $this->comments;
-    }
-
-    public function setComments(?string $comments): void
-    {
-        $this->comments = $comments;
     }
 
     public function getFloor(): Floor

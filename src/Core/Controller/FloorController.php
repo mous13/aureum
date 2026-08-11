@@ -109,7 +109,6 @@ class FloorController extends AbstractController
             'hasStairs' => $room->hasStairs(),
             'interconnecting' => $room->isInterconnecting(),
             'lastLet' => $room->isLastLet(),
-            'comments' => $room->getComments(),
             'cells' => $room->getCells(),
         ], $this->roomRepository->findByFloor($floor));
 
@@ -120,7 +119,6 @@ class FloorController extends AbstractController
             'hasSteps' => $feature->hasSteps(),
             'department' => $feature->getDepartment(),
             'contents' => $feature->getContents(),
-            'comments' => $feature->getComments(),
             'cells' => $feature->getCells(),
         ], $this->floorFeatureRepository->findByFloor($floor));
 
@@ -183,7 +181,6 @@ class FloorController extends AbstractController
             $room->setHasStairs((bool)($data['hasStairs'] ?? false));
             $room->setInterconnecting((bool)($data['interconnecting'] ?? false));
             $room->setLastLet((bool)($data['lastLet'] ?? false));
-            $room->setComments($this->nullableText($data['comments'] ?? null));
             $room->setCells($cells);
         } catch (\ValueError) {
             return new JsonResponse(['error' => 'Invalid attribute value'], Response::HTTP_BAD_REQUEST);
@@ -247,9 +244,7 @@ class FloorController extends AbstractController
             if ($feature->getType()->usesStorageFields()) {
                 $feature->setDepartment($this->nullableText($data['department'] ?? null));
                 $feature->setContents($this->nullableText($data['contents'] ?? null));
-                $feature->setComments(null);
             } else {
-                $feature->setComments($this->nullableText($data['comments'] ?? null));
                 $feature->setDepartment(null);
                 $feature->setContents(null);
             }
