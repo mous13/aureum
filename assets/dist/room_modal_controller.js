@@ -14,9 +14,12 @@ export default class extends Controller {
     };
 
     connect() {
-        this.modal = this.element.querySelector('.modal');
         this.commentsUrl = null;
         this.editingId = null;
+    }
+
+    get modal() {
+        return this.element.querySelector('.modal');
     }
 
     open(event) {
