@@ -259,7 +259,10 @@ export default class extends Controller {
         button.type = 'button';
         button.className = `btn ${extraClass} btn-small`;
         button.textContent = label;
-        button.addEventListener('click', onClick);
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            onClick();
+        });
 
         return button;
     }
