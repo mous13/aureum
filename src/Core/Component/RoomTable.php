@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Component;
 
 use Citadel\Aureum\Core\Entity\Room;
+use Citadel\Aureum\Core\Service\RoomCommentService;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -23,6 +25,14 @@ class RoomTable extends AbstractDoctrineTable
 
     #[LiveProp]
     public int $hotelId;
+
+    private ?array $commentCounts = null;
+
+    public function __construct(
+        private readonly RoomCommentService $commentService,
+        private readonly UrlGeneratorInterface $urlGenerator,
+    ) {
+    }
 
     protected function getEntityClass(): string
     {
@@ -99,9 +109,9 @@ class RoomTable extends AbstractDoctrineTable
             ->addColumn('comments', [
                 'label' => 'Comments',
                 'class' => 'text-small',
-                'field' => 'comments',
+                'field' => 'id',
                 'sortable' => false,
-                'searchable' => true,
+                'searchable' => false,
                 'renderer' => $this->renderComments(...),
             ])
         ;
@@ -117,18 +127,31 @@ class RoomTable extends AbstractDoctrineTable
         return $this->renderText($value instanceof \BackedEnum ? $value->value : $value);
     }
 
-    private function renderComments(mixed $value): string
+    private function renderComments(mixed $value, Room $room): string
     {
-        $comments = trim((string)($value ?? ''));
-        if ($comments === '') {
-            return '';
-        }
+        $count = $this->getCommentCounts()[$room->getId()] ?? 0;
+        $url = $this->urlGenerator->generate('aureum_room_comments_list', [
+            'type' => 'room',
+            'id' => $room->getId(),
+        ]);
 
         return sprintf(
-            '<span title="%s">%s</span>',
-            htmlspecialchars($comments, ENT_QUOTES),
-            htmlspecialchars(mb_strimwidth($comments, 0, 40, '…'), ENT_QUOTES),
+            '<button type="button" class="btn btn-link btn-small rooms-list-comments"'
+            . ' data-action="click->room-modal#open" data-kind="room" data-comments-only="1"'
+            . ' data-title="Room %1$s" data-comments-url="%2$s" data-comment-count="%3$d"'
+            . ' aria-label="Comments on room %1$s">'
+            . '<i class="ph ph-chat-circle-dots"></i><span data-comment-count-text>%4$s</span>'
+            . '</button>',
+            htmlspecialchars($room->getNumber(), ENT_QUOTES),
+            htmlspecialchars($url, ENT_QUOTES),
+            $count,
+            $count > 0 ? $count : '',
         );
+    }
+
+    private function getCommentCounts(): array
+    {
+        return $this->commentCounts ??= $this->commentService->countsForHotel($this->hotelId);
     }
 
     private function renderBoolean(mixed $value): string

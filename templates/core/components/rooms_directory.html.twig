@@ -1,4 +1,9 @@
-<div {{ attributes.defaults({ 'class': 'rooms-directory', 'data-controller': 'room-modal' }) }}>
+<div {{ attributes.defaults({
+    'class': 'rooms-directory',
+    'data-controller': 'room-modal',
+    'data-room-modal-csrf-token-value': csrf_token(constant('Citadel\\Aureum\\Core\\Controller\\RoomCommentController::CSRF_TOKEN_ID')),
+    'data-room-modal-max-length-value': constant('Citadel\\Aureum\\Core\\Service\\RoomCommentService::MAX_LENGTH'),
+}) }}>
     <div class="rooms-view-toggle" role="group" aria-label="Rooms view">
         <button
                 type="button"
@@ -22,9 +27,11 @@
         </button>
     </div>
 
-    {% if this.listMode %}
+    <div class="rooms-directory-list"{% if not this.listMode %} hidden{% endif %}>
         {{ component('Aureum\\RoomTable', { hotelId: this.hotelId }) }}
-    {% else %}
+    </div>
+
+    {% if not this.listMode %}
     <div class="rooms-directory-layout">
         <nav class="rooms-floor-nav">
             {% for floor in this.floors %}
@@ -122,13 +129,19 @@
                                     data-steps="{{ room.hasStairs ? 'Yes' : 'No' }}"
                                     data-interconnecting="{{ room.interconnecting ? 'Yes' : 'No' }}"
                                     data-last-let="{{ room.lastLet ? 'Yes' : 'No' }}"
-                                    data-comments="{{ room.comments }}"
+                                    data-comments-url="{{ path('aureum_room_comments_list', { type: 'room', id: room.id }) }}"
+                                    data-comment-count="{{ tile.comments }}"
                                     role="button"
                                     tabindex="0"
                                     aria-label="Room {{ room.number }}"
                             >
                                 {% if cell.label %}
-                                    <span class="room-label" style="--label-span: {{ cell.span }};" title="{{ room.number }}">{{ room.number }}</span>
+                                    <span class="room-label" style="--label-span: {{ cell.span }};" title="{{ room.number }}">
+                                        {{- room.number -}}
+                                        {% if tile.comments > 0 %}
+                                            <i class="ph ph-chat-circle-dots comment-flag" title="{{ tile.comments }} comment{{ tile.comments == 1 ? '' : 's' }}"></i>
+                                        {% endif %}
+                                    </span>
                                 {% endif %}
                             </div>
                         {% endfor %}
@@ -147,7 +160,8 @@
                                     data-steps="{{ feature.hasSteps ? 'Yes' : 'No' }}"
                                     data-department="{{ feature.department }}"
                                     data-contents="{{ feature.contents }}"
-                                    data-comments="{{ feature.comments }}"
+                                    data-comments-url="{{ path('aureum_room_comments_list', { type: 'feature', id: feature.id }) }}"
+                                    data-comment-count="{{ tile.comments }}"
                                     role="button"
                                     tabindex="0"
                                     aria-label="{{ feature.displayName }}"
@@ -155,6 +169,9 @@
                                 {% if cell.label %}
                                     <span class="room-label feature-label" style="--label-span: {{ cell.span }};" title="{{ feature.displayName }}">
                                         {{ feature.displayName }}{% if feature.hasSteps %} <i class="ph ph-steps" title="Has steps"></i>{% endif %}
+                                        {% if tile.comments > 0 %}
+                                            <i class="ph ph-chat-circle-dots comment-flag" title="{{ tile.comments }} comment{{ tile.comments == 1 ? '' : 's' }}"></i>
+                                        {% endif %}
                                     </span>
                                 {% endif %}
                             </div>
@@ -202,9 +219,34 @@
                         <dt>Steps</dt>
                         <dd data-room-modal-target="steps"></dd>
                     </dl>
-                    <div class="room-modal-comments" data-room-modal-target="commentsSection">
-                        <h5>Comments</h5>
-                        <p data-room-modal-target="comments"></p>
+                    <div class="room-modal-comments">
+                        <h5>
+                            Comments
+                            <span class="comment-count" data-room-modal-target="count"></span>
+                        </h5>
+
+                        <ul class="comment-thread" data-room-modal-target="thread"></ul>
+
+                        <p class="comment-empty text-small" data-room-modal-target="empty" hidden>
+                            No comments yet — add the first one.
+                        </p>
+
+                        <form class="comment-composer" data-action="submit->room-modal#submit">
+                            <textarea
+                                    rows="2"
+                                    maxlength="{{ constant('Citadel\\Aureum\\Core\\Service\\RoomCommentService::MAX_LENGTH') }}"
+                                    placeholder="Write a comment…"
+                                    aria-label="Write a comment"
+                                    data-room-modal-target="input"
+                                    data-action="keydown->room-modal#composerKeydown"
+                            ></textarea>
+                            <div class="comment-composer-actions">
+                                <span class="text-small">Ctrl + Enter to post</span>
+                                <button type="submit" class="btn btn-primary luxury-light square btn-small">Comment</button>
+                            </div>
+                        </form>
+
+                        <p class="comment-error" data-room-modal-target="error" hidden></p>
                     </div>
                 </div>
             </div>

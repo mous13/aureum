@@ -47,21 +47,8 @@ class Room
     #[ORM\Column(type: 'boolean')]
     private bool $lastLet = false;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $comments = null;
-
     #[ORM\Column(type: 'json')]
     private array $cells = [];
-
-    public function getComments(): ?string
-    {
-        return $this->comments;
-    }
-
-    public function setComments(?string $comments): void
-    {
-        $this->comments = $comments;
-    }
 
     public function getFloor(): Floor
     {

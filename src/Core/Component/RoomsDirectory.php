@@ -16,6 +16,7 @@ use Citadel\Aureum\Core\Repository\FloorRepository;
 use Citadel\Aureum\Core\Repository\HotelRepository;
 use Citadel\Aureum\Core\Repository\RoomRepository;
 use Citadel\Aureum\Core\Repository\RoomTypeRepository;
+use Citadel\Aureum\Core\Service\RoomCommentService;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -65,12 +66,15 @@ class RoomsDirectory
     /** @var array<string, bool>|null */
     private ?array $occupancy = null;
 
+    private ?array $roomTiles = null;
+
     public function __construct(
         private readonly HotelRepository $hotelRepository,
         private readonly FloorRepository $floorRepository,
         private readonly RoomRepository $roomRepository,
         private readonly FloorFeatureRepository $floorFeatureRepository,
         private readonly RoomTypeRepository $roomTypeRepository,
+        private readonly RoomCommentService $commentService,
     ) {
     }
 
@@ -144,33 +148,42 @@ class RoomsDirectory
      * @return array<int, array{
      *     room: Room,
      *     matches: bool,
+     *     comments: int,
      *     cells: array<int, array{x: int, y: int, edges: string, label: bool, span: int}>
      * }>
      */
     public function getRoomTiles(): array
     {
+        if ($this->roomTiles !== null) {
+            return $this->roomTiles;
+        }
+
         $floor = $this->getFloor();
         if ($floor === null) {
-            return [];
+            return $this->roomTiles = [];
         }
 
         $occupied = $this->getFloorOccupancy($floor);
+        $rooms = $this->roomRepository->findByFloor($floor);
+        $commentCounts = $this->commentService->countsForRooms($rooms);
 
         $tiles = [];
-        foreach ($this->roomRepository->findByFloor($floor) as $room) {
+        foreach ($rooms as $room) {
             $tiles[] = [
                 'room' => $room,
                 'matches' => $this->matchesFilters($room),
+                'comments' => $commentCounts[$room->getId()] ?? 0,
                 'cells' => $this->computeCells($room->getCells(), $occupied, $floor->getGridWidth()),
             ];
         }
 
-        return $tiles;
+        return $this->roomTiles = $tiles;
     }
 
     /***
      * @return array<int, array{
      *     feature: FloorFeature,
+     *     comments: int,
      *     cells: array<int, array{x: int, y: int, edges: string, label: bool, span: int}>
      * }>
      */
@@ -182,11 +195,14 @@ class RoomsDirectory
         }
 
         $occupied = $this->getFloorOccupancy($floor);
+        $features = $this->floorFeatureRepository->findByFloor($floor);
+        $commentCounts = $this->commentService->countsForFeatures($features);
 
         $tiles = [];
-        foreach ($this->floorFeatureRepository->findByFloor($floor) as $feature) {
+        foreach ($features as $feature) {
             $tiles[] = [
                 'feature' => $feature,
+                'comments' => $commentCounts[$feature->getId()] ?? 0,
                 'cells' => $this->computeCells(
                     $feature->getCells(),
                     $occupied,
