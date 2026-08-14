@@ -27,9 +27,11 @@
         </button>
     </div>
 
-    {% if this.listMode %}
+    <div class="rooms-directory-list"{% if not this.listMode %} hidden{% endif %}>
         {{ component('Aureum\\RoomTable', { hotelId: this.hotelId }) }}
-    {% else %}
+    </div>
+
+    {% if not this.listMode %}
     <div class="rooms-directory-layout">
         <nav class="rooms-floor-nav">
             {% for floor in this.floors %}
