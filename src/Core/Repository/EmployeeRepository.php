@@ -22,7 +22,8 @@ class EmployeeRepository extends AbstractRepository
     public function createQueryBuilderForHotel(?int $hotelId = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('e')
-            ->leftJoin('e.hotel', 'h');
+            ->leftJoin('e.hotel', 'h')
+            ->andWhere('e.archivedAt IS NULL');
 
         if ($hotelId !== null) {
             $qb->andWhere('h.id = :hotelId')
@@ -39,6 +40,7 @@ class EmployeeRepository extends AbstractRepository
     {
         return $this->createQueryBuilder('e')
             ->where('e.hotel = :hotel')
+            ->andWhere('e.archivedAt IS NULL')
             ->setParameter('hotel', $hotel)
             ->orderBy('e.name', 'ASC')
             ->getQuery()
@@ -50,6 +52,7 @@ class EmployeeRepository extends AbstractRepository
         return (int) $this->createQueryBuilder('e')
             ->select('COUNT(e.id)')
             ->where('e.hotel = :hotel')
+            ->andWhere('e.archivedAt IS NULL')
             ->setParameter('hotel', $hotel)
             ->getQuery()
             ->getSingleScalarResult();

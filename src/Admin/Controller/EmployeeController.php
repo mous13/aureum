@@ -8,6 +8,7 @@ use Citadel\Aureum\Admin\Form\DTO\NewEmployee;
 use Citadel\Aureum\Admin\Form\EmployeeEditType;
 use Citadel\Aureum\Admin\Form\EmployeeType;
 use Citadel\Aureum\Admin\Service\CreateEmployeeService;
+use Citadel\Aureum\Core\Entity\Employee;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
 use Citadel\Aureum\Core\Repository\HotelRepository;
 use Forumify\Core\Exception\UserAlreadyExistsException;
@@ -176,22 +177,44 @@ class EmployeeController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', '_delete')]
+    #[Route('/delete/{id}', '_delete', methods: ['GET'])]
+    public function confirmDelete(int $id): Response
+    {
+        return $this->render('@CitadelAureum/admin/employee/delete.html.twig', [
+            'employee' => $this->findEmployeeOr404($id),
+        ]);
+    }
+
+    #[Route('/delete/{id}', '_delete_confirm', methods: ['POST'])]
     public function delete(Request $request, int $id): Response
     {
-        $employee = $this->employeeRepository->find($id);
-        if (!$request->get('confirmed')) {
-            return $this->render('@CitadelAureum/admin/employee/delete.html.twig', [
-                'employee' => $employee,
-            ]);
+        $employee = $this->findEmployeeOr404($id);
+
+        if (!$this->isCsrfTokenValid('aureum_employee_delete_' . $id, (string)$request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
         }
 
         $user = $employee->getUser();
 
-        $this->userRepository->remove($user);
-        $this->employeeRepository->remove($employee);
+        $employee->archive();
+        $this->employeeRepository->save($employee);
 
-        $this->addFlash('success', 'Employee Deleted.');
+        if ($user !== null) {
+            $this->userRepository->remove($user);
+        }
+
+        $this->addFlash('success', 'Employee offboarded. Their history has been kept for the audit trail.');
+
         return $this->redirectToRoute('aureum_admin_hotels_list');
+    }
+
+    private function findEmployeeOr404(int $id): Employee
+    {
+        $employee = $this->employeeRepository->find($id);
+        if ($employee === null || $employee->isArchived()) {
+            throw $this->createNotFoundException();
+        }
+
+        return $employee;
     }
 }

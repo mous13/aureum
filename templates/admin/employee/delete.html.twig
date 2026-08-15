@@ -1,8 +1,26 @@
 {% extends '@Forumify/admin/base.html.twig' %}
 {% block body %}
-    {% include '@Forumify/admin/components/confirm.html.twig' with {
-        warningText: 'You are about to delete this employee',
-        confirmPath: path('aureum_admin_employees_delete', { id: employee.id, confirmed: 1 }),
-        cancelPath: path('aureum_admin_hotels_list')
-    } only %}
+    <div class="box">
+        <h2 class="text-subtitle flex justify-center items-center mb-4">
+            <i class="ph ph-warning"></i> {{ 'warning'|trans }}!
+        </h2>
+        <div class="alert-warning mb-4">
+            <p class="mb-2">You are about to offboard <strong>{{ employee.name }}</strong>.</p>
+            <p class="mb-2">
+                Their login account will be deleted and they will lose access immediately.
+                Their name is kept against past packages, fines, transfers and lost property
+                so those records stay attributable.
+            </p>
+            <p>{{ 'warning_continue'|trans }}</p>
+        </div>
+        <form
+            method="post"
+            action="{{ path('aureum_admin_employees_delete_confirm', { id: employee.id }) }}"
+            class="flex justify-center items-center gap-2"
+        >
+            <input type="hidden" name="_token" value="{{ csrf_token('aureum_employee_delete_' ~ employee.id) }}">
+            <button type="submit" class="btn-primary">{{ 'confirm'|trans }}</button>
+            <a href="{{ path('aureum_admin_hotels_list') }}" class="btn-outlined">{{ 'cancel'|trans }}</a>
+        </form>
+    </div>
 {% endblock %}

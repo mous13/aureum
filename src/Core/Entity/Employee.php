@@ -13,7 +13,7 @@ use Forumify\Core\Entity\User;
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
 #[ORM\Table(name: 'aureum_employees')]
-class Employee
+class Employee implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 
@@ -24,8 +24,11 @@ class Employee
     private bool $hotelAdmin = false;
 
     #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    private User $user;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
+
+    #[ORM\Column(name: 'archived_at', type: 'datetime', nullable: true)]
+    private ?\DateTime $archivedAt = null;
 
     #[ORM\ManyToOne(targetEntity: Hotel::class, inversedBy: 'employees')]
     #[ORM\JoinColumn(name: 'hotel_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
@@ -68,14 +71,31 @@ class Employee
         $this->name = $name;
     }
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(User $user): void
+    public function setUser(?User $user): void
     {
         $this->user = $user;
+    }
+
+    public function getArchivedAt(): ?\DateTime
+    {
+        return $this->archivedAt;
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archivedAt !== null;
+    }
+
+    public function archive(): void
+    {
+        $this->user = null;
+        $this->archivedAt = new \DateTime();
+        $this->hotelRoles->clear();
     }
 
     public function getHotel(): Hotel
