@@ -54,7 +54,7 @@ class Fine implements HotelOwnedInterface, AnonymisableInterface
     #[ORM\ManyToOne(targetEntity: Employee::class)]
     private Employee $updatedBy;
 
-    #[ORM\ManyToOne(targetEntity: Hotel::class)]
+    #[ORM\ManyToOne(targetEntity: Hotel::class, inversedBy: 'fines')]
     private Hotel $hotel;
 
     #[ORM\Column(length: 255, nullable: true)]

@@ -31,6 +31,9 @@ class Employee implements HotelOwnedInterface
     #[ORM\Column(name: 'archived_at', type: 'datetime', nullable: true)]
     private ?\DateTime $archivedAt = null;
 
+    #[ORM\Column(name: 'must_change_password', type: 'boolean', options: ['default' => 0])]
+    private bool $mustChangePassword = false;
+
     #[ORM\ManyToOne(targetEntity: Hotel::class, inversedBy: 'employees')]
     #[ORM\JoinColumn(name: 'hotel_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private Hotel $hotel;
@@ -80,6 +83,16 @@ class Employee implements HotelOwnedInterface
     public function setUser(?User $user): void
     {
         $this->user = $user;
+    }
+
+    public function mustChangePassword(): bool
+    {
+        return $this->mustChangePassword;
+    }
+
+    public function setMustChangePassword(bool $mustChangePassword): void
+    {
+        $this->mustChangePassword = $mustChangePassword;
     }
 
     public function getArchivedAt(): ?\DateTime
