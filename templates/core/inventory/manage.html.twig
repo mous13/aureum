@@ -12,6 +12,8 @@
         .inv-tag { font-size: 0.75rem; padding: 0.1rem 0.45rem; border-radius: 999px; border: 1px solid rgba(0, 0, 0, 0.2); }
         .inv-tag-warn { font-size: 0.75rem; font-weight: 600; padding: 0.1rem 0.45rem; border-radius: 999px; border: 1px solid #d33; color: #d33; background: rgba(221, 51, 51, 0.08); }
         .inv-form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.75rem; align-items: end; }
+        .inv-table details > summary { cursor: pointer; color: inherit; }
+        .inv-edit-row { margin-top: 0.5rem; }
     </style>
 
     <div class="mb-4 flex flex-wrap items-center justify-between">
@@ -26,7 +28,7 @@
 
             <table class="inv-table">
                 <thead>
-                    <tr><th>Name</th><th>Position</th><th>Active</th></tr>
+                    <tr><th>Name</th><th>Position</th><th>Active</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
                     {% for inventory in inventories %}
@@ -34,9 +36,25 @@
                             <td>{{ inventory.name }}</td>
                             <td>{{ inventory.position }}</td>
                             <td>{{ inventory.active ? 'Yes' : 'No' }}</td>
+                            <td>
+                                <details>
+                                    <summary>Edit</summary>
+                                    <div class="inv-edit-row">
+                                        {{ form_start(inventoryEditForms[inventory.id]) }}
+                                            <input type="hidden" name="inventory_id" value="{{ inventory.id }}">
+                                            <div class="inv-form-row">
+                                                {{ form_row(inventoryEditForms[inventory.id].name) }}
+                                                {{ form_row(inventoryEditForms[inventory.id].position) }}
+                                                {{ form_row(inventoryEditForms[inventory.id].active) }}
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            </div>
+                                        {{ form_end(inventoryEditForms[inventory.id]) }}
+                                    </div>
+                                </details>
+                            </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="3" class="text-small">No inventories yet.</td></tr>
+                        <tr><td colspan="4" class="text-small">No inventories yet.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -57,7 +75,7 @@
 
             <table class="inv-table">
                 <thead>
-                    <tr><th>Inventory</th><th>Name</th><th>Position</th></tr>
+                    <tr><th>Inventory</th><th>Name</th><th>Position</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
                     {% for inventory in inventories %}
@@ -66,10 +84,26 @@
                                 <td>{{ inventory.name }}</td>
                                 <td>{{ category.name }}</td>
                                 <td>{{ category.position }}</td>
+                                <td>
+                                    <details>
+                                        <summary>Edit</summary>
+                                        <div class="inv-edit-row">
+                                            {{ form_start(categoryEditForms[category.id]) }}
+                                                <input type="hidden" name="inventory_category_id" value="{{ category.id }}">
+                                                <div class="inv-form-row">
+                                                    {{ form_row(categoryEditForms[category.id].inventory) }}
+                                                    {{ form_row(categoryEditForms[category.id].name) }}
+                                                    {{ form_row(categoryEditForms[category.id].position) }}
+                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                </div>
+                                            {{ form_end(categoryEditForms[category.id]) }}
+                                        </div>
+                                    </details>
+                                </td>
                             </tr>
                         {% endfor %}
                     {% else %}
-                        <tr><td colspan="3" class="text-small">No categories yet.</td></tr>
+                        <tr><td colspan="4" class="text-small">No categories yet.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -90,7 +124,7 @@
 
             <table class="inv-table">
                 <thead>
-                    <tr><th>Name</th><th>Type</th><th>Position</th></tr>
+                    <tr><th>Name</th><th>Type</th><th>Position</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
                     {% for location in locations %}
@@ -98,9 +132,26 @@
                             <td>{{ location.name }}</td>
                             <td><span class="inv-tag">{{ location.type.label }}</span></td>
                             <td>{{ location.position }}</td>
+                            <td>
+                                <details>
+                                    <summary>Edit</summary>
+                                    <div class="inv-edit-row">
+                                        {{ form_start(locationEditForms[location.id]) }}
+                                            <input type="hidden" name="storage_location_id" value="{{ location.id }}">
+                                            <div class="inv-form-row">
+                                                {{ form_row(locationEditForms[location.id].name) }}
+                                                {{ form_row(locationEditForms[location.id].type) }}
+                                                {{ form_row(locationEditForms[location.id].position) }}
+                                                {{ form_row(locationEditForms[location.id].active) }}
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            </div>
+                                        {{ form_end(locationEditForms[location.id]) }}
+                                    </div>
+                                </details>
+                            </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="3" class="text-small">No storage locations yet.</td></tr>
+                        <tr><td colspan="4" class="text-small">No storage locations yet.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -130,6 +181,7 @@
                         <th>Lead time</th>
                         <th>Buffer</th>
                         <th>Location</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -149,10 +201,32 @@
                                 </td>
                                 <td>{{ item.safetyBufferDays }} day{{ item.safetyBufferDays == 1 ? '' : 's' }}</td>
                                 <td>{{ item.location.name }}</td>
+                                <td>
+                                    <details>
+                                        <summary>Edit</summary>
+                                        <div class="inv-edit-row">
+                                            {{ form_start(itemEditForms[item.id]) }}
+                                                <input type="hidden" name="inventory_item_id" value="{{ item.id }}">
+                                                <div class="inv-form-row">
+                                                    {{ form_row(itemEditForms[item.id].category) }}
+                                                    {{ form_row(itemEditForms[item.id].location) }}
+                                                    {{ form_row(itemEditForms[item.id].name) }}
+                                                    {{ form_row(itemEditForms[item.id].unit) }}
+                                                    {{ form_row(itemEditForms[item.id].packSize) }}
+                                                    {{ form_row(itemEditForms[item.id].packLabel) }}
+                                                    {{ form_row(itemEditForms[item.id].leadTimeDays) }}
+                                                    {{ form_row(itemEditForms[item.id].safetyBufferDays) }}
+                                                    {{ form_row(itemEditForms[item.id].active) }}
+                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                </div>
+                                            {{ form_end(itemEditForms[item.id]) }}
+                                        </div>
+                                    </details>
+                                </td>
                             </tr>
                         {% endfor %}
                     {% else %}
-                        <tr><td colspan="7" class="text-small">No items yet.</td></tr>
+                        <tr><td colspan="8" class="text-small">No items yet.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>

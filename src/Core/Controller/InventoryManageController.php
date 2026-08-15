@@ -78,6 +78,37 @@ class InventoryManageController extends AbstractController
             'locations' => $locations,
         ]);
 
+        $locationEditForms = [];
+        foreach ($locations as $existingLocation) {
+            $locationEditForms[$existingLocation->getId()] = $this->createForm(StorageLocationType::class, $existingLocation, [
+                'action' => $this->generateUrl('aureum_inventory_location_save'),
+            ])->createView();
+        }
+
+        $inventoryEditForms = [];
+        foreach ($inventories as $existingInventory) {
+            $inventoryEditForms[$existingInventory->getId()] = $this->createForm(InventoryType::class, $existingInventory, [
+                'action' => $this->generateUrl('aureum_inventory_inventory_save'),
+            ])->createView();
+        }
+
+        $categoryEditForms = [];
+        $itemEditForms = [];
+        foreach ($categories as $existingCategory) {
+            $categoryEditForms[$existingCategory->getId()] = $this->createForm(InventoryCategoryType::class, $existingCategory, [
+                'action' => $this->generateUrl('aureum_inventory_category_save'),
+                'inventories' => $inventories,
+            ])->createView();
+
+            foreach ($existingCategory->getItems() as $existingItem) {
+                $itemEditForms[$existingItem->getId()] = $this->createForm(InventoryItemType::class, $existingItem, [
+                    'action' => $this->generateUrl('aureum_inventory_item_save'),
+                    'categories' => $categories,
+                    'locations' => $locations,
+                ])->createView();
+            }
+        }
+
         return $this->render('@CitadelAureum/core/inventory/manage.html.twig', [
             'inventories' => $inventories,
             'categories' => $categories,
@@ -86,6 +117,10 @@ class InventoryManageController extends AbstractController
             'inventoryForm' => $inventoryForm,
             'categoryForm' => $categoryForm,
             'itemForm' => $itemForm,
+            'locationEditForms' => $locationEditForms,
+            'inventoryEditForms' => $inventoryEditForms,
+            'categoryEditForms' => $categoryEditForms,
+            'itemEditForms' => $itemEditForms,
         ]);
     }
 
@@ -155,7 +190,12 @@ class InventoryManageController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $category = new InventoryCategory();
+        $id = $request->request->getInt('inventory_category_id');
+        $category = $id > 0 ? $this->categoryRepository->find($id) : new InventoryCategory();
+        if ($category === null || ($id > 0 && $category->getInventory()->getHotel()->getId() !== $hotel->getId())) {
+            throw $this->createNotFoundException();
+        }
+
         $form = $this->createForm(InventoryCategoryType::class, $category, [
             'inventories' => $this->inventoryRepository->findByHotel($hotel),
         ]);
