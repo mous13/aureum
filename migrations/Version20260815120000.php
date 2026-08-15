@@ -22,7 +22,7 @@ final class Version20260815120000 extends AbstractMigration
             name VARCHAR(255) NOT NULL,
             position INT NOT NULL,
             active TINYINT(1) NOT NULL,
-            INDEX IDX_inventories_hotel (hotel_id),
+            INDEX IDX_47F06BB53243BB18 (hotel_id),
             PRIMARY KEY (id)
         ) DEFAULT CHARACTER SET utf8mb4');
 
@@ -33,7 +33,7 @@ final class Version20260815120000 extends AbstractMigration
             type VARCHAR(32) NOT NULL,
             position INT NOT NULL,
             active TINYINT(1) NOT NULL,
-            INDEX IDX_locations_hotel (hotel_id),
+            INDEX IDX_A04C039E3243BB18 (hotel_id),
             PRIMARY KEY (id)
         ) DEFAULT CHARACTER SET utf8mb4');
 
@@ -42,7 +42,7 @@ final class Version20260815120000 extends AbstractMigration
             inventory_id INT NOT NULL,
             name VARCHAR(255) NOT NULL,
             position INT NOT NULL,
-            INDEX IDX_categories_inventory (inventory_id),
+            INDEX IDX_1D82C37D9EEA759 (inventory_id),
             PRIMARY KEY (id)
         ) DEFAULT CHARACTER SET utf8mb4');
 
@@ -57,8 +57,8 @@ final class Version20260815120000 extends AbstractMigration
             lead_time_days INT DEFAULT NULL,
             safety_buffer_days INT NOT NULL,
             active TINYINT(1) NOT NULL,
-            INDEX IDX_items_category (category_id),
-            INDEX IDX_items_location (location_id),
+            INDEX IDX_E81F4CB112469DE2 (category_id),
+            INDEX IDX_E81F4CB164D218E (location_id),
             PRIMARY KEY (id)
         ) DEFAULT CHARACTER SET utf8mb4');
 
@@ -69,11 +69,11 @@ final class Version20260815120000 extends AbstractMigration
             hotel_id INT NOT NULL,
             counted_at DATETIME NOT NULL,
             notes LONGTEXT DEFAULT NULL,
-            INDEX IDX_counts_inventory (inventory_id),
-            INDEX IDX_counts_employee (counted_by_id),
-            INDEX IDX_counts_hotel (hotel_id),
-            INDEX IDX_counts_hotel_date (hotel_id, counted_at),
-            INDEX IDX_counts_inventory_date (inventory_id, counted_at),
+            INDEX IDX_91A653529EEA759 (inventory_id),
+            INDEX IDX_91A653527D70F0D2 (counted_by_id),
+            INDEX IDX_91A653523243BB18 (hotel_id),
+            INDEX IDX_91A653523243BB185CF260CC (hotel_id, counted_at),
+            INDEX IDX_91A653529EEA7595CF260CC (inventory_id, counted_at),
             PRIMARY KEY (id)
         ) DEFAULT CHARACTER SET utf8mb4');
 
@@ -83,9 +83,9 @@ final class Version20260815120000 extends AbstractMigration
             item_id INT NOT NULL,
             location_id INT DEFAULT NULL,
             quantity INT NOT NULL,
-            INDEX IDX_lines_count (stock_count_id),
-            INDEX IDX_lines_item (item_id),
-            INDEX IDX_lines_location (location_id),
+            INDEX IDX_11ABEFB59CE6EC8 (stock_count_id),
+            INDEX IDX_11ABEFB5126F525E (item_id),
+            INDEX IDX_11ABEFB564D218E (location_id),
             UNIQUE INDEX uniq_count_item (stock_count_id, item_id),
             PRIMARY KEY (id)
         ) DEFAULT CHARACTER SET utf8mb4');
@@ -101,12 +101,12 @@ final class Version20260815120000 extends AbstractMigration
             quantity INT NOT NULL,
             occurred_at DATETIME NOT NULL,
             notes LONGTEXT DEFAULT NULL,
-            INDEX IDX_movements_item (item_id),
-            INDEX IDX_movements_employee (recorded_by_id),
-            INDEX IDX_movements_hotel (hotel_id),
-            INDEX IDX_movements_destination (destination_id),
-            INDEX IDX_movements_item_date (item_id, occurred_at),
-            INDEX IDX_movements_hotel_date (hotel_id, occurred_at),
+            INDEX IDX_75239D35126F525E (item_id),
+            INDEX IDX_75239D35D05A957B (recorded_by_id),
+            INDEX IDX_75239D353243BB18 (hotel_id),
+            INDEX IDX_75239D35816C6140 (destination_id),
+            INDEX IDX_75239D35126F525E87C03D1B (item_id, occurred_at),
+            INDEX IDX_75239D353243BB1887C03D1B (hotel_id, occurred_at),
             PRIMARY KEY (id)
         ) DEFAULT CHARACTER SET utf8mb4');
 
@@ -119,11 +119,11 @@ final class Version20260815120000 extends AbstractMigration
             changes JSON DEFAULT NULL,
             notes LONGTEXT DEFAULT NULL,
             created_at DATETIME NOT NULL,
-            INDEX IDX_item_logs_item (item_id),
-            INDEX IDX_item_logs_employee (performed_by_id),
-            INDEX IDX_item_logs_hotel (hotel_id),
-            INDEX IDX_item_logs_hotel_date (hotel_id, created_at),
-            INDEX IDX_item_logs_item_date (item_id, created_at),
+            INDEX IDX_22423328126F525E (item_id),
+            INDEX IDX_224233282E65C292 (performed_by_id),
+            INDEX IDX_224233283243BB18 (hotel_id),
+            INDEX IDX_224233283243BB188B8E8428 (hotel_id, created_at),
+            INDEX IDX_22423328126F525E8B8E8428 (item_id, created_at),
             PRIMARY KEY (id)
         ) DEFAULT CHARACTER SET utf8mb4');
 
