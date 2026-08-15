@@ -11,6 +11,7 @@ use Citadel\Aureum\Admin\Service\CreateEmployeeService;
 use Citadel\Aureum\Core\Entity\Employee;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
 use Citadel\Aureum\Core\Repository\HotelRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Forumify\Core\Exception\UserAlreadyExistsException;
 use Forumify\Core\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,6 +29,7 @@ class EmployeeController extends AbstractController
         private readonly EmployeeRepository $employeeRepository,
         private readonly UserRepository $userRepository,
         private readonly Security $security,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -195,13 +197,18 @@ class EmployeeController extends AbstractController
         }
 
         $user = $employee->getUser();
+        if ($user !== null) {
+            $this->entityManager->initializeObject($user);
+        }
 
         $employee->archive();
-        $this->employeeRepository->save($employee);
+        $this->employeeRepository->save($employee, false);
 
         if ($user !== null) {
-            $this->userRepository->remove($user);
+            $this->userRepository->remove($user, false);
         }
+
+        $this->employeeRepository->flush();
 
         $this->addFlash('success', 'Employee offboarded. Their history has been kept for the audit trail.');
 
