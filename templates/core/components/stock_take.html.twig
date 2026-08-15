@@ -17,7 +17,7 @@
         <select data-model="locationId">
             <option value="">All locations</option>
             {% for location in this.locations %}
-                <option value="{{ location.id }}">{{ location.name }}</option>
+                <option value="{{ location.id }}" {% if this.locationId == location.id %}selected{% endif %}>{{ location.name }}</option>
             {% endfor %}
         </select>
         <span class="text-small">{{ this.enteredCount }} item{{ this.enteredCount == 1 ? '' : 's' }} entered</span>
@@ -37,6 +37,7 @@
                         {% if row.item.packSize %}
                             <input type="number" min="0" inputmode="numeric"
                                    data-model="norender|entries[{{ row.item.id }}][packs]"
+                                   value="{{ this.entries[row.item.id].packs|default('') }}"
                                    placeholder="{{ row.item.packLabel ?? 'pack' }}">
                         {% else %}
                             <span class="text-small">&mdash;</span>
@@ -45,6 +46,7 @@
                     <td>
                         <input type="number" min="0" inputmode="numeric"
                                data-model="entries[{{ row.item.id }}][loose]"
+                               value="{{ this.entries[row.item.id].loose|default('') }}"
                                placeholder="{{ row.item.unit }}">
                     </td>
                     <td class="stock-take-total">
