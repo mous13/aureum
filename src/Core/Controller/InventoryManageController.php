@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Controller;
 
+use Citadel\Aureum\Core\Entity\Enum\StorageLocationType as StorageLocationTypeEnum;
 use Citadel\Aureum\Core\Entity\Inventory;
 use Citadel\Aureum\Core\Entity\InventoryCategory;
 use Citadel\Aureum\Core\Entity\InventoryItem;
@@ -48,6 +49,7 @@ class InventoryManageController extends AbstractController
         $inventories = $this->inventoryRepository->findByHotel($hotel);
         $categories = $this->categoryRepository->findByHotel($hotel);
         $locations = $this->locationRepository->findActiveByHotel($hotel);
+        $itemLocations = $this->locationRepository->findActiveByHotel($hotel, StorageLocationTypeEnum::BULK);
 
         $location = new StorageLocation();
         $location->setHotel($hotel);
@@ -75,7 +77,7 @@ class InventoryManageController extends AbstractController
         $itemForm = $this->createForm(InventoryItemType::class, $item, [
             'action' => $this->generateUrl('aureum_inventory_item_save'),
             'categories' => $categories,
-            'locations' => $locations,
+            'locations' => $itemLocations,
         ]);
 
         $locationEditForms = [];
@@ -104,7 +106,7 @@ class InventoryManageController extends AbstractController
                 $itemEditForms[$existingItem->getId()] = $this->createForm(InventoryItemType::class, $existingItem, [
                     'action' => $this->generateUrl('aureum_inventory_item_save'),
                     'categories' => $categories,
-                    'locations' => $locations,
+                    'locations' => $itemLocations,
                 ])->createView();
             }
         }
@@ -235,7 +237,7 @@ class InventoryManageController extends AbstractController
 
         $form = $this->createForm(InventoryItemType::class, $item, [
             'categories' => $this->categoryRepository->findByHotel($hotel),
-            'locations' => $this->locationRepository->findActiveByHotel($hotel),
+            'locations' => $this->locationRepository->findActiveByHotel($hotel, StorageLocationTypeEnum::BULK),
         ]);
         $form->handleRequest($request);
 
