@@ -12,12 +12,25 @@ accidental destruction all count.
 
 ## Owner
 
-**Named owner:** _to be filled in._
+**Named owner:** Oscar Ellis, Citadel Software Solutions.
 
-This procedure is not real until a person is named here. With a single
-administrator today that is Oscar Ellis by default, which also means there is no
-cover — if that person is unavailable, nothing in this document happens. Record
-a deputy before the platform takes on more hotels.
+**There is no deputy.** Oscar is the only person with production access, so if
+he is unavailable — on holiday, ill, or simply asleep during a US-hours
+incident — nothing in this procedure happens and the notification clock keeps
+running for every affected hotel.
+
+This is the single largest operational risk on the platform and it cannot be
+fixed in code. Two partial mitigations worth having before a second hotel signs:
+
+- A break-glass credential held somewhere trustworthy and sealed, so that
+  someone else can at least take the platform offline to contain a breach.
+- A written statement to hotels of the hours during which you can realistically
+  respond, so their expectations match reality and they are not relying on
+  cover that does not exist.
+
+An auditor will ask about continuity. "One person, no cover" is a finding, but
+an acknowledged and documented one is treated very differently from one
+discovered during the audit.
 
 ## What counts
 

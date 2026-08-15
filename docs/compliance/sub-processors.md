@@ -11,27 +11,43 @@ region, the purpose, and what data reaches it.
 Anything that can see guest data belongs here, including services that only see
 it incidentally, such as error tracking that captures request payloads.
 
-## Register
+**Last reviewed:** 15 August 2026
 
-**Status: incomplete.** The entries below are derived from configuration in the
-repository. The ones marked _to confirm_ need the production values.
+## Register
 
 | Sub-processor | Purpose | Data reaching it | Location | Status |
 |---|---|---|---|---|
-| Amazon Web Services (Lightsail) | Application and database hosting | All platform data, including guest names, contact details and addresses | _to confirm — check the instance region_ | Active |
-| _Mail provider_ | Transactional email: password resets and account verification | Employee names and email addresses. No guest data. | _to confirm_ | Active |
+| Amazon Web Services (Lightsail) | Application and database hosting | All platform data, including guest names, contact details and home addresses | **US — N. Virginia (us-east-1)** | Active |
+| Mailgun | Transactional email: password resets and account verification | Employee names and email addresses. No guest data. | _to confirm — US or EU region_ | Active |
 
-### Notes on each
+### Amazon Web Services
 
-**AWS Lightsail.** Region determines whether any international transfer is
-happening. If the instance is outside the UK/EEA, an assessment and a transfer
-mechanism are required before the arrangement is lawful. Confirm in the AWS
-console and record the answer here.
+The instance runs in **N. Virginia**, so all guest personal data is stored in the
+United States. MySQL runs in Docker on the instance itself rather than as a
+Lightsail managed database.
 
-**Mail provider.** Configured through `MAILER_DSN` in the host application's
-environment. Whichever service is behind it is a sub-processor and must be
-named. Only employee data passes through it; guests are never emailed by
-Aureum.
+Two consequences, both covered in detail in
+[international-transfers.md](international-transfers.md) and the audit report:
+
+1. This is a restricted transfer under UK/EU GDPR and needs a documented
+   transfer mechanism.
+2. Running the database on the instance means encryption at rest is not
+   something AWS is providing for you at the managed-database level. Confirm
+   what applies to your instance disk and snapshots.
+
+You need the AWS Data Processing Addendum in place — it is accepted through the
+AWS console and incorporates the Standard Contractual Clauses. Check whether
+you have already accepted it; if not, that is the first thing to fix.
+
+### Mailgun
+
+Only employee data passes through it; guests are never emailed by Aureum, so
+the risk is materially lower than the hosting transfer.
+
+Mailgun operates both US and EU infrastructure and the choice is made per
+account. **Confirm which region your account uses.** If it is US, the same
+transfer analysis applies, though to a much narrower dataset. Mailgun publishes
+a DPA — confirm it is accepted.
 
 ## Not currently used
 

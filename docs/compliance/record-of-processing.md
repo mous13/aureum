@@ -73,19 +73,26 @@ process it incidentally are the infrastructure and mail providers recorded in
 
 ## International transfers
 
-Determined by where the AWS Lightsail instance is hosted. **Confirm the region.**
-If it sits outside the UK/EEA, a transfer mechanism and assessment are required
-before the arrangement is lawful.
+Hosting is AWS Lightsail in **N. Virginia (us-east-1)**, so all guest personal
+data is stored in the United States. Where hotels or their guests are in the
+UK/EEA this is a restricted transfer requiring a documented mechanism, and none
+is in place yet. See [international-transfers.md](international-transfers.md).
+
+Mailgun handles transactional email; its region is unconfirmed. Only employee
+names and email addresses reach it.
 
 ## Security measures
 
 - Role-based access control per module, enforced server-side on every route.
 - A tenant boundary that prevents any employee reaching another hotel's records.
 - Passwords hashed with Symfony's managed hasher; login throttling enabled.
+- Employees set their own password at first sign-in; generated passwords are shown once and never stored.
 - CSRF protection on forms and on every destructive action.
 - Attributed audit log of every change, plus an access log of reads on guest modules.
 - Automated anonymisation of guest details past their retention period.
-- Baseline security response headers; session idle timeout.
+- Baseline security response headers; HTTPS enforced; one-hour session idle timeout.
 
-**Not yet in place:** multi-factor authentication; encryption at rest
-unconfirmed; backups weekly and never restore-tested.
+**Not yet in place:** multi-factor authentication. **Encryption at rest is not
+provided** — MySQL runs in Docker on the Lightsail instance disk rather than as
+a managed database. Backups are weekly and have never been restore-tested. A
+single administrator holds all production access, with no documented cover.

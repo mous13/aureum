@@ -22,8 +22,18 @@ creates the accounts and holds the credentials.
 |---|---|---|
 | [record-of-processing.md](record-of-processing.md) | Draft, derived from the schema | Required of processors by Art. 30(2) |
 | [retention-schedule.md](retention-schedule.md) | Draft | Backed by working code |
-| [breach-response.md](breach-response.md) | Draft | Needs a named owner before it is real |
-| [sub-processors.md](sub-processors.md) | **Incomplete** | Needs the production provider names filled in |
+| [breach-response.md](breach-response.md) | Draft | Owner named; no deputy exists |
+| [sub-processors.md](sub-processors.md) | Draft | Mailgun region still to confirm |
+| [international-transfers.md](international-transfers.md) | **Action required** | Hosting is in the US with no transfer mechanism in place |
+
+## Read this first
+
+Hosting is AWS Lightsail in **N. Virginia**. If your hotels or their guests are
+in the UK or EEA, guest data is crossing to the US with nothing documented to
+make that lawful. Nothing else in this directory matters as much.
+See [international-transfers.md](international-transfers.md) — the recommended
+fix is to move the instance to London, which also resolves the
+encryption-at-rest gap in the same migration.
 
 ## What is not here, and why
 
