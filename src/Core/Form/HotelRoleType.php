@@ -25,15 +25,27 @@ class HotelRoleType extends AbstractType
         $resolver->setRequired('hotel');
     }
 
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public static function permissionChoices(): array
+    {
+        $choices = [];
+        foreach (Module::cases() as $module) {
+            $actions = [];
+            foreach ($module->permissions() as $action) {
+                $actions[ucfirst($action)] = "{$module->value}.{$action}";
+            }
+
+            $choices[$module->getLabel()] = $actions;
+        }
+
+        return $choices;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $permissionChoices = [];
-        foreach (Module::cases() as $module) {
-            $permissionChoices[$module->getLabel()] = [
-                'View' => "{$module->value}.view",
-                'Manage' => "{$module->value}.manage",
-            ];
-        }
+        $permissionChoices = self::permissionChoices();
 
         $builder
             ->add('name', TextType::class, [
@@ -44,7 +56,7 @@ class HotelRoleType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'required' => false,
-                'help' => 'Manage includes View. Hotel admins (Managers) always have every permission.',
+                'help' => 'Each level includes the ones below it. Hotel admins (Managers) always have every permission.',
             ])
             ->add('employees', EntityType::class, [
                 'class' => Employee::class,
