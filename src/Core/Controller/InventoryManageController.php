@@ -186,7 +186,7 @@ class InventoryManageController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $isNew = $id === 0;
+        $isNew = $id <= 0;
         $originalData = $isNew ? [] : $this->itemLogService->captureCurrentState($item);
 
         if (!$isNew && $item->getCategory()->getInventory()->getHotel()->getId() !== $hotel->getId()) {
