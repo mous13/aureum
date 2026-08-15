@@ -13,6 +13,7 @@ enum Module: string
     case RESTAURANTS = 'restaurants';
     case ROOMS = 'rooms';
     case EVENTS = 'events';
+    case INVENTORY = 'inventory';
 
     public function getLabel(): string
     {
@@ -24,6 +25,7 @@ enum Module: string
             self::RESTAURANTS => 'Restaurants',
             self::ROOMS => 'Rooms Directory',
             self::EVENTS => 'Events',
+            self::INVENTORY => 'Inventory',
         };
     }
 
@@ -35,12 +37,24 @@ enum Module: string
     /**
      * @return array<string>
      */
+    public function permissions(): array
+    {
+        return match ($this) {
+            self::INVENTORY => ['view', 'count', 'manage'],
+            default => ['view', 'manage'],
+        };
+    }
+
+    /**
+     * @return array<string>
+     */
     public static function allPermissionKeys(): array
     {
         $keys = [];
         foreach (self::cases() as $module) {
-            $keys[] = "{$module->value}.view";
-            $keys[] = "{$module->value}.manage";
+            foreach ($module->permissions() as $action) {
+                $keys[] = "{$module->value}.{$action}";
+            }
         }
 
         return $keys;

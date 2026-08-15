@@ -41,7 +41,7 @@ class AureumVoter extends Voter
         [$moduleValue, $action] = $this->parse($attribute);
 
         $module = Module::tryFrom($moduleValue);
-        if ($module === null || !in_array($action, ['view', 'manage'], true)) {
+        if ($module === null || !in_array($action, $module->permissions(), true)) {
             return false;
         }
 
@@ -53,13 +53,14 @@ class AureumVoter extends Voter
             return true;
         }
 
-        foreach ($employee->getHotelRoles() as $role) {
-            if ($role->hasPermission("{$moduleValue}.{$action}")) {
-                return true;
-            }
+        $actions = $module->permissions();
+        $requiredIndex = array_search($action, $actions, true);
 
-            if ($action === 'view' && $role->hasPermission("{$moduleValue}.manage")) {
-                return true;
+        foreach ($employee->getHotelRoles() as $role) {
+            foreach (array_slice($actions, (int)$requiredIndex) as $grantingAction) {
+                if ($role->hasPermission("{$moduleValue}.{$grantingAction}")) {
+                    return true;
+                }
             }
         }
 
