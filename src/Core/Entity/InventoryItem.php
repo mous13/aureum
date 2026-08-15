@@ -163,7 +163,8 @@ class InventoryItem
 
         $parts = [];
         if ($packs > 0) {
-            $parts[] = "{$packs} {$this->packLabel}";
+            $packLabel = $this->packLabel ?? 'pack';
+            $parts[] = "{$packs} {$packLabel}";
         }
 
         if ($loose > 0 || $parts === []) {

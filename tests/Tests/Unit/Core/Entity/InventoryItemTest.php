@@ -68,4 +68,11 @@ class InventoryItemTest extends TestCase
         self::assertSame('-600 card', $item->describeQuantity(-600));
         self::assertSame('0 card', $item->describeQuantity(0));
     }
+
+    public function testDescribeQuantityFallsBackToPackWhenLabelIsMissing(): void
+    {
+        $item = $this->item(500, null);
+
+        self::assertSame('8 pack, 200 card', $item->describeQuantity(4200));
+    }
 }
