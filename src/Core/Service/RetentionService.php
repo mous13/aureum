@@ -11,6 +11,7 @@ use Citadel\Aureum\Core\Entity\LostProperty;
 use Citadel\Aureum\Core\Entity\Package;
 use Citadel\Aureum\Core\Entity\RetentionPolicy;
 use Citadel\Aureum\Core\Entity\Transfer;
+use Citadel\Aureum\Core\Repository\AccessLogRepository;
 use Citadel\Aureum\Core\Repository\RetentionPolicyRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,10 +43,32 @@ class RetentionService
         Module::TRANSFERS->value => ['aureum_logs_transfers', 'transfer_id'],
     ];
 
+    /**
+     * The access log is itself a record of what staff did, so it cannot be kept
+     * forever either. Twelve months is long enough to investigate an incident
+     * and answer a hotel asking who saw a guest's details.
+     */
+    public const ACCESS_LOG_MONTHS = 12;
+
     public function __construct(
         private readonly RetentionPolicyRepository $policyRepository,
+        private readonly AccessLogRepository $accessLogRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
+    }
+
+    public function pruneAccessLog(bool $dryRun = false): int
+    {
+        $cutoff = (new DateTime())->modify('-' . self::ACCESS_LOG_MONTHS . ' months');
+
+        if ($dryRun) {
+            return (int)$this->entityManager->getConnection()->fetchOne(
+                'SELECT COUNT(*) FROM aureum_logs_access WHERE accessed_at < :cutoff',
+                ['cutoff' => $cutoff->format('Y-m-d H:i:s')],
+            );
+        }
+
+        return $this->accessLogRepository->deleteOlderThan($cutoff);
     }
 
     public static function supports(Module $module): bool

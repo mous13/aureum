@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 
 class FineType extends AbstractType
 {
@@ -48,7 +49,10 @@ class FineType extends AbstractType
                 'label' => '',
                 'attr' => [
                     'placeholder' => 'Notes',
+                    'maxlength' => 255,
                 ],
+                'help' => 'Operational details only. Do not record health information or allegations of misconduct here.',
+                'constraints' => [new Length(max: 255)],
                 'required' => false,
             ])
         ->add('status', ChoiceType::class, [

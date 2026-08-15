@@ -47,7 +47,15 @@ final class HotelTenantSubscriber
         }
 
         foreach ($subjects as $subject) {
-            $subjectHotel = $subject->getHotel();
+            try {
+                $subjectHotel = $subject->getHotel();
+            } catch (\Error) {
+                // Hotel is a non-nullable property on most of these entities, so
+                // reading it before it is set raises an Error rather than
+                // returning null. Deny rather than let that surface as a 500.
+                throw new NotFoundHttpException();
+            }
+
             if ($subjectHotel === null || $subjectHotel->getId() !== $hotel->getId()) {
                 throw new NotFoundHttpException();
             }

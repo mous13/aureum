@@ -83,6 +83,10 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
                 'icon' => 'ph ph-clock-counter-clockwise',
                 'permission' => 'aureum.rbac.manage',
             ]),
+            new MenuItem('Access Log', $url('aureum_access_log'), [
+                'icon' => 'ph ph-eye',
+                'permission' => 'aureum.rbac.manage',
+            ]),
         ]);
 
         $menu->addItem($manager);

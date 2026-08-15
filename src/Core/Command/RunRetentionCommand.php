@@ -42,9 +42,16 @@ class RunRetentionCommand extends Command
         $io->title($dryRun ? 'Retention run (dry run)' : 'Retention run');
 
         $results = $this->retentionService->run($dryRun);
+        $accessLogs = $this->retentionService->pruneAccessLog($dryRun);
+
+        if ($accessLogs > 0) {
+            $io->text($dryRun
+                ? "{$accessLogs} access log entries would be removed."
+                : "{$accessLogs} access log entries removed.");
+        }
 
         if ($results === []) {
-            $io->success('Nothing has passed its retention period.');
+            $io->success('No guest records have passed their retention period.');
 
             return Command::SUCCESS;
         }
