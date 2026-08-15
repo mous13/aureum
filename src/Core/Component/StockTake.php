@@ -180,6 +180,7 @@ class StockTake
         }
 
         $this->entries = [];
+        $this->rows = null;
         $this->notes = '';
         $this->saved = true;
     }
