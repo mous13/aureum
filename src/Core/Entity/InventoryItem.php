@@ -150,6 +150,10 @@ class InventoryItem
 
     public function describeQuantity(int $baseUnits): string
     {
+        if ($baseUnits < 0) {
+            return "{$baseUnits} {$this->unit}";
+        }
+
         if ($this->packSize === null || $this->packSize < 1) {
             return "{$baseUnits} {$this->unit}";
         }

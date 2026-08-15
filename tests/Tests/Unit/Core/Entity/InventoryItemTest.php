@@ -60,4 +60,12 @@ class InventoryItemTest extends TestCase
 
         self::assertSame('12 roll', $item->describeQuantity(12));
     }
+
+    public function testDescribeQuantitySurfacesNegativesRaw(): void
+    {
+        $item = $this->item(500, 'box');
+
+        self::assertSame('-600 card', $item->describeQuantity(-600));
+        self::assertSame('0 card', $item->describeQuantity(0));
+    }
 }
