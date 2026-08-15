@@ -31,7 +31,7 @@ class InventoryMovementController extends AbstractController
     ) {
     }
 
-    #[Route('/inventory/movements', name: 'inventory_movements')]
+    #[Route('/inventory/movements', name: 'inventory_movements', methods: ['GET'])]
     public function index(): Response
     {
         $hotel = $this->aureumService->getHotel();
@@ -56,7 +56,7 @@ class InventoryMovementController extends AbstractController
         ]);
     }
 
-    #[Route('/inventory/movements', name: 'inventory_movement_save', methods: ['POST'])]
+    #[Route('/inventory/movements/record', name: 'inventory_movement_save', methods: ['POST'])]
     public function save(Request $request): Response
     {
         $hotel = $this->aureumService->getHotel();
