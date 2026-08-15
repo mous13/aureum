@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Controller;
 
+use Citadel\Aureum\Core\Entity\Enum\ReorderStatus;
 use Citadel\Aureum\Core\Repository\InventoryItemRepository;
 use Citadel\Aureum\Core\Repository\InventoryRepository;
 use Citadel\Aureum\Core\Repository\StockCountRepository;
 use Citadel\Aureum\Core\Service\AureumService;
+use Citadel\Aureum\Core\Service\Forecast\InventoryForecastService;
+use Citadel\Aureum\Core\Service\Forecast\ItemForecast;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,6 +24,7 @@ class InventoryController extends AbstractController
         private readonly InventoryRepository $inventoryRepository,
         private readonly InventoryItemRepository $itemRepository,
         private readonly StockCountRepository $stockCountRepository,
+        private readonly InventoryForecastService $forecastService,
     ) {
     }
 
@@ -52,7 +56,43 @@ class InventoryController extends AbstractController
     #[Route('/inventory/reorder', name: 'inventory_reorder')]
     public function reorder(): Response
     {
-        return $this->render('@CitadelAureum/core/inventory/index.html.twig', ['rows' => []]);
+        $hotel = $this->aureumService->getHotel();
+        if ($hotel === null) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $forecasts = $this->forecastService->forecastForHotel($hotel);
+
+        return $this->render('@CitadelAureum/core/inventory/reorder.html.twig', [
+            'groups' => self::groupByWeek($forecasts),
+            'actionable' => count(array_filter($forecasts, static fn (ItemForecast $f): bool => $f->status->isActionable())),
+            'needsReview' => count(array_filter($forecasts, static fn (ItemForecast $f): bool => $f->needsReview)),
+            'needsSetup' => count(array_filter($forecasts, static fn (ItemForecast $f): bool => $f->status === ReorderStatus::NEEDS_SETUP)),
+        ]);
+    }
+
+    /**
+     * @param array<ItemForecast> $forecasts
+     * @return array<string, array<ItemForecast>>
+     */
+    public static function groupByWeek(array $forecasts): array
+    {
+        $dated = [];
+        $undated = [];
+
+        foreach ($forecasts as $forecast) {
+            $week = $forecast->orderByWeek();
+            if ($week === null) {
+                $undated[] = $forecast;
+                continue;
+            }
+
+            $dated[$week][] = $forecast;
+        }
+
+        ksort($dated);
+
+        return $undated === [] ? $dated : $dated + ['' => $undated];
     }
 
     #[Route('/inventory/take/{id}', name: 'inventory_take', requirements: ['id' => '\d+'])]

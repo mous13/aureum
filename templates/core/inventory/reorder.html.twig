@@ -1,0 +1,109 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+
+{% block title %}Reorder{% endblock %}
+
+{% block body %}
+    <style>
+        .inv-summary { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+        .inv-stat { border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 10px; padding: 0.75rem 1rem; min-width: 9rem; }
+        .inv-stat strong { display: block; font-size: 1.4rem; }
+        .inv-week { margin-bottom: 2rem; }
+        .inv-week h2 { font-size: 1rem; margin: 0 0 0.5rem; }
+        .inv-table { width: 100%; border-collapse: collapse; }
+        .inv-table th, .inv-table td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
+        .inv-badge { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 999px; border: 1px solid; white-space: nowrap; }
+        .inv-badge-overdue, .inv-badge-order_now { color: #b91c1c; background: rgba(185, 28, 28, 0.08); border-color: #b91c1c; }
+        .inv-badge-due_soon { color: #92400e; background: rgba(146, 64, 14, 0.08); border-color: #92400e; }
+        .inv-badge-ok { color: #4b5563; background: rgba(75, 85, 99, 0.06); border-color: rgba(75, 85, 99, 0.3); }
+        .inv-badge-needs_setup, .inv-badge-no_data { color: #6b7280; background: rgba(107, 114, 128, 0.06); border-color: rgba(107, 114, 128, 0.25); }
+        .inv-flag { display: inline-block; font-size: 0.7rem; padding: 0.05rem 0.4rem; border-radius: 999px; border: 1px solid rgba(146, 64, 14, 0.5); color: #92400e; margin-left: 0.35rem; }
+        .inv-empty { border: 1px dashed rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 1.5rem; text-align: center; }
+    </style>
+
+    <div class="mb-4 flex flex-wrap items-center justify-between">
+        <h1 class="mb-0">Reorder</h1>
+        <a class="btn btn-link" href="{{ path('aureum_inventory') }}">Back to Inventory</a>
+    </div>
+
+    <div class="inv-summary">
+        <div class="inv-stat">
+            <strong>{{ actionable }}</strong>
+            <span class="text-small">Need ordering now</span>
+        </div>
+        <div class="inv-stat">
+            <strong>{{ needsReview }}</strong>
+            <span class="text-small">Need review</span>
+        </div>
+        <div class="inv-stat">
+            <strong>{{ needsSetup }}</strong>
+            <span class="text-small">Need setup</span>
+        </div>
+    </div>
+
+    {% if groups is empty %}
+        <div class="inv-empty">
+            <p>Nothing to reorder.</p>
+        </div>
+    {% else %}
+        {% for week, forecasts in groups %}
+            <div class="inv-week">
+                {% if week == '' %}
+                    <h2>No order date</h2>
+                {% else %}
+                    <h2>Week {{ week|split('-W')[1] }}, {{ week|split('-W')[0] }}</h2>
+                {% endif %}
+
+                <table class="inv-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Status</th>
+                            <th>Stock on hand</th>
+                            <th>Days of cover</th>
+                            <th>Order by</th>
+                            <th>Order</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for forecast in forecasts %}
+                            <tr>
+                                <td>
+                                    {{ forecast.item.name }}
+                                    {% if forecast.provisional %}
+                                        <span class="inv-flag" title="Based on only {{ forecast.usableIntervals }} usable interval{{ forecast.usableIntervals == 1 ? '' : 's' }} - treat as an estimate.">Provisional</span>
+                                    {% endif %}
+                                    {% if forecast.needsReview %}
+                                        <span class="inv-flag">Needs review</span>
+                                    {% endif %}
+                                </td>
+                                <td><span class="inv-badge inv-badge-{{ forecast.status.value }}">{{ forecast.status.label }}</span></td>
+                                <td>
+                                    {% if forecast.status.value == 'no_data' %}
+                                        <span class="text-small">Unknown</span>
+                                    {% else %}
+                                        {{ forecast.item.describeQuantity(forecast.stockOnHand) }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ forecast.daysOfCover is not null ? forecast.daysOfCover|round(1) ~ ' days' : '-' }}</td>
+                                <td>{{ forecast.orderBy is not null ? forecast.orderBy|date('j M Y') : '-' }}</td>
+                                <td>
+                                    {% if forecast.orderPacks is not null %}
+                                        {{ forecast.orderPacks }} {{ forecast.item.packLabel ?? 'pack' }}{{ forecast.orderPacks == 1 ? '' : 's' }}
+                                    {% elseif forecast.orderQuantity is not null %}
+                                        {{ forecast.orderQuantity }} {{ forecast.item.unit }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                    {% if forecast.status.value == 'needs_setup' %}
+                                        <br>
+                                        <a class="text-small" href="{{ path('aureum_inventory_manage') }}">Set lead time</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
