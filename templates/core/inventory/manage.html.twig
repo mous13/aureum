@@ -20,6 +20,70 @@
 
     <div class="inv-manage">
         <section class="inv-panel">
+            <h2>Inventories</h2>
+            <p class="text-small">Each inventory is a countable list, like General Stock or Housekeeping.</p>
+
+            <table class="inv-table">
+                <thead>
+                    <tr><th>Name</th><th>Position</th><th>Active</th></tr>
+                </thead>
+                <tbody>
+                    {% for inventory in inventories %}
+                        <tr>
+                            <td>{{ inventory.name }}</td>
+                            <td>{{ inventory.position }}</td>
+                            <td>{{ inventory.active ? 'Yes' : 'No' }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3" class="text-small">No inventories yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {{ form_start(inventoryForm) }}
+                <div class="inv-form-row mt-4">
+                    {{ form_row(inventoryForm.name) }}
+                    {{ form_row(inventoryForm.position) }}
+                    {{ form_row(inventoryForm.active) }}
+                    <button type="submit" class="btn btn-primary">Add inventory</button>
+                </div>
+            {{ form_end(inventoryForm) }}
+        </section>
+
+        <section class="inv-panel">
+            <h2>Categories</h2>
+            <p class="text-small">Categories group items within an inventory, like Essentials or Cleaning Supplies.</p>
+
+            <table class="inv-table">
+                <thead>
+                    <tr><th>Inventory</th><th>Name</th><th>Position</th></tr>
+                </thead>
+                <tbody>
+                    {% for inventory in inventories %}
+                        {% for category in inventory.categories %}
+                            <tr>
+                                <td>{{ inventory.name }}</td>
+                                <td>{{ category.name }}</td>
+                                <td>{{ category.position }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr><td colspan="3" class="text-small">No categories yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {{ form_start(categoryForm) }}
+                <div class="inv-form-row mt-4">
+                    {{ form_row(categoryForm.inventory) }}
+                    {{ form_row(categoryForm.name) }}
+                    {{ form_row(categoryForm.position) }}
+                    <button type="submit" class="btn btn-primary">Add category</button>
+                </div>
+            {{ form_end(categoryForm) }}
+        </section>
+
+        <section class="inv-panel">
             <h2>Storage locations</h2>
             <p class="text-small">Bulk stores are counted and drive the reorder forecast. Working locations — an office shelf, the corner shop — are destinations and are never forecast.</p>
 

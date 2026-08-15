@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Controller;
 
+use Citadel\Aureum\Core\Entity\Inventory;
+use Citadel\Aureum\Core\Entity\InventoryCategory;
 use Citadel\Aureum\Core\Entity\StorageLocation;
+use Citadel\Aureum\Core\Form\InventoryCategoryType;
+use Citadel\Aureum\Core\Form\InventoryType;
 use Citadel\Aureum\Core\Form\StorageLocationType;
+use Citadel\Aureum\Core\Repository\InventoryCategoryRepository;
 use Citadel\Aureum\Core\Repository\InventoryRepository;
 use Citadel\Aureum\Core\Repository\StorageLocationRepository;
 use Citadel\Aureum\Core\Service\AureumService;
@@ -21,6 +26,7 @@ class InventoryManageController extends AbstractController
     public function __construct(
         private readonly AureumService $aureumService,
         private readonly InventoryRepository $inventoryRepository,
+        private readonly InventoryCategoryRepository $categoryRepository,
         private readonly StorageLocationRepository $locationRepository,
     ) {
     }
@@ -33,6 +39,8 @@ class InventoryManageController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
+        $inventories = $this->inventoryRepository->findByHotel($hotel);
+
         $location = new StorageLocation();
         $location->setHotel($hotel);
 
@@ -40,10 +48,26 @@ class InventoryManageController extends AbstractController
             'action' => $this->generateUrl('aureum_inventory_location_save'),
         ]);
 
+        $inventory = new Inventory();
+        $inventory->setHotel($hotel);
+
+        $inventoryForm = $this->createForm(InventoryType::class, $inventory, [
+            'action' => $this->generateUrl('aureum_inventory_inventory_save'),
+        ]);
+
+        $category = new InventoryCategory();
+
+        $categoryForm = $this->createForm(InventoryCategoryType::class, $category, [
+            'action' => $this->generateUrl('aureum_inventory_category_save'),
+            'inventories' => $inventories,
+        ]);
+
         return $this->render('@CitadelAureum/core/inventory/manage.html.twig', [
-            'inventories' => $this->inventoryRepository->findByHotel($hotel),
+            'inventories' => $inventories,
             'locations' => $this->locationRepository->findActiveByHotel($hotel),
             'locationForm' => $locationForm,
+            'inventoryForm' => $inventoryForm,
+            'categoryForm' => $categoryForm,
         ]);
     }
 
@@ -71,6 +95,59 @@ class InventoryManageController extends AbstractController
             $this->addFlash('success', 'Storage location saved.');
         } else {
             $this->addFlash('error', 'Storage location could not be saved.');
+        }
+
+        return $this->redirectToRoute('aureum_inventory_manage');
+    }
+
+    #[Route('/inventory/manage/inventories', name: 'inventory_inventory_save', methods: ['POST'])]
+    public function saveInventory(Request $request): Response
+    {
+        $hotel = $this->aureumService->getHotel();
+        if ($hotel === null) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $id = $request->request->getInt('inventory_id');
+        $inventory = $id > 0 ? $this->inventoryRepository->find($id) : new Inventory();
+        if ($inventory === null || ($id > 0 && $inventory->getHotel()->getId() !== $hotel->getId())) {
+            throw $this->createNotFoundException();
+        }
+
+        $inventory->setHotel($hotel);
+
+        $form = $this->createForm(InventoryType::class, $inventory);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->inventoryRepository->save($inventory);
+            $this->addFlash('success', 'Inventory saved.');
+        } else {
+            $this->addFlash('error', 'Inventory could not be saved.');
+        }
+
+        return $this->redirectToRoute('aureum_inventory_manage');
+    }
+
+    #[Route('/inventory/manage/categories', name: 'inventory_category_save', methods: ['POST'])]
+    public function saveCategory(Request $request): Response
+    {
+        $hotel = $this->aureumService->getHotel();
+        if ($hotel === null) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $category = new InventoryCategory();
+        $form = $this->createForm(InventoryCategoryType::class, $category, [
+            'inventories' => $this->inventoryRepository->findByHotel($hotel),
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->categoryRepository->save($category);
+            $this->addFlash('success', 'Category saved.');
+        } else {
+            $this->addFlash('error', 'Category could not be saved.');
         }
 
         return $this->redirectToRoute('aureum_inventory_manage');
