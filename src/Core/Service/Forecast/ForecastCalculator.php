@@ -64,18 +64,21 @@ class ForecastCalculator
         $buffer = $item->getSafetyBufferDays();
         $daysOfCover = $stockOnHand / $rate;
         $daysUntilOrder = $daysOfCover - $leadTime - $buffer;
-        $orderBy = $now->modify(sprintf('%+d days', (int)floor($daysUntilOrder)));
+        $daysUntilOrderFloor = (int)floor($daysUntilOrder);
+        $orderBy = $now->modify(sprintf('%+d days', $daysUntilOrderFloor));
 
         $required = (int)ceil($rate * ($leadTime + $buffer + self::ORDER_HORIZON_DAYS)) - $stockOnHand;
         $orderQuantity = null;
         $orderPacks = null;
 
         if ($required > 0) {
-            $orderPacks = $item->packsFor($required);
             $packSize = $item->getPackSize();
-            $orderQuantity = $packSize !== null && $packSize > 0
-                ? $orderPacks * $packSize
-                : $required;
+            if ($packSize !== null && $packSize > 0) {
+                $orderPacks = $item->packsFor($required);
+                $orderQuantity = $orderPacks * $packSize;
+            } else {
+                $orderQuantity = $required;
+            }
         }
 
         return new ItemForecast(
@@ -86,7 +89,7 @@ class ForecastCalculator
             $orderBy,
             $orderQuantity,
             $orderPacks,
-            $this->statusFor($daysUntilOrder),
+            $this->statusFor($daysUntilOrderFloor),
             $needsReview,
             $provisional,
             $usable,
@@ -94,7 +97,7 @@ class ForecastCalculator
         );
     }
 
-    private function statusFor(float $daysUntilOrder): ReorderStatus
+    private function statusFor(int $daysUntilOrder): ReorderStatus
     {
         if ($daysUntilOrder < 0) {
             return ReorderStatus::OVERDUE;

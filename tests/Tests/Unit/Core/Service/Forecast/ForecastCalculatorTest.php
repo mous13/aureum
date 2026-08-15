@@ -181,7 +181,7 @@ class ForecastCalculatorTest extends TestCase
         );
 
         self::assertSame(240, $forecast->orderQuantity);
-        self::assertSame(240, $forecast->orderPacks);
+        self::assertNull($forecast->orderPacks);
     }
 
     public function testWellStockedItemNeedsNoOrder(): void
