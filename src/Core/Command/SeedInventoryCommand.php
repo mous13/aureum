@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Command;
 
 use Citadel\Aureum\Core\Entity\Enum\StorageLocationType;
+use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Entity\Inventory;
 use Citadel\Aureum\Core\Entity\InventoryCategory;
 use Citadel\Aureum\Core\Entity\InventoryItem;
@@ -14,6 +15,7 @@ use Citadel\Aureum\Core\Repository\InventoryCategoryRepository;
 use Citadel\Aureum\Core\Repository\InventoryItemRepository;
 use Citadel\Aureum\Core\Repository\InventoryRepository;
 use Citadel\Aureum\Core\Repository\StorageLocationRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -64,6 +66,7 @@ class SeedInventoryCommand extends Command
         private readonly InventoryCategoryRepository $categoryRepository,
         private readonly InventoryItemRepository $itemRepository,
         private readonly StorageLocationRepository $locationRepository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -78,7 +81,7 @@ class SeedInventoryCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $code = (string)$input->getArgument('hotelCode');
 
-        $hotel = $this->hotelRepository->findOneBy(['code' => $code]);
+        $hotel = $this->hotelRepository->findByCode($code);
         if ($hotel === null) {
             $io->error("No hotel found with code {$code}.");
 
@@ -93,6 +96,22 @@ class SeedInventoryCommand extends Command
             }
         }
 
+        $itemCount = $this->entityManager->wrapInTransaction(fn (): int => $this->seed($hotel));
+
+        $io->success(sprintf(
+            'Created %s for %s with %d categories and %d items.',
+            self::INVENTORY_NAME,
+            $code,
+            count(self::CATALOGUE),
+            $itemCount,
+        ));
+        $io->note('Lead times are unset. Every item will show as Needs Setup until they are filled in.');
+
+        return Command::SUCCESS;
+    }
+
+    private function seed(Hotel $hotel): int
+    {
         $location = null;
         foreach ($this->locationRepository->findActiveByHotel($hotel) as $existing) {
             if ($existing->getName() === self::DEFAULT_LOCATION) {
@@ -136,15 +155,6 @@ class SeedInventoryCommand extends Command
             }
         }
 
-        $io->success(sprintf(
-            'Created %s for %s with %d categories and %d items.',
-            self::INVENTORY_NAME,
-            $code,
-            count(self::CATALOGUE),
-            $itemCount,
-        ));
-        $io->note('Lead times are unset. Every item will show as Needs Setup until they are filled in.');
-
-        return Command::SUCCESS;
+        return $itemCount;
     }
 }
