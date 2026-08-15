@@ -55,9 +55,12 @@ class AureumVoter extends Voter
 
         $actions = $module->permissions();
         $requiredIndex = array_search($action, $actions, true);
+        if ($requiredIndex === false) {
+            return false;
+        }
 
         foreach ($employee->getHotelRoles() as $role) {
-            foreach (array_slice($actions, (int)$requiredIndex) as $grantingAction) {
+            foreach (array_slice($actions, $requiredIndex) as $grantingAction) {
                 if ($role->hasPermission("{$moduleValue}.{$grantingAction}")) {
                     return true;
                 }
