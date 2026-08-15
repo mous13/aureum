@@ -20,6 +20,7 @@ use Citadel\Aureum\Core\Repository\StorageLocationRepository;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\InventoryItemLogService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -82,32 +83,48 @@ class InventoryManageController extends AbstractController
 
         $locationEditForms = [];
         foreach ($locations as $existingLocation) {
-            $locationEditForms[$existingLocation->getId()] = $this->createForm(StorageLocationType::class, $existingLocation, [
-                'action' => $this->generateUrl('aureum_inventory_location_save'),
-            ])->createView();
+            $locationEditForms[$existingLocation->getId()] = $this->createNamedForm(
+                'storage_location_' . $existingLocation->getId(),
+                StorageLocationType::class,
+                $existingLocation,
+                ['action' => $this->generateUrl('aureum_inventory_location_save')],
+            )->createView();
         }
 
         $inventoryEditForms = [];
         foreach ($inventories as $existingInventory) {
-            $inventoryEditForms[$existingInventory->getId()] = $this->createForm(InventoryType::class, $existingInventory, [
-                'action' => $this->generateUrl('aureum_inventory_inventory_save'),
-            ])->createView();
+            $inventoryEditForms[$existingInventory->getId()] = $this->createNamedForm(
+                'inventory_' . $existingInventory->getId(),
+                InventoryType::class,
+                $existingInventory,
+                ['action' => $this->generateUrl('aureum_inventory_inventory_save')],
+            )->createView();
         }
 
         $categoryEditForms = [];
         $itemEditForms = [];
         foreach ($categories as $existingCategory) {
-            $categoryEditForms[$existingCategory->getId()] = $this->createForm(InventoryCategoryType::class, $existingCategory, [
-                'action' => $this->generateUrl('aureum_inventory_category_save'),
-                'inventories' => $inventories,
-            ])->createView();
+            $categoryEditForms[$existingCategory->getId()] = $this->createNamedForm(
+                'inventory_category_' . $existingCategory->getId(),
+                InventoryCategoryType::class,
+                $existingCategory,
+                [
+                    'action' => $this->generateUrl('aureum_inventory_category_save'),
+                    'inventories' => $inventories,
+                ],
+            )->createView();
 
             foreach ($existingCategory->getItems() as $existingItem) {
-                $itemEditForms[$existingItem->getId()] = $this->createForm(InventoryItemType::class, $existingItem, [
-                    'action' => $this->generateUrl('aureum_inventory_item_save'),
-                    'categories' => $categories,
-                    'locations' => $itemLocations,
-                ])->createView();
+                $itemEditForms[$existingItem->getId()] = $this->createNamedForm(
+                    'inventory_item_' . $existingItem->getId(),
+                    InventoryItemType::class,
+                    $existingItem,
+                    [
+                        'action' => $this->generateUrl('aureum_inventory_item_save'),
+                        'categories' => $categories,
+                        'locations' => $itemLocations,
+                    ],
+                )->createView();
             }
         }
 
@@ -142,7 +159,8 @@ class InventoryManageController extends AbstractController
 
         $location->setHotel($hotel);
 
-        $form = $this->createForm(StorageLocationType::class, $location);
+        $formName = $id > 0 ? 'storage_location_' . $id : 'storage_location';
+        $form = $this->createNamedForm($formName, StorageLocationType::class, $location);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -171,7 +189,8 @@ class InventoryManageController extends AbstractController
 
         $inventory->setHotel($hotel);
 
-        $form = $this->createForm(InventoryType::class, $inventory);
+        $formName = $id > 0 ? 'inventory_' . $id : 'inventory';
+        $form = $this->createNamedForm($formName, InventoryType::class, $inventory);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -198,7 +217,8 @@ class InventoryManageController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $form = $this->createForm(InventoryCategoryType::class, $category, [
+        $formName = $id > 0 ? 'inventory_category_' . $id : 'inventory_category';
+        $form = $this->createNamedForm($formName, InventoryCategoryType::class, $category, [
             'inventories' => $this->inventoryRepository->findByHotel($hotel),
         ]);
         $form->handleRequest($request);
@@ -235,7 +255,8 @@ class InventoryManageController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $form = $this->createForm(InventoryItemType::class, $item, [
+        $formName = $isNew ? 'inventory_item' : 'inventory_item_' . $id;
+        $form = $this->createNamedForm($formName, InventoryItemType::class, $item, [
             'categories' => $this->categoryRepository->findByHotel($hotel),
             'locations' => $this->locationRepository->findActiveByHotel($hotel, StorageLocationTypeEnum::BULK),
         ]);
@@ -256,5 +277,13 @@ class InventoryManageController extends AbstractController
         }
 
         return $this->redirectToRoute('aureum_inventory_manage');
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    private function createNamedForm(string $name, string $type, mixed $data, array $options = []): FormInterface
+    {
+        return $this->container->get('form.factory')->createNamed($name, $type, $data, $options);
     }
 }

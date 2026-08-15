@@ -101,7 +101,7 @@ class StockTake
 
         $inventory = $this->getInventory();
         $hotel = $this->aureumService->getHotel();
-        if ($inventory === null || $hotel === null) {
+        if ($inventory === null || $hotel === null || $inventory->getHotel()->getId() !== $hotel->getId()) {
             return $this->rows = [];
         }
 
@@ -152,7 +152,7 @@ class StockTake
 
         $employee = $this->aureumService->getEmployee();
         $inventory = $this->getInventory();
-        if ($employee === null || $inventory === null) {
+        if ($employee === null || $inventory === null || $inventory->getHotel()->getId() !== $employee->getHotel()->getId()) {
             return;
         }
 
