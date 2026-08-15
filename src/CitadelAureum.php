@@ -32,6 +32,11 @@ class CitadelAureum extends AbstractForumifyPlugin
                     'view',
                     'manage',
                 ],
+                'inventory' => [
+                    'view',
+                    'count',
+                    'manage',
+                ],
             ],
         ];
     }
