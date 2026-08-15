@@ -46,6 +46,9 @@ class StockTake
     #[LiveProp]
     public bool $saved = false;
 
+    #[LiveProp]
+    public bool $nothingToSave = false;
+
     /**
      * @var array<int, array{item: InventoryItem, onHand: int, entered: int, rising: bool}>|null
      */
@@ -144,6 +147,9 @@ class StockTake
     #[LiveAction]
     public function save(): void
     {
+        $this->saved = false;
+        $this->nothingToSave = false;
+
         $employee = $this->aureumService->getEmployee();
         $inventory = $this->getInventory();
         if ($employee === null || $inventory === null) {
@@ -160,6 +166,8 @@ class StockTake
         }
 
         if ($lines === []) {
+            $this->nothingToSave = true;
+
             return;
         }
 

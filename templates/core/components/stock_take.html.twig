@@ -11,6 +11,8 @@
 
     {% if this.saved %}
         <div class="alert-success stock-take-saved"><p>Stock take saved.</p></div>
+    {% elseif this.nothingToSave %}
+        <div class="alert-warning stock-take-saved"><p>Nothing to save — enter a count before saving.</p></div>
     {% endif %}
 
     <div class="stock-take-toolbar">
