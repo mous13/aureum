@@ -60,11 +60,4 @@ class InventoryController extends AbstractController
     {
         return $this->redirectToRoute('aureum_inventory');
     }
-
-    #[Route('/inventory/manage', name: 'inventory_manage')]
-    #[IsGranted('aureum.module.inventory.manage')]
-    public function manage(): Response
-    {
-        return $this->redirectToRoute('aureum_inventory');
-    }
 }

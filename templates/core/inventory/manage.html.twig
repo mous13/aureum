@@ -1,0 +1,54 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+
+{% block title %}Manage Inventory{% endblock %}
+
+{% block body %}
+    <style>
+        .inv-manage { display: flex; flex-direction: column; gap: 2rem; }
+        .inv-panel { border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 10px; padding: 1rem 1.1rem; }
+        .inv-panel h2 { margin: 0 0 0.75rem; font-size: 1.05rem; }
+        .inv-table { width: 100%; border-collapse: collapse; }
+        .inv-table th, .inv-table td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
+        .inv-tag { font-size: 0.75rem; padding: 0.1rem 0.45rem; border-radius: 999px; border: 1px solid rgba(0, 0, 0, 0.2); }
+        .inv-form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.75rem; align-items: end; }
+    </style>
+
+    <div class="mb-4 flex flex-wrap items-center justify-between">
+        <h1 class="mb-0">Manage Inventory</h1>
+        <a class="btn btn-link" href="{{ path('aureum_inventory') }}">Back to Inventory</a>
+    </div>
+
+    <div class="inv-manage">
+        <section class="inv-panel">
+            <h2>Storage locations</h2>
+            <p class="text-small">Bulk stores are counted and drive the reorder forecast. Working locations — an office shelf, the corner shop — are destinations and are never forecast.</p>
+
+            <table class="inv-table">
+                <thead>
+                    <tr><th>Name</th><th>Type</th><th>Position</th></tr>
+                </thead>
+                <tbody>
+                    {% for location in locations %}
+                        <tr>
+                            <td>{{ location.name }}</td>
+                            <td><span class="inv-tag">{{ location.type.label }}</span></td>
+                            <td>{{ location.position }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3" class="text-small">No storage locations yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {{ form_start(locationForm) }}
+                <div class="inv-form-row mt-4">
+                    {{ form_row(locationForm.name) }}
+                    {{ form_row(locationForm.type) }}
+                    {{ form_row(locationForm.position) }}
+                    {{ form_row(locationForm.active) }}
+                    <button type="submit" class="btn btn-primary">Add location</button>
+                </div>
+            {{ form_end(locationForm) }}
+        </section>
+    </div>
+{% endblock %}
