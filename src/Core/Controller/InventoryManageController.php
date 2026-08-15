@@ -122,7 +122,7 @@ class InventoryManageController extends AbstractController
                     [
                         'action' => $this->generateUrl('aureum_inventory_item_save'),
                         'categories' => $categories,
-                        'locations' => $itemLocations,
+                        'locations' => self::locationChoicesWithCurrent($itemLocations, $existingItem->getLocation()),
                     ],
                 )->createView();
             }
@@ -255,10 +255,15 @@ class InventoryManageController extends AbstractController
             throw $this->createNotFoundException();
         }
 
+        $itemLocations = $this->locationRepository->findActiveByHotel($hotel, StorageLocationTypeEnum::BULK);
+        if (!$isNew) {
+            $itemLocations = self::locationChoicesWithCurrent($itemLocations, $item->getLocation());
+        }
+
         $formName = $isNew ? 'inventory_item' : 'inventory_item_' . $id;
         $form = $this->createNamedForm($formName, InventoryItemType::class, $item, [
             'categories' => $this->categoryRepository->findByHotel($hotel),
-            'locations' => $this->locationRepository->findActiveByHotel($hotel, StorageLocationTypeEnum::BULK),
+            'locations' => $itemLocations,
         ]);
         $form->handleRequest($request);
 
@@ -285,5 +290,20 @@ class InventoryManageController extends AbstractController
     private function createNamedForm(string $name, string $type, mixed $data, array $options = []): FormInterface
     {
         return $this->container->get('form.factory')->createNamed($name, $type, $data, $options);
+    }
+
+    /**
+     * @param array<StorageLocation> $locations
+     * @return array<StorageLocation>
+     */
+    public static function locationChoicesWithCurrent(array $locations, StorageLocation $current): array
+    {
+        foreach ($locations as $location) {
+            if ($location->getId() === $current->getId()) {
+                return $locations;
+            }
+        }
+
+        return [...$locations, $current];
     }
 }
