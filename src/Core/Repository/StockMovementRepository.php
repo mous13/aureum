@@ -51,4 +51,20 @@ class StockMovementRepository extends AbstractRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return array<StockMovement>
+     */
+    public function findRecentByHotel(Hotel $hotel, int $limit = 50): array
+    {
+        return $this->createQueryBuilder('m')
+            ->join('m.item', 'i')
+            ->addSelect('i')
+            ->where('m.hotel = :hotel')
+            ->setParameter('hotel', $hotel)
+            ->orderBy('m.occurredAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }

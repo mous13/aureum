@@ -12,7 +12,6 @@ use Citadel\Aureum\Core\Repository\InventoryItemRepository;
 use Citadel\Aureum\Core\Repository\StockMovementRepository;
 use Citadel\Aureum\Core\Repository\StorageLocationRepository;
 use Citadel\Aureum\Core\Service\AureumService;
-use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,13 +45,11 @@ class InventoryMovementController extends AbstractController
             'locations' => $this->locationRepository->findActiveByHotel($hotel, StorageLocationType::WORKING),
         ]);
 
-        $since = new DateTimeImmutable('@0');
-        $movements = $this->movementRepository->findForHotelSince($hotel, $since);
-        $recent = array_slice(array_reverse($movements), 0, 50);
+        $movements = $this->movementRepository->findRecentByHotel($hotel);
 
         return $this->render('@CitadelAureum/core/inventory/movement.html.twig', [
             'form' => $form,
-            'movements' => $recent,
+            'movements' => $movements,
         ]);
     }
 
