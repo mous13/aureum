@@ -52,6 +52,10 @@ class ForecastCalculator
             return $this->barren($item, $stockOnHand, null, ReorderStatus::NO_DATA, $needsReview, $provisional, $usable, $observedDays);
         }
 
+        if ($rate < 0.0) {
+            return $this->barren($item, $stockOnHand, $rate, ReorderStatus::NO_DATA, true, $provisional, $usable, $observedDays);
+        }
+
         if ($rate <= 0.0) {
             return $this->barren($item, $stockOnHand, 0.0, ReorderStatus::OK, $needsReview, $provisional, $usable, $observedDays);
         }

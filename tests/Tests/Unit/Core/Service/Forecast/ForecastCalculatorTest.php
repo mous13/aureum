@@ -254,6 +254,24 @@ class ForecastCalculatorTest extends TestCase
         self::assertFalse($forecast->provisional);
     }
 
+    public function testNegativeRateIsTreatedAsUntrustworthyRatherThanZero(): void
+    {
+        $impossible = [new ConsumptionInterval(
+            $this->now->modify('-28 days'),
+            $this->now,
+            -280,
+            28.0,
+            false,
+        )];
+
+        $forecast = $this->calculator->forecast($this->item(14), 400, $impossible, $this->now);
+
+        self::assertSame(ReorderStatus::NO_DATA, $forecast->status);
+        self::assertTrue($forecast->needsReview);
+        self::assertEqualsWithDelta(-10.0, $forecast->ratePerDay, 0.0001);
+        self::assertNull($forecast->orderQuantity);
+    }
+
     public function testNeedsReviewIsIndependentOfStatus(): void
     {
         $intervals = $this->steadyIntervals(70, 8);
