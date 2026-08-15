@@ -37,6 +37,14 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
                 'icon' => 'ph ph-article',
                 'permission' => 'aureum.module.fines.view',
             ]),
+            new MenuItem('Inventory', $url('aureum_inventory'), [
+                'icon' => 'ph ph-package',
+                'permission' => 'aureum.module.inventory.view',
+            ]),
+            new MenuItem('Reorder', $url('aureum_inventory_reorder'), [
+                'icon' => 'ph ph-shopping-cart',
+                'permission' => 'aureum.module.inventory.view',
+            ]),
         ]);
 
         $menu->addItem($general);
@@ -66,6 +74,10 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
             new MenuItem('Room Types', $url('aureum_room_types_list'), [
                 'icon' => 'ph ph-bed',
                 'permission' => 'aureum.module.rooms.manage',
+            ]),
+            new MenuItem('Manage Inventory', $url('aureum_inventory_manage'), [
+                'icon' => 'ph ph-clipboard-text',
+                'permission' => 'aureum.module.inventory.manage',
             ]),
             new MenuItem('Roles', $url('aureum_roles_list'), [
                 'icon' => 'ph ph-users-three',
