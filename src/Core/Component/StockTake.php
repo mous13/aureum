@@ -46,6 +46,11 @@ class StockTake
     #[LiveProp]
     public bool $saved = false;
 
+    /**
+     * @var array<int, array{item: InventoryItem, onHand: int, entered: int, rising: bool}>|null
+     */
+    private ?array $rows = null;
+
     public function __construct(
         private readonly AureumService $aureumService,
         private readonly InventoryRepository $inventoryRepository,
@@ -87,18 +92,30 @@ class StockTake
      */
     public function getRows(): array
     {
-        $inventory = $this->getInventory();
-        if ($inventory === null) {
-            return [];
+        if ($this->rows !== null) {
+            return $this->rows;
         }
 
-        $rows = [];
+        $inventory = $this->getInventory();
+        $hotel = $this->aureumService->getHotel();
+        if ($inventory === null || $hotel === null) {
+            return $this->rows = [];
+        }
+
+        $items = [];
         foreach ($this->itemRepository->findActiveByInventory($inventory) as $item) {
             if ($this->locationId !== null && $item->getLocation()->getId() !== $this->locationId) {
                 continue;
             }
 
-            $onHand = $this->forecastService->stockOnHand($item);
+            $items[] = $item;
+        }
+
+        $onHandByItem = $this->forecastService->stockOnHandForItems($hotel, $items);
+
+        $rows = [];
+        foreach ($items as $item) {
+            $onHand = $onHandByItem[$item->getId()] ?? 0;
             $entered = $this->enteredFor($item);
 
             $rows[] = [
@@ -109,7 +126,7 @@ class StockTake
             ];
         }
 
-        return $rows;
+        return $this->rows = $rows;
     }
 
     public function getEnteredCount(): int

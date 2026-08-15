@@ -86,6 +86,27 @@ class InventoryForecastService
     }
 
     /**
+     * @param array<InventoryItem> $items
+     * @return array<int, int>
+     */
+    public function stockOnHandForItems(Hotel $hotel, array $items): array
+    {
+        $now = new DateTimeImmutable();
+        $since = $now->modify('-' . self::WINDOW_DAYS . ' days');
+
+        $countsByItem = $this->groupCounts($this->countLineRepository->findForHotelSince($hotel, $since));
+        $movementsByItem = $this->groupMovements($this->movementRepository->findForHotelSince($hotel, $since));
+
+        $stock = [];
+        foreach ($items as $item) {
+            $id = $item->getId();
+            $stock[$id] = self::stockOnHandFrom($countsByItem[$id] ?? [], $movementsByItem[$id] ?? []);
+        }
+
+        return $stock;
+    }
+
+    /**
      * @param array<CountObservation> $counts
      * @param array<MovementObservation> $movements
      */
