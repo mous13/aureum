@@ -10,6 +10,7 @@
         .inv-table { width: 100%; border-collapse: collapse; }
         .inv-table th, .inv-table td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
         .inv-tag { font-size: 0.75rem; padding: 0.1rem 0.45rem; border-radius: 999px; border: 1px solid rgba(0, 0, 0, 0.2); }
+        .inv-tag-warn { font-size: 0.75rem; font-weight: 600; padding: 0.1rem 0.45rem; border-radius: 999px; border: 1px solid #d33; color: #d33; background: rgba(221, 51, 51, 0.08); }
         .inv-form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.75rem; align-items: end; }
     </style>
 
@@ -113,6 +114,63 @@
                     <button type="submit" class="btn btn-primary">Add location</button>
                 </div>
             {{ form_end(locationForm) }}
+        </section>
+
+        <section class="inv-panel">
+            <h2>Items</h2>
+            <p class="text-small">Every item needs a lead time before it can be forecast. An item with no lead time set will never appear on the reorder screen.</p>
+
+            <table class="inv-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Name</th>
+                        <th>Unit</th>
+                        <th>Pack size</th>
+                        <th>Lead time</th>
+                        <th>Buffer</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                        {% for item in category.items %}
+                            <tr>
+                                <td>{{ category.name }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.unit }}</td>
+                                <td>{{ item.packSize ?? '-' }}{{ item.packLabel ? ' ' ~ item.packLabel : '' }}</td>
+                                <td>
+                                    {% if item.leadTimeDays is null %}
+                                        <span class="inv-tag-warn">Not set</span>
+                                    {% else %}
+                                        {{ item.leadTimeDays }} day{{ item.leadTimeDays == 1 ? '' : 's' }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.safetyBufferDays }} day{{ item.safetyBufferDays == 1 ? '' : 's' }}</td>
+                                <td>{{ item.location.name }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr><td colspan="7" class="text-small">No items yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {{ form_start(itemForm) }}
+                <div class="inv-form-row mt-4">
+                    {{ form_row(itemForm.category) }}
+                    {{ form_row(itemForm.location) }}
+                    {{ form_row(itemForm.name) }}
+                    {{ form_row(itemForm.unit) }}
+                    {{ form_row(itemForm.packSize) }}
+                    {{ form_row(itemForm.packLabel) }}
+                    {{ form_row(itemForm.leadTimeDays) }}
+                    {{ form_row(itemForm.safetyBufferDays) }}
+                    {{ form_row(itemForm.active) }}
+                    <button type="submit" class="btn btn-primary">Add item</button>
+                </div>
+            {{ form_end(itemForm) }}
         </section>
     </div>
 {% endblock %}
