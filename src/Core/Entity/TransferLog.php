@@ -19,6 +19,7 @@ class TransferLog implements HotelOwnedInterface
     use LogEntityTrait;
 
     #[ORM\ManyToOne(targetEntity: Transfer::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'cascade')]
     private Transfer $transfer;
 
     public function getTransfer(): Transfer

@@ -13,6 +13,7 @@ use Forumify\Core\Entity\User;
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
 #[ORM\Table(name: 'aureum_employees')]
+#[ORM\Index(name: 'IDX_65A90A71_archived_at', columns: ['archived_at'])]
 class Employee implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;

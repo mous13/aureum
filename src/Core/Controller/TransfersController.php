@@ -101,4 +101,19 @@ class TransfersController extends AbstractController
         }
         return $this->redirectToRoute('aureum_transfers');
     }
+
+    #[Route('/transfers/{id}/delete', name: 'transfers_delete', methods: ['POST'])]
+    #[IsGranted('aureum.module.transfers.manage')]
+    public function delete(Request $request, Transfer $transfer): Response
+    {
+        $token = (string)$request->request->get('_token');
+        if (!$this->isCsrfTokenValid('aureum_transfer_delete_' . $transfer->getId(), $token)) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        $this->transferRepository->remove($transfer);
+        $this->addFlash('success', 'Record deleted.');
+
+        return $this->redirectToRoute('aureum_transfers');
+    }
 }

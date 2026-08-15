@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Entity;
 
 use Citadel\Aureum\Core\Entity\Enum\TransferStatus;
+use Citadel\Aureum\Core\Entity\Enum\Module;
+use Citadel\Aureum\Core\Entity\Trait\AnonymisableEntityTrait;
 use Citadel\Aureum\Core\Repository\TransferRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,9 +14,33 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 
 #[ORM\Entity(repositoryClass: TransferRepository::class)]
 #[ORM\Table(name: 'aureum_transfers')]
-class Transfer implements HotelOwnedInterface
+#[ORM\Index(name: 'IDX_aureum_transfers_anonymised_at', columns: ['anonymised_at'])]
+class Transfer implements HotelOwnedInterface, AnonymisableInterface
 {
     use IdentifiableEntityTrait;
+    use AnonymisableEntityTrait;
+
+    public static function getModule(): Module
+    {
+        return Module::TRANSFERS;
+    }
+
+    public function getRetentionAnchor(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function anonymise(): void
+    {
+        $this->guest = null;
+        $this->number = null;
+        $this->email = null;
+        $this->pickup = null;
+        $this->dropoff = null;
+        $this->driver = null;
+        $this->notes = null;
+        $this->markAnonymised();
+    }
 
     #[ORM\Column(type: 'datetime')]
     private DateTime $date;
