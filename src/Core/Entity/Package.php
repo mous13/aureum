@@ -12,7 +12,7 @@ use Forumify\Core\Entity\TimestampableEntityTrait;
 
 #[ORM\Entity(repositoryClass: PackageRepository::class)]
 #[ORM\Table(name: 'aureum_packages')]
-class Package
+class Package implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
     use TimestampableEntityTrait;

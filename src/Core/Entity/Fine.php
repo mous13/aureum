@@ -12,7 +12,7 @@ use Forumify\Core\Entity\TimestampableEntityTrait;
 
 #[ORM\Entity(repositoryClass: FineRepository::class)]
 #[ORM\Table(name: 'aureum_fines')]
-class Fine
+class Fine implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
     use TimestampableEntityTrait;

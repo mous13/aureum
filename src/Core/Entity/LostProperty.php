@@ -13,7 +13,7 @@ use Forumify\Core\Entity\TimestampableEntityTrait;
 
 #[ORM\Entity(repositoryClass: LostPropertyRepository::class)]
 #[ORM\Table(name: 'aureum_lost_property')]
-class LostProperty
+class LostProperty implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
     use TimestampableEntityTrait;

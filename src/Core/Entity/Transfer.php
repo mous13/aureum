@@ -12,7 +12,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 
 #[ORM\Entity(repositoryClass: TransferRepository::class)]
 #[ORM\Table(name: 'aureum_transfers')]
-class Transfer
+class Transfer implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 

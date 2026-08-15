@@ -13,7 +13,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 #[ORM\Table(name: 'aureum_logs_transfers')]
 #[ORM\Index(columns: ['hotel_id', 'created_at'])]
 #[ORM\Index(columns: ['transfer_id', 'created_at'])]
-class TransferLog
+class TransferLog implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
     use LogEntityTrait;
