@@ -56,8 +56,17 @@ class InventoryController extends AbstractController
     }
 
     #[Route('/inventory/take/{id}', name: 'inventory_take', requirements: ['id' => '\d+'])]
+    #[IsGranted('aureum.module.inventory.count')]
     public function take(int $id): Response
     {
-        return $this->redirectToRoute('aureum_inventory');
+        $hotel = $this->aureumService->getHotel();
+        $inventory = $this->inventoryRepository->find($id);
+        if ($hotel === null || $inventory === null || $inventory->getHotel()->getId() !== $hotel->getId()) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('@CitadelAureum/core/inventory/take.html.twig', [
+            'inventory' => $inventory,
+        ]);
     }
 }
