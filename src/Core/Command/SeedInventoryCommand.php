@@ -88,7 +88,7 @@ class SeedInventoryCommand extends Command
             return Command::FAILURE;
         }
 
-        foreach ($this->inventoryRepository->findActiveByHotel($hotel) as $existing) {
+        foreach ($this->inventoryRepository->findByHotel($hotel) as $existing) {
             if ($existing->getName() === self::INVENTORY_NAME) {
                 $io->warning(self::INVENTORY_NAME . " already exists for {$code}. Nothing was changed.");
 

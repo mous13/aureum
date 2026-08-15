@@ -32,4 +32,18 @@ class InventoryRepository extends AbstractRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return array<Inventory>
+     */
+    public function findByHotel(Hotel $hotel): array
+    {
+        return $this->createQueryBuilder('i')
+            ->where('i.hotel = :hotel')
+            ->setParameter('hotel', $hotel)
+            ->orderBy('i.position', 'ASC')
+            ->addOrderBy('i.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
