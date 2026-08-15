@@ -45,6 +45,10 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
                 'icon' => 'ph ph-shopping-cart',
                 'permission' => 'aureum.module.inventory.view',
             ]),
+            new MenuItem('Record Movement', $url('aureum_inventory_movements'), [
+                'icon' => 'ph ph-arrows-left-right',
+                'permission' => 'aureum.module.inventory.count',
+            ]),
         ]);
 
         $menu->addItem($general);

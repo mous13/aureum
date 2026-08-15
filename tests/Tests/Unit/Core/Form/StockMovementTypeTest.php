@@ -28,6 +28,7 @@ class StockMovementTypeTest extends TestCase
     {
         self::assertSame(MovementDirection::IN, StockMovementType::directionFor(MovementReason::DELIVERY, MovementDirection::OUT));
         self::assertSame(MovementDirection::OUT, StockMovementType::directionFor(MovementReason::TRANSFER, MovementDirection::IN));
+        self::assertSame(MovementDirection::OUT, StockMovementType::directionFor(MovementReason::WASTAGE, MovementDirection::IN));
         self::assertSame(MovementDirection::IN, StockMovementType::directionFor(MovementReason::ADJUSTMENT, MovementDirection::IN));
         self::assertSame(MovementDirection::OUT, StockMovementType::directionFor(MovementReason::ADJUSTMENT, MovementDirection::OUT));
     }

@@ -48,6 +48,7 @@ class AureumMenuBuilderTest extends TestCase
 
         self::assertArrayHasKey('Inventory', $items);
         self::assertArrayHasKey('Reorder', $items);
+        self::assertArrayHasKey('Record Movement', $items);
         self::assertArrayHasKey('Manage Inventory', $items);
     }
 
@@ -57,6 +58,7 @@ class AureumMenuBuilderTest extends TestCase
 
         self::assertSame('aureum.module.inventory.view', $items['Inventory']['permission']);
         self::assertSame('aureum.module.inventory.view', $items['Reorder']['permission']);
+        self::assertSame('aureum.module.inventory.count', $items['Record Movement']['permission']);
         self::assertSame('aureum.module.inventory.manage', $items['Manage Inventory']['permission']);
     }
 

@@ -8,6 +8,7 @@
         .inv-card { border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 10px; padding: 1rem 1.1rem; }
         .inv-card h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
         .inv-meta { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.9rem; }
+        .inv-card-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
         .inv-empty { border: 1px dashed rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 1.5rem; text-align: center; }
     </style>
 
@@ -36,9 +37,14 @@
                             <span>Never counted</span>
                         {% endif %}
                     </div>
-                    <a class="btn btn-primary" href="{{ path('aureum_inventory_take', { id: row.inventory.id }) }}">
-                        <i class="ph ph-clipboard-text"></i> Stock take
-                    </a>
+                    <div class="inv-card-actions">
+                        <a class="btn btn-primary" href="{{ path('aureum_inventory_take', { id: row.inventory.id }) }}">
+                            <i class="ph ph-clipboard-text"></i> Stock take
+                        </a>
+                        <a class="btn btn-link" href="{{ path('aureum_inventory_movements') }}">
+                            <i class="ph ph-arrows-left-right"></i> Record Movement
+                        </a>
+                    </div>
                 </div>
             {% endfor %}
         </div>
