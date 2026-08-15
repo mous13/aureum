@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Repository;
 
+use Citadel\Aureum\Core\Entity\Enum\StorageLocationType;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Entity\Inventory;
 use Citadel\Aureum\Core\Entity\InventoryItem;
@@ -27,10 +28,13 @@ class InventoryItemRepository extends AbstractRepository
         return $this->createQueryBuilder('i')
             ->join('i.category', 'c')
             ->join('c.inventory', 'inv')
+            ->join('i.location', 'l')
             ->where('inv.hotel = :hotel')
             ->andWhere('i.active = true')
             ->andWhere('inv.active = true')
+            ->andWhere('l.type = :locationType')
             ->setParameter('hotel', $hotel)
+            ->setParameter('locationType', StorageLocationType::BULK)
             ->orderBy('inv.position', 'ASC')
             ->addOrderBy('c.position', 'ASC')
             ->addOrderBy('i.name', 'ASC')

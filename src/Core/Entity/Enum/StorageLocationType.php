@@ -16,9 +16,4 @@ enum StorageLocationType: string
             self::WORKING => 'Working Location',
         };
     }
-
-    public function isForecast(): bool
-    {
-        return $this === self::BULK;
-    }
 }
