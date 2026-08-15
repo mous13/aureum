@@ -38,12 +38,14 @@
                         {% endif %}
                     </div>
                     <div class="inv-card-actions">
-                        <a class="btn btn-primary" href="{{ path('aureum_inventory_take', { id: row.inventory.id }) }}">
-                            <i class="ph ph-clipboard-text"></i> Stock take
-                        </a>
-                        <a class="btn btn-link" href="{{ path('aureum_inventory_movements') }}">
-                            <i class="ph ph-arrows-left-right"></i> Record Movement
-                        </a>
+                        {% if is_granted('aureum.module.inventory.count') %}
+                            <a class="btn btn-primary" href="{{ path('aureum_inventory_take', { id: row.inventory.id }) }}">
+                                <i class="ph ph-clipboard-text"></i> Stock take
+                            </a>
+                            <a class="btn btn-link" href="{{ path('aureum_inventory_movements') }}">
+                                <i class="ph ph-arrows-left-right"></i> Record Movement
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
