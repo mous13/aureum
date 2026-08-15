@@ -189,7 +189,7 @@
                         {% for item in category.items %}
                             <tr>
                                 <td>{{ category.name }}</td>
-                                <td>{{ item.name }}</td>
+                                <td><a href="{{ path('aureum_inventory_item', { id: item.id }) }}">{{ item.name }}</a></td>
                                 <td>{{ item.unit }}</td>
                                 <td>{{ item.packSize ?? '-' }}{{ item.packLabel ? ' ' ~ item.packLabel : '' }}</td>
                                 <td>

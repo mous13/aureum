@@ -68,7 +68,7 @@
                         {% for forecast in forecasts %}
                             <tr>
                                 <td>
-                                    {{ forecast.item.name }}
+                                    <a href="{{ path('aureum_inventory_item', { id: forecast.item.id }) }}">{{ forecast.item.name }}</a>
                                     {% if forecast.provisional %}
                                         <span class="inv-flag" title="Based on only {{ forecast.usableIntervals }} usable interval{{ forecast.usableIntervals == 1 ? '' : 's' }} - treat as an estimate.">Provisional</span>
                                     {% endif %}

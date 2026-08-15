@@ -73,15 +73,13 @@ class InventoryMovementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($movement->getReason() === MovementReason::TRANSFER && $movement->getDestination() === null) {
+            $missingDestination = $movement->getReason() === MovementReason::TRANSFER && $movement->getDestination() === null;
+
+            if ($missingDestination) {
                 $form->get('destination')->addError(new FormError('A destination is required for transfers.'));
-            }
-
-            if ($form->isValid() && $movement->getItem()->getCategory()->getInventory()->getHotel()->getId() !== $hotel->getId()) {
+            } elseif ($movement->getItem()->getCategory()->getInventory()->getHotel()->getId() !== $hotel->getId()) {
                 throw $this->createNotFoundException();
-            }
-
-            if ($form->isValid()) {
+            } else {
                 $movement->setDirection(StockMovementType::directionFor($movement->getReason(), $movement->getDirection()));
                 $movement->setQuantity(abs($movement->getQuantity()));
                 $movement->setRecordedBy($employee);

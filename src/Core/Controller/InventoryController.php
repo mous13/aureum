@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Controller;
 
 use Citadel\Aureum\Core\Entity\Enum\ReorderStatus;
+use Citadel\Aureum\Core\Repository\InventoryItemLogRepository;
 use Citadel\Aureum\Core\Repository\InventoryItemRepository;
 use Citadel\Aureum\Core\Repository\InventoryRepository;
+use Citadel\Aureum\Core\Repository\StockCountLineRepository;
 use Citadel\Aureum\Core\Repository\StockCountRepository;
+use Citadel\Aureum\Core\Repository\StockMovementRepository;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\Forecast\InventoryForecastService;
 use Citadel\Aureum\Core\Service\Forecast\ItemForecast;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,6 +29,9 @@ class InventoryController extends AbstractController
         private readonly InventoryItemRepository $itemRepository,
         private readonly StockCountRepository $stockCountRepository,
         private readonly InventoryForecastService $forecastService,
+        private readonly StockCountLineRepository $countLineRepository,
+        private readonly StockMovementRepository $movementRepository,
+        private readonly InventoryItemLogRepository $itemLogRepository,
     ) {
     }
 
@@ -107,6 +114,28 @@ class InventoryController extends AbstractController
 
         return $this->render('@CitadelAureum/core/inventory/take.html.twig', [
             'inventory' => $inventory,
+        ]);
+    }
+
+    #[Route('/inventory/items/{id}', name: 'inventory_item', requirements: ['id' => '\d+'])]
+    public function item(int $id): Response
+    {
+        $hotel = $this->aureumService->getHotel();
+        $item = $this->itemRepository->find($id);
+        if ($hotel === null || $item === null
+            || $item->getCategory()->getInventory()->getHotel()->getId() !== $hotel->getId()
+        ) {
+            throw $this->createNotFoundException();
+        }
+
+        $since = new DateTimeImmutable('-' . InventoryForecastService::WINDOW_DAYS . ' days');
+
+        return $this->render('@CitadelAureum/core/inventory/item.html.twig', [
+            'item' => $item,
+            'forecast' => $this->forecastService->forecastForItem($item),
+            'counts' => $this->countLineRepository->findForItemSince($item, $since),
+            'movements' => $this->movementRepository->findForItemSince($item, $since),
+            'logs' => $this->itemLogRepository->findByItem($item),
         ]);
     }
 }
