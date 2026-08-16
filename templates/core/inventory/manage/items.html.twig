@@ -1,0 +1,11 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+
+{% block title %}Items{% endblock %}
+
+{% block body %}
+    <div class="mb-4 flex flex-wrap items-center justify-between">
+        <h1 class="mb-0">Items</h1>
+        <a class="btn btn-link" href="{{ path('aureum_inventory') }}">Back to Inventory</a>
+    </div>
+    {% include '@CitadelAureum/core/inventory/blocks/items.html.twig' %}
+{% endblock %}

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tests\Unit\Core\Controller;
 
-use Citadel\Aureum\Core\Controller\InventoryManageController;
+use Citadel\Aureum\Core\Controller\Manage\ItemController;
 use Citadel\Aureum\Core\Entity\StorageLocation;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -29,7 +29,7 @@ class InventoryManageLocationChoicesTest extends TestCase
         $bulkB = $this->location(2);
         $working = $this->location(3);
 
-        $result = InventoryManageController::locationChoicesWithCurrent([$bulkA, $bulkB], $working);
+        $result = ItemController::locationChoicesWithCurrent([$bulkA, $bulkB], $working);
 
         self::assertSame([$bulkA, $bulkB, $working], $result);
     }
@@ -39,7 +39,7 @@ class InventoryManageLocationChoicesTest extends TestCase
         $bulkA = $this->location(1);
         $bulkB = $this->location(2);
 
-        $result = InventoryManageController::locationChoicesWithCurrent([$bulkA, $bulkB], $bulkB);
+        $result = ItemController::locationChoicesWithCurrent([$bulkA, $bulkB], $bulkB);
 
         self::assertSame([$bulkA, $bulkB], $result);
     }
@@ -48,7 +48,7 @@ class InventoryManageLocationChoicesTest extends TestCase
     {
         $working = $this->location(5);
 
-        $result = InventoryManageController::locationChoicesWithCurrent([], $working);
+        $result = ItemController::locationChoicesWithCurrent([], $working);
 
         self::assertSame([$working], $result);
     }

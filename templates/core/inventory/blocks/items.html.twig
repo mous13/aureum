@@ -1,0 +1,85 @@
+<div class="card">
+    <div class="card-title luxury">Add new item</div>
+    <div class="card-body">
+        {{ form_start(itemForm) }}
+            {{ form_row(itemForm.category) }}
+            {{ form_row(itemForm.location) }}
+            {{ form_row(itemForm.name) }}
+            {{ form_row(itemForm.unit) }}
+            {{ form_row(itemForm.packSize) }}
+            {{ form_row(itemForm.packLabel) }}
+            {{ form_row(itemForm.leadTimeDays) }}
+            {{ form_row(itemForm.safetyBufferDays) }}
+            {{ form_row(itemForm.active) }}
+            <button type="submit" class="btn btn-primary">Add item</button>
+        {{ form_end(itemForm) }}
+    </div>
+</div>
+<div class="card mt-5">
+    <div class="card-title luxury">Items</div>
+    <div class="card-body">
+        <p class="text-small">An item without a lead time is never forecast. Set one and it appears on the reorder screen.</p>
+        <table class="text-left">
+            <tr>
+                <th>Category</th>
+                <th>Name</th>
+                <th>Unit</th>
+                <th>Pack</th>
+                <th>Lead time</th>
+                <th>Buffer</th>
+                <th>Location</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+            {% for category in categories %}
+                {% for item in category.items %}
+                    <tr>
+                        <td>{{ category.name }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.unit }}</td>
+                        <td>{{ item.packSize ? item.packSize ~ ' / ' ~ (item.packLabel ?? 'pack') : '-' }}</td>
+                        <td>
+                            {% if item.leadTimeDays is null %}
+                                <span class="tag">Not set</span>
+                            {% else %}
+                                {{ item.leadTimeDays }} days
+                            {% endif %}
+                        </td>
+                        <td>{{ item.safetyBufferDays }} days</td>
+                        <td>{{ item.location.name }}</td>
+                        <td>{{ item.active ? 'Yes' : 'No' }}</td>
+                        <td>
+                            {% embed '@Forumify/components/modal.html.twig' %}
+                                {% block modalOpenButton %}
+                                    <button type="button" class="btn-link btn-icon" {{ stimulus_action('forumify/forumify-platform/modal', 'open') }}>
+                                        <i class="ph ph-pencil"></i>
+                                    </button>
+                                {% endblock %}
+                                {% block modalContent %}
+                                    <div class="card">
+                                        <div class="card-title luxury">Edit {{ item.name }}</div>
+                                        <div class="card-body">
+                                            {{ form_start(itemEditForms[item.id]) }}
+                                            <input type="hidden" name="inventory_item_id" value="{{ item.id }}">
+                                                {{ form_row(itemEditForms[item.id].category) }}
+                                                {{ form_row(itemEditForms[item.id].location) }}
+                                                {{ form_row(itemEditForms[item.id].name) }}
+                                                {{ form_row(itemEditForms[item.id].unit) }}
+                                                {{ form_row(itemEditForms[item.id].packSize) }}
+                                                {{ form_row(itemEditForms[item.id].packLabel) }}
+                                                {{ form_row(itemEditForms[item.id].leadTimeDays) }}
+                                                {{ form_row(itemEditForms[item.id].safetyBufferDays) }}
+                                                {{ form_row(itemEditForms[item.id].active) }}
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            {{ form_end(itemEditForms[item.id]) }}
+                                        </div>
+                                    </div>
+                                {% endblock %}
+                            {% endembed %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </table>
+    </div>
+</div>

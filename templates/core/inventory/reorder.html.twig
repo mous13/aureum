@@ -96,7 +96,7 @@
                                     {% endif %}
                                     {% if forecast.status.value == 'needs_setup' and is_granted('aureum.module.inventory.manage') %}
                                         <br>
-                                        <a class="text-small" href="{{ path('aureum_inventory_manage') }}">Set lead time</a>
+                                        <a class="text-small" href="{{ path('aureum_inventory_manage_items') }}">Set lead time</a>
                                     {% endif %}
                                 </td>
                             </tr>

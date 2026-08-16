@@ -1,0 +1,59 @@
+<div class="card">
+    <div class="card-title luxury">Add new storage location</div>
+    <div class="card-body">
+        {{ form_start(locationForm) }}
+            {{ form_row(locationForm.name) }}
+            {{ form_row(locationForm.type) }}
+            {{ form_row(locationForm.position) }}
+            {{ form_row(locationForm.active) }}
+            <button type="submit" class="btn btn-primary">Add storage location</button>
+        {{ form_end(locationForm) }}
+    </div>
+</div>
+<div class="card mt-5">
+    <div class="card-title luxury">Storage locations</div>
+    <div class="card-body">
+        <p class="text-small">Bulk stores are counted and drive the reorder forecast. Working locations are destinations and are never forecast.</p>
+        <table class="text-left">
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Position</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+            {% for location in locations %}
+                <tr>
+                    <td>{{ location.name }}</td>
+                    <td>{{ location.type.label }}</td>
+                    <td>{{ location.position }}</td>
+                    <td>{{ location.active ? 'Yes' : 'No' }}</td>
+                    <td>
+                        {% embed '@Forumify/components/modal.html.twig' %}
+                            {% block modalOpenButton %}
+                                <button type="button" class="btn-link btn-icon" {{ stimulus_action('forumify/forumify-platform/modal', 'open') }}>
+                                    <i class="ph ph-pencil"></i>
+                                </button>
+                            {% endblock %}
+                            {% block modalContent %}
+                                <div class="card">
+                                    <div class="card-title luxury">Edit {{ location.name }}</div>
+                                    <div class="card-body">
+                                        {{ form_start(locationEditForms[location.id]) }}
+                                        <input type="hidden" name="storage_location_id" value="{{ location.id }}">
+                                            {{ form_row(locationEditForms[location.id].name) }}
+                                            {{ form_row(locationEditForms[location.id].type) }}
+                                            {{ form_row(locationEditForms[location.id].position) }}
+                                            {{ form_row(locationEditForms[location.id].active) }}
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                        {{ form_end(locationEditForms[location.id]) }}
+                                    </div>
+                                </div>
+                            {% endblock %}
+                        {% endembed %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>

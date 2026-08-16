@@ -1,0 +1,56 @@
+<div class="card">
+    <div class="card-title luxury">Add new category</div>
+    <div class="card-body">
+        {{ form_start(categoryForm) }}
+            {{ form_row(categoryForm.inventory) }}
+            {{ form_row(categoryForm.name) }}
+            {{ form_row(categoryForm.position) }}
+            <button type="submit" class="btn btn-primary">Add category</button>
+        {{ form_end(categoryForm) }}
+    </div>
+</div>
+<div class="card mt-5">
+    <div class="card-title luxury">Categories</div>
+    <div class="card-body">
+        <table class="text-left">
+            <tr>
+                <th>Inventory</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th></th>
+            </tr>
+            {% for inventory in inventories %}
+                {% for category in inventory.categories %}
+                    <tr>
+                        <td>{{ inventory.name }}</td>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.position }}</td>
+                        <td>
+                            {% embed '@Forumify/components/modal.html.twig' %}
+                                {%block modalOpenButton %}
+                                    <button type="button" class="btn-link btn-icon" {{ stimulus_action('forumify/forumify-platform/modal', 'open') }}>
+                                        <i class="ph ph-pencil"></i>
+                                    </button>
+                                {% endblock %}
+                                {% block modalContent %}
+                                    <div class="card">
+                                        <div class="card-title luxury">Edit {{ category.name }}</div>
+                                        <div class="card-body">
+                                            {{ form_start(categoryEditForms[category.id]) }}
+                                            <input type="hidden" name="inventory_category_id" value="{{ category.id }}">
+                                                {{ form_row(categoryEditForms[category.id].inventory) }}
+                                                {{ form_row(categoryEditForms[category.id].name) }}
+                                                {{ form_row(categoryEditForms[category.id].position) }}
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            {{ form_end(categoryEditForms[category.id]) }}
+                                        </div>
+                                    </div>
+                                {% endblock %}
+                            {% endembed %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </table>
+    </div>
+</div>
