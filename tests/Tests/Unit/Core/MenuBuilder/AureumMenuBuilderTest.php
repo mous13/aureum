@@ -12,10 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AureumMenuBuilderTest extends TestCase
 {
-    /**
-     * @return array<string, array{label: string, permission: string}>
-     */
-    private function itemsByLabel(): array
+    private function build(): Menu
     {
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $urlGenerator->method('generate')->willReturnCallback(static fn (string $name): string => "/{$name}");
@@ -23,50 +20,121 @@ class AureumMenuBuilderTest extends TestCase
         $menu = new Menu('ROOT');
         (new AureumMenuBuilder($urlGenerator))->build($menu);
 
-        $found = [];
-        foreach ($menu->getEntries() as $entry) {
-            if (!$entry instanceof Menu) {
-                continue;
-            }
+        return $menu;
+    }
 
-            foreach ($entry->getEntries() as $child) {
-                if ($child instanceof MenuItem) {
-                    $found[$child->label] = [
-                        'label' => $child->label,
-                        'permission' => $child->getPermission() ?? '',
+    /**
+     * @return array<string, array{permission: string, location: string}>
+     */
+    private function leavesByLabel(): array
+    {
+        $found = [];
+        $walk = static function (Menu $menu) use (&$walk, &$found): void {
+            foreach ($menu->getEntries() as $entry) {
+                if ($entry instanceof MenuItem) {
+                    $found[$entry->label] = [
+                        'permission' => $entry->getPermission() ?? '',
+                        'location' => $entry->location,
                     ];
+                    continue;
                 }
+
+                $walk($entry);
             }
-        }
+        };
+        $walk($this->build());
 
         return $found;
     }
 
-    public function testInventoryEntriesArePresent(): void
+    private function submenu(string $label): ?Menu
     {
-        $items = $this->itemsByLabel();
+        foreach ($this->build()->getEntries() as $group) {
+            if (!$group instanceof Menu) {
+                continue;
+            }
 
-        self::assertArrayHasKey('Inventory', $items);
-        self::assertArrayHasKey('Reorder', $items);
-        self::assertArrayHasKey('Record Movement', $items);
-        self::assertArrayHasKey('Manage Inventory', $items);
+            foreach ($group->getEntries() as $child) {
+                if ($child instanceof Menu && $child->label === $label) {
+                    return $child;
+                }
+            }
+        }
+
+        return null;
     }
 
-    public function testInventoryEntriesCarryTheRightPermissions(): void
+    /**
+     * @return array<string>
+     */
+    private function childLabels(Menu $menu): array
     {
-        $items = $this->itemsByLabel();
+        return array_map(static fn (MenuItem $item): string => $item->label, $menu->getEntries());
+    }
+
+    public function testFlatInventoryEntriesArePresentWithTheRightPermissions(): void
+    {
+        $items = $this->leavesByLabel();
 
         self::assertSame('aureum.module.inventory.view', $items['Inventory']['permission']);
         self::assertSame('aureum.module.inventory.view', $items['Reorder']['permission']);
         self::assertSame('aureum.module.inventory.count', $items['Record Movement']['permission']);
-        self::assertSame('aureum.module.inventory.manage', $items['Manage Inventory']['permission']);
+    }
+
+    public function testManageInventoryIsASubmenuOverItsFourEntities(): void
+    {
+        $submenu = $this->submenu('Manage Inventory');
+
+        self::assertNotNull($submenu);
+        self::assertSame('aureum.module.inventory.manage', $submenu->getPermission());
+        self::assertArrayNotHasKey('location', $submenu->options);
+        self::assertSame(
+            ['Inventories', 'Categories', 'Storage Locations', 'Items'],
+            $this->childLabels($submenu),
+        );
+    }
+
+    public function testEachManageInventoryChildTargetsItsOwnPage(): void
+    {
+        $items = $this->leavesByLabel();
+
+        self::assertSame('/aureum_inventory_manage_inventories', $items['Inventories']['location']);
+        self::assertSame('/aureum_inventory_manage_categories', $items['Categories']['location']);
+        self::assertSame('/aureum_inventory_manage_locations', $items['Storage Locations']['location']);
+        self::assertSame('/aureum_inventory_manage_items', $items['Items']['location']);
+    }
+
+    public function testManageRoomsGroupsItsTwoEntities(): void
+    {
+        $submenu = $this->submenu('Manage Rooms');
+
+        self::assertNotNull($submenu);
+        self::assertSame('aureum.module.rooms.manage', $submenu->getPermission());
+        self::assertArrayNotHasKey('location', $submenu->options);
+        self::assertSame(['Floors', 'Room Types'], $this->childLabels($submenu));
+    }
+
+    public function testEverySubmenuChildCarriesItsOwnPermission(): void
+    {
+        foreach (['Manage Inventory', 'Manage Rooms'] as $label) {
+            $submenu = $this->submenu($label);
+            self::assertNotNull($submenu);
+
+            foreach ($submenu->getEntries() as $child) {
+                self::assertNotNull(
+                    $child->getPermission(),
+                    "{$label} child {$child->label} has no permission and would show to everyone",
+                );
+            }
+        }
     }
 
     public function testExistingEntriesAreUntouched(): void
     {
-        $items = $this->itemsByLabel();
+        $items = $this->leavesByLabel();
 
         self::assertSame('aureum.module.packages.view', $items['Packages']['permission']);
-        self::assertSame('aureum.module.rooms.manage', $items['Manage Floors']['permission']);
+        self::assertSame('aureum.module.restaurants.view', $items['Restaurants']['permission']);
+        self::assertSame('aureum.rbac.manage', $items['Roles']['permission']);
     }
 }

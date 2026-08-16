@@ -21,6 +21,26 @@
                             {% endif %}
                             <span class="text-small ml-2 text-center">{{ child.label }}</span>
                         </a>
+                    {% else %}
+                        <div class="navigation-subgroup flex flex-col gap-1" data-controller="aureum-nav">
+                            <button type="button" class="btn-link flex" aria-expanded="false"
+                                    data-aureum-nav-target="toggle" data-action="aureum-nav#toggle">
+                                {% if child.options.icon is defined %}
+                                    <i class="text-center ml-2 {{ child.options.icon }}"></i>
+                                {% endif %}
+                                <span class="text-small ml-2 text-center">{{ child.label }}</span>
+                                <i class="ph ph-caret-right ml-2" data-aureum-nav-target="caret"></i>
+                            </button>
+                            <div class="d-none" data-aureum-nav-target="children">
+                                <div class="flex flex-col gap-1">
+                                    {% for sub in child.entries %}
+                                        <a class="btn-link flex" href="{{ sub.location }}">
+                                            <span class="text-small ml-6 text-center">{{ sub.label }}</span>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
                     {% endif %}
                 {% endfor %}
             </div>

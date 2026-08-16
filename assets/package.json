@@ -23,14 +23,20 @@
         "fetch": "eager",
         "enabled": true,
         "autoimport": {}
+      },
+      "aureum-nav": {
+        "main": "dist/aureum_nav_controller.js",
+        "name": "aureum-nav",
+        "fetch": "eager",
+        "enabled": true,
+        "autoimport": {}
       }
     },
     "importmap": {
       "@hotwired/stimulus": "^3.0.0"
     }
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@hotwired/stimulus": "^3.0.0",
     "core-js": "^3.34.0"

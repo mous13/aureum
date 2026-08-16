@@ -70,28 +70,47 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
 
         $menu->addItem($directory);
 
-        $manager = new Menu('MANAGER', ['icon' => ''], [
-            new MenuItem('Manage Floors', $url('aureum_floors_list'), [
-                'icon' => 'ph ph-blueprint',
+        $manager = new Menu('MANAGER', ['icon' => '']);
+
+        $manager->addItem(new Menu('Manage Rooms', [
+            'icon' => 'ph ph-blueprint',
+            'permission' => 'aureum.module.rooms.manage',
+        ], [
+            new MenuItem('Floors', $url('aureum_floors_list'), [
                 'permission' => 'aureum.module.rooms.manage',
             ]),
             new MenuItem('Room Types', $url('aureum_room_types_list'), [
-                'icon' => 'ph ph-bed',
                 'permission' => 'aureum.module.rooms.manage',
             ]),
-            new MenuItem('Manage Inventory', $url('aureum_inventory_manage'), [
-                'icon' => 'ph ph-clipboard-text',
+        ]));
+
+        $manager->addItem(new Menu('Manage Inventory', [
+            'icon' => 'ph ph-clipboard-text',
+            'permission' => 'aureum.module.inventory.manage',
+        ], [
+            new MenuItem('Inventories', $url('aureum_inventory_manage_inventories'), [
                 'permission' => 'aureum.module.inventory.manage',
             ]),
-            new MenuItem('Roles', $url('aureum_roles_list'), [
-                'icon' => 'ph ph-users-three',
-                'permission' => 'aureum.rbac.manage',
+            new MenuItem('Categories', $url('aureum_inventory_manage_categories'), [
+                'permission' => 'aureum.module.inventory.manage',
             ]),
-            new MenuItem('Modules', $url('aureum_modules_edit'), [
-                'icon' => 'ph ph-squares-four',
-                'permission' => 'aureum.rbac.manage',
+            new MenuItem('Storage Locations', $url('aureum_inventory_manage_locations'), [
+                'permission' => 'aureum.module.inventory.manage',
             ]),
-        ]);
+            new MenuItem('Items', $url('aureum_inventory_manage_items'), [
+                'permission' => 'aureum.module.inventory.manage',
+            ]),
+        ]));
+
+        $manager->addItem(new MenuItem('Roles', $url('aureum_roles_list'), [
+            'icon' => 'ph ph-users-three',
+            'permission' => 'aureum.rbac.manage',
+        ]));
+
+        $manager->addItem(new MenuItem('Modules', $url('aureum_modules_edit'), [
+            'icon' => 'ph ph-squares-four',
+            'permission' => 'aureum.rbac.manage',
+        ]));
 
         $menu->addItem($manager);
 
