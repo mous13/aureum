@@ -65,6 +65,30 @@ class StockTake
     ) {
     }
 
+    public function mount(int $inventoryId): void
+    {
+        $this->inventoryId = $inventoryId;
+        $this->entries = $this->blankEntries();
+    }
+
+    /**
+     * @return array<int, array{packs: string, loose: string}>
+     */
+    private function blankEntries(): array
+    {
+        $inventory = $this->getInventory();
+        if ($inventory === null) {
+            return [];
+        }
+
+        $blank = [];
+        foreach ($this->itemRepository->findActiveByInventory($inventory) as $item) {
+            $blank[$item->getId()] = ['packs' => '', 'loose' => ''];
+        }
+
+        return $blank;
+    }
+
     public static function baseUnits(int $packs, int $loose, ?int $packSize): int
     {
         $loose = max(0, $loose);
@@ -187,7 +211,7 @@ class StockTake
             $this->countLineRepository->save($line);
         }
 
-        $this->entries = [];
+        $this->entries = $this->blankEntries();
         $this->rows = null;
         $this->notes = '';
         $this->saved = true;
