@@ -1,75 +1,79 @@
 <div {{ attributes.defaults({ 'class': 'stock-take' }) }}>
-    <style>
-        .stock-take-toolbar { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1rem; }
-        .stock-take-table { width: 100%; border-collapse: collapse; }
-        .stock-take-table th, .stock-take-table td { text-align: left; padding: 0.45rem 0.5rem; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
-        .stock-take-table input { width: 6rem; }
-        .stock-take-warn { color: #a1401a; font-size: 0.8rem; display: block; }
-        .stock-take-total { font-variant-numeric: tabular-nums; }
-        .stock-take-saved { margin-bottom: 1rem; }
-    </style>
-
     {% if this.saved %}
-        <div class="alert-success stock-take-saved"><p>Stock take saved.</p></div>
+        <div class="alert-success mb-4"><p>Stock take saved.</p></div>
     {% elseif this.nothingToSave %}
-        <div class="alert-warning stock-take-saved"><p>Nothing to save — enter a count before saving.</p></div>
+        <div class="alert-warning mb-4"><p>Nothing to save — enter a count before saving.</p></div>
     {% endif %}
 
-    <div class="stock-take-toolbar">
-        <select data-model="locationId">
-            <option value="">All locations</option>
-            {% for location in this.locations %}
-                <option value="{{ location.id }}" {% if this.locationId == location.id %}selected{% endif %}>{{ location.name }}</option>
-            {% endfor %}
-        </select>
-        <span class="text-small">{{ this.enteredCount }} item{{ this.enteredCount == 1 ? '' : 's' }} entered</span>
-    </div>
+    <div class="card">
+        <div class="card-title luxury">Count stock</div>
+        <div class="card-body">
+            <p class="text-small">Enter what is on the shelf. Packs and loose units combine as you type, and a count of zero is a real observation.</p>
 
-    <table class="stock-take-table">
-        <thead>
-            <tr><th>Item</th><th>Location</th><th>On hand</th><th>Packs</th><th>Loose</th><th>Counted</th></tr>
-        </thead>
-        <tbody>
-            {% for row in this.rows %}
+            <div class="flex gap-2 items-center mb-4">
+                <select data-model="locationId">
+                    <option value="">All locations</option>
+                    {% for location in this.locations %}
+                        <option value="{{ location.id }}" {% if this.locationId == location.id %}selected{% endif %}>{{ location.name }}</option>
+                    {% endfor %}
+                </select>
+                <span class="text-small">{{ this.enteredCount }} item{{ this.enteredCount == 1 ? '' : 's' }} entered</span>
+            </div>
+
+            <table class="text-left">
                 <tr>
-                    <td>{{ row.item.name }}</td>
-                    <td class="text-small">{{ row.item.location.name }}</td>
-                    <td class="text-small">{{ row.item.describeQuantity(row.onHand) }}</td>
-                    <td>
-                        {% if row.item.packSize %}
-                            <input type="number" min="0" inputmode="numeric"
-                                   data-model="norender|entries[{{ row.item.id }}][packs]"
-                                   value="{{ this.entries[row.item.id].packs|default('') }}"
-                                   placeholder="{{ row.item.packLabel ?? 'pack' }}">
-                        {% else %}
-                            <span class="text-small">&mdash;</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <input type="number" min="0" inputmode="numeric"
-                               data-model="entries[{{ row.item.id }}][loose]"
-                               value="{{ this.entries[row.item.id].loose|default('') }}"
-                               placeholder="{{ row.item.unit }}">
-                    </td>
-                    <td class="stock-take-total">
-                        {{ row.item.describeQuantity(row.entered) }}
-                        {% if row.rising %}
-                            <span class="stock-take-warn">Higher than stock on hand — record the delivery, or re-check the shelf.</span>
-                        {% endif %}
-                    </td>
+                    <th>Item</th>
+                    <th>Location</th>
+                    <th>On hand</th>
+                    <th>Packs</th>
+                    <th>Loose</th>
+                    <th>Counted</th>
                 </tr>
-            {% else %}
-                <tr><td colspan="6" class="text-small">No items to count here.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                {% for row in this.rows %}
+                    <tr>
+                        <td>{{ row.item.name }}</td>
+                        <td>{{ row.item.location.name }}</td>
+                        <td>{{ row.item.describeQuantity(row.onHand) }}</td>
+                        <td>
+                            {% if row.item.packSize %}
+                                <input type="number" min="0" inputmode="numeric"
+                                       data-model="norender|entries[{{ row.item.id }}][packs]"
+                                       value="{{ this.entries[row.item.id].packs|default('') }}"
+                                       placeholder="{{ row.item.packLabel ?? 'pack' }}">
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            <input type="number" min="0" inputmode="numeric"
+                                   data-model="entries[{{ row.item.id }}][loose]"
+                                   value="{{ this.entries[row.item.id].loose|default('') }}"
+                                   placeholder="{{ row.item.unit }}">
+                        </td>
+                        <td>
+                            {{ row.item.describeQuantity(row.entered) }}
+                            {% if row.rising %}
+                                <div class="alert-warning mt-2">
+                                    <p class="text-small">Higher than stock on hand — record the delivery, or re-check the shelf.</p>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-small">No items to count here.</td>
+                    </tr>
+                {% endfor %}
+            </table>
 
-    <div class="mt-4 flex flex-col gap-2">
-        <textarea data-model="norender|notes" rows="2" placeholder="Notes (optional)"></textarea>
-        <div>
-            <button type="button" class="btn btn-primary" data-action="live#action" data-live-action-param="save">
-                <i class="ph ph-check"></i> Save stock take
-            </button>
+            <div class="mt-4 flex flex-col gap-2">
+                <textarea data-model="norender|notes" rows="2" placeholder="Notes (optional)"></textarea>
+                <div>
+                    <button type="button" class="btn btn-primary" data-action="live#action" data-live-action-param="save">
+                        <i class="ph ph-check"></i> Save stock take
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
