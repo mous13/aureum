@@ -3,114 +3,102 @@
 {% block title %}{{ item.name }}{% endblock %}
 
 {% block body %}
-    <style>
-        .inv-panel { border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 1.5rem; }
-        .inv-panel h2 { margin: 0 0 0.75rem; font-size: 1.05rem; }
-        .inv-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.75rem; }
-        .inv-meta-grid dt { font-size: 0.75rem; text-transform: uppercase; opacity: 0.65; }
-        .inv-meta-grid dd { margin: 0; }
-        .inv-table { width: 100%; border-collapse: collapse; }
-        .inv-table th, .inv-table td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
-        .inv-badge { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 999px; border: 1px solid; white-space: nowrap; }
-        .inv-badge-overdue, .inv-badge-order_now { color: #b91c1c; background: rgba(185, 28, 28, 0.08); border-color: #b91c1c; }
-        .inv-badge-due_soon { color: #92400e; background: rgba(146, 64, 14, 0.08); border-color: #92400e; }
-        .inv-badge-ok { color: #4b5563; background: rgba(75, 85, 99, 0.06); border-color: rgba(75, 85, 99, 0.3); }
-        .inv-badge-needs_setup, .inv-badge-no_data { color: #6b7280; background: rgba(107, 114, 128, 0.06); border-color: rgba(107, 114, 128, 0.25); }
-        .inv-flag { display: inline-block; font-size: 0.7rem; padding: 0.05rem 0.4rem; border-radius: 999px; border: 1px solid rgba(146, 64, 14, 0.5); color: #92400e; margin-left: 0.35rem; }
-    </style>
-
     <div class="mb-4 flex flex-wrap items-center justify-between">
         <h1 class="mb-0">{{ item.name }}</h1>
         <a class="btn btn-link" href="{{ path('aureum_inventory') }}">Back to Inventory</a>
     </div>
 
-    <section class="inv-panel">
-        <h2>Settings</h2>
-        <dl class="inv-meta-grid">
-            <div>
-                <dt>Unit</dt>
-                <dd>{{ item.unit }}</dd>
-            </div>
-            <div>
-                <dt>Pack size</dt>
-                <dd>{{ item.packSize ?? '-' }}{{ item.packLabel ? ' ' ~ item.packLabel : '' }}</dd>
-            </div>
-            <div>
-                <dt>Lead time</dt>
-                <dd>{{ item.leadTimeDays is null ? 'Not set' : item.leadTimeDays ~ ' day' ~ (item.leadTimeDays == 1 ? '' : 's') }}</dd>
-            </div>
-            <div>
-                <dt>Safety buffer</dt>
-                <dd>{{ item.safetyBufferDays }} day{{ item.safetyBufferDays == 1 ? '' : 's' }}</dd>
-            </div>
-            <div>
-                <dt>Location</dt>
-                <dd>{{ item.location.name }}</dd>
-            </div>
-            <div>
-                <dt>Category</dt>
-                <dd>{{ item.category.name }}</dd>
-            </div>
-        </dl>
-    </section>
-
-    <section class="inv-panel">
-        <h2>Current forecast</h2>
-        <dl class="inv-meta-grid">
-            <div>
-                <dt>Status</dt>
-                <dd>
-                    <span class="inv-badge inv-badge-{{ forecast.status.value }}">{{ forecast.status.label }}</span>
-                    {% if forecast.provisional %}
-                        <span class="inv-flag">Provisional</span>
-                    {% endif %}
-                    {% if forecast.needsReview %}
-                        <span class="inv-flag">Needs review</span>
-                    {% endif %}
-                </dd>
-            </div>
-            <div>
-                <dt>Stock on hand</dt>
-                <dd>{{ forecast.status.value == 'no_data' ? 'Unknown' : item.describeQuantity(forecast.stockOnHand) }}</dd>
-            </div>
-            <div>
-                <dt>Consumption rate</dt>
-                <dd>{{ forecast.ratePerDay is not null ? forecast.ratePerDay|round(2) ~ ' ' ~ item.unit ~ '/day' : '-' }}</dd>
-            </div>
-            <div>
-                <dt>Days of cover</dt>
-                <dd>{{ forecast.daysOfCover is not null ? forecast.daysOfCover|round(1) ~ ' days' : '-' }}</dd>
-            </div>
-            <div>
-                <dt>Order by</dt>
-                <dd>{{ forecast.orderBy is not null ? forecast.orderBy|date('j M Y') : '-' }}</dd>
-            </div>
-            <div>
-                <dt>Order</dt>
-                <dd>
-                    {% if forecast.orderPacks is not null %}
-                        {{ forecast.orderPacks }} {{ item.packLabel ?? 'pack' }}{{ forecast.orderPacks == 1 ? '' : 's' }}
-                    {% elseif forecast.orderQuantity is not null %}
-                        {{ forecast.orderQuantity }} {{ item.unit }}
-                    {% else %}
-                        -
-                    {% endif %}
-                </dd>
-            </div>
-            <div>
-                <dt>Based on</dt>
-                <dd>{{ forecast.usableIntervals }} usable interval{{ forecast.usableIntervals == 1 ? '' : 's' }}, {{ forecast.observedDays|round(1) }} observed days</dd>
-            </div>
-        </dl>
-    </section>
-
-    <section class="inv-panel">
-        <h2>Counts</h2>
-        <table class="inv-table">
-            <thead>
-                <tr><th>Date</th><th>Quantity</th><th>Who</th></tr>
-            </thead>
-            <tbody>
+    <div class="card">
+        <div class="card-title luxury">Settings</div>
+        <div class="card-body">
+            <table class="text-left">
+                <tr>
+                    <th>Category</th>
+                    <td>{{ item.category.name }}</td>
+                </tr>
+                <tr>
+                    <th>Location</th>
+                    <td>{{ item.location.name }}</td>
+                </tr>
+                <tr>
+                    <th>Unit</th>
+                    <td>{{ item.unit }}</td>
+                </tr>
+                <tr>
+                    <th>Pack size</th>
+                    <td>{{ item.packSize ?? '-' }}{{ item.packLabel ? ' ' ~ item.packLabel : '' }}</td>
+                </tr>
+                <tr>
+                    <th>Lead time</th>
+                    <td>{{ item.leadTimeDays is null ? 'Not set' : item.leadTimeDays ~ ' day' ~ (item.leadTimeDays == 1 ? '' : 's') }}</td>
+                </tr>
+                <tr>
+                    <th>Safety buffer</th>
+                    <td>{{ item.safetyBufferDays }} day{{ item.safetyBufferDays == 1 ? '' : 's' }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="card mt-5">
+        <div class="card-title luxury">Current forecast</div>
+        <div class="card-body">
+            <table class="text-left">
+                <tr>
+                    <th>Status</th>
+                    <td>
+                        {{ forecast.status.label }}
+                        {% if forecast.provisional %}
+                            <span class="tag">Provisional</span>
+                        {% endif %}
+                        {% if forecast.needsReview %}
+                            <span class="tag">Needs review</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Stock on hand</th>
+                    <td>{{ forecast.status.value == 'no_data' ? 'Unknown' : item.describeQuantity(forecast.stockOnHand) }}</td>
+                </tr>
+                <tr>
+                    <th>Consumption rate</th>
+                    <td>{{ forecast.ratePerDay is not null ? forecast.ratePerDay|round(2) ~ ' ' ~ item.unit ~ '/day' : '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Days of cover</th>
+                    <td>{{ forecast.daysOfCover is not null ? forecast.daysOfCover|round(1) ~ ' days' : '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Order by</th>
+                    <td>{{ forecast.orderBy is not null ? forecast.orderBy|date('j M Y') : '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Order</th>
+                    <td>
+                        {% if forecast.orderPacks is not null %}
+                            {{ forecast.orderPacks }} {{ item.packLabel ?? 'pack' }}{{ forecast.orderPacks == 1 ? '' : 's' }}
+                        {% elseif forecast.orderQuantity is not null %}
+                            {{ forecast.orderQuantity }} {{ item.unit }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Based on</th>
+                    <td>{{ forecast.usableIntervals }} usable interval{{ forecast.usableIntervals == 1 ? '' : 's' }}, {{ forecast.observedDays|round(1) }} observed days</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="card mt-5">
+        <div class="card-title luxury">Counts</div>
+        <div class="card-body">
+            <table class="text-left">
+                <tr>
+                    <th>Date</th>
+                    <th>Quantity</th>
+                    <th>Counted by</th>
+                </tr>
                 {% for line in counts %}
                     <tr>
                         <td>{{ line.stockCount.countedAt|date('j M Y, H:i') }}</td>
@@ -118,19 +106,24 @@
                         <td>{{ line.stockCount.countedBy.name }}</td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="3" class="text-small">No counts in this window.</td></tr>
+                    <tr>
+                        <td colspan="3" class="text-small">No counts in this window.</td>
+                    </tr>
                 {% endfor %}
-            </tbody>
-        </table>
-    </section>
-
-    <section class="inv-panel">
-        <h2>Movements</h2>
-        <table class="inv-table">
-            <thead>
-                <tr><th>Date</th><th>Direction</th><th>Reason</th><th>Quantity</th><th>Destination</th></tr>
-            </thead>
-            <tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card mt-5">
+        <div class="card-title luxury">Movements</div>
+        <div class="card-body">
+            <table class="text-left">
+                <tr>
+                    <th>Date</th>
+                    <th>Direction</th>
+                    <th>Reason</th>
+                    <th>Quantity</th>
+                    <th>Destination</th>
+                </tr>
                 {% for movement in movements %}
                     <tr>
                         <td>{{ movement.occurredAt|date('j M Y, H:i') }}</td>
@@ -140,19 +133,22 @@
                         <td>{{ movement.destination ? movement.destination.name : '-' }}</td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="5" class="text-small">No movements in this window.</td></tr>
+                    <tr>
+                        <td colspan="5" class="text-small">No movements in this window.</td>
+                    </tr>
                 {% endfor %}
-            </tbody>
-        </table>
-    </section>
-
-    <section class="inv-panel">
-        <h2>Catalogue changes</h2>
-        <table class="inv-table">
-            <thead>
-                <tr><th>When</th><th>Who</th><th>What changed</th></tr>
-            </thead>
-            <tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card mt-5">
+        <div class="card-title luxury">Catalogue changes</div>
+        <div class="card-body">
+            <table class="text-left">
+                <tr>
+                    <th>When</th>
+                    <th>Who</th>
+                    <th>What changed</th>
+                </tr>
                 {% for log in logs %}
                     <tr>
                         <td>{{ log.createdAt|date('j M Y, H:i') }}</td>
@@ -175,9 +171,11 @@
                         </td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="3" class="text-small">No catalogue changes recorded.</td></tr>
+                    <tr>
+                        <td colspan="3" class="text-small">No catalogue changes recorded.</td>
+                    </tr>
                 {% endfor %}
-            </tbody>
-        </table>
-    </section>
+            </table>
+        </div>
+    </div>
 {% endblock %}
