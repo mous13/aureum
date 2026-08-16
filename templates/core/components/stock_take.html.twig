@@ -37,7 +37,7 @@
                         <td>
                             {% if row.item.packSize %}
                                 <input type="number" min="0" inputmode="numeric"
-                                       data-model="norender|entries[{{ row.item.id }}][packs]"
+                                       data-model="entries[{{ row.item.id }}][packs]"
                                        value="{{ this.entries[row.item.id].packs|default('') }}"
                                        placeholder="{{ row.item.packLabel ?? 'pack' }}">
                             {% else %}
@@ -67,7 +67,7 @@
             </table>
 
             <div class="mt-4 flex flex-col gap-2">
-                <textarea data-model="norender|notes" rows="2" placeholder="Notes (optional)"></textarea>
+                <textarea data-model="notes" rows="2" placeholder="Notes (optional)">{{ this.notes }}</textarea>
                 <div>
                     <button type="button" class="btn btn-primary" data-action="live#action" data-live-action-param="save">
                         <i class="ph ph-check"></i> Save stock take
