@@ -3,15 +3,6 @@
 {% block title %}Inventory{% endblock %}
 
 {% block body %}
-    <style>
-        .inv-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 1rem; }
-        .inv-card { border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 10px; padding: 1rem 1.1rem; }
-        .inv-card h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
-        .inv-meta { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.9rem; }
-        .inv-card-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-        .inv-empty { border: 1px dashed rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 1.5rem; text-align: center; }
-    </style>
-
     <div class="mb-4 flex flex-wrap items-center justify-between">
         <h1 class="mb-0">Inventory</h1>
         <a class="btn btn-link" href="{{ path('aureum_inventory_reorder') }}">
@@ -19,36 +10,41 @@
         </a>
     </div>
 
-    {% if rows is empty %}
-        <div class="inv-empty">
-            <p>No inventories yet.</p>
-            <p class="text-small">Create one from Manage Inventory, or run the seed command to load General Stock.</p>
+    {% for row in rows %}
+        <div class="card{{ loop.first ? '' : ' mt-5' }}">
+            <div class="card-title luxury">{{ row.inventory.name }}</div>
+            <div class="card-body">
+                <table class="text-left">
+                    <tr>
+                        <th>Items</th>
+                        <th>Last counted</th>
+                        <th>Counted by</th>
+                    </tr>
+                    <tr>
+                        <td>{{ row.itemCount }}</td>
+                        <td>{{ row.lastCountedAt ? row.lastCountedAt|date('j M Y, H:i') : 'Never' }}</td>
+                        <td>{{ row.lastCountedBy ? row.lastCountedBy.name : '-' }}</td>
+                    </tr>
+                </table>
+                {% if is_granted('aureum.module.inventory.count') %}
+                    <div class="mt-4">
+                        <a class="btn btn-primary" href="{{ path('aureum_inventory_take', { id: row.inventory.id }) }}">
+                            <i class="ph ph-clipboard-text"></i> Stock take
+                        </a>
+                        <a class="btn btn-link" href="{{ path('aureum_inventory_movements') }}">
+                            <i class="ph ph-arrows-left-right"></i> Record Movement
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     {% else %}
-        <div class="inv-cards">
-            {% for row in rows %}
-                <div class="inv-card">
-                    <h2>{{ row.inventory.name }}</h2>
-                    <div class="inv-meta text-small">
-                        <span>{{ row.itemCount }} item{{ row.itemCount == 1 ? '' : 's' }}</span>
-                        {% if row.lastCountedAt %}
-                            <span>Last counted {{ row.lastCountedAt|date('j M Y, H:i') }} by {{ row.lastCountedBy.name }}</span>
-                        {% else %}
-                            <span>Never counted</span>
-                        {% endif %}
-                    </div>
-                    <div class="inv-card-actions">
-                        {% if is_granted('aureum.module.inventory.count') %}
-                            <a class="btn btn-primary" href="{{ path('aureum_inventory_take', { id: row.inventory.id }) }}">
-                                <i class="ph ph-clipboard-text"></i> Stock take
-                            </a>
-                            <a class="btn btn-link" href="{{ path('aureum_inventory_movements') }}">
-                                <i class="ph ph-arrows-left-right"></i> Record Movement
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
+        <div class="card">
+            <div class="card-title luxury">Inventories</div>
+            <div class="card-body">
+                <p>No inventories yet.</p>
+                <p class="text-small">Create one from Manage Inventory, or run the seed command to load General Stock.</p>
+            </div>
         </div>
-    {% endif %}
+    {% endfor %}
 {% endblock %}
