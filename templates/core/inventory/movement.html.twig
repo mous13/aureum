@@ -3,23 +3,15 @@
 {% block title %}Record Movement{% endblock %}
 
 {% block body %}
-    <style>
-        .inv-panel { border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 10px; padding: 1rem 1.1rem; }
-        .inv-panel h2 { margin: 0 0 0.75rem; font-size: 1.05rem; }
-        .inv-table { width: 100%; border-collapse: collapse; }
-        .inv-table th, .inv-table td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
-        .inv-form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.75rem; align-items: end; }
-    </style>
-
     <div class="mb-4 flex flex-wrap items-center justify-between">
         <h1 class="mb-0">Record Movement</h1>
         <a class="btn btn-link" href="{{ path('aureum_inventory') }}">Back to Inventory</a>
     </div>
 
-    <section class="inv-panel mb-4">
-        <h2>New movement</h2>
-        {{ form_start(form) }}
-            <div class="inv-form-row">
+    <div class="card">
+        <div class="card-title luxury">Record a movement</div>
+        <div class="card-body">
+            {{ form_start(form) }}
                 {{ form_row(form.item) }}
                 {{ form_row(form.reason) }}
                 {{ form_row(form.direction) }}
@@ -28,39 +20,39 @@
                 {{ form_row(form.occurredAt) }}
                 {{ form_row(form.notes) }}
                 <button type="submit" class="btn btn-primary">Record</button>
-            </div>
-        {{ form_end(form) }}
-    </section>
-
-    <section class="inv-panel">
-        <h2>Recent movements</h2>
-        <table class="inv-table">
-            <thead>
+            {{ form_end(form) }}
+        </div>
+    </div>
+    <div class="card mt-5">
+        <div class="card-title luxury">Recent movements</div>
+        <div class="card-body">
+            <p class="text-small">Deliveries are the only thing that adds stock. A delivery that is never recorded reads as an unexplained rise on the next count.</p>
+            <table class="text-left">
                 <tr>
+                    <th>When</th>
                     <th>Item</th>
                     <th>Direction</th>
                     <th>Reason</th>
                     <th>Quantity</th>
                     <th>Destination</th>
-                    <th>When</th>
-                    <th>Who</th>
+                    <th>Recorded by</th>
                 </tr>
-            </thead>
-            <tbody>
                 {% for movement in movements %}
                     <tr>
+                        <td>{{ movement.occurredAt|date('j M Y, H:i') }}</td>
                         <td>{{ movement.item.name }}</td>
                         <td>{{ movement.direction.label }}</td>
                         <td>{{ movement.reason.label }}</td>
                         <td>{{ movement.item.describeQuantity(movement.quantity) }}</td>
                         <td>{{ movement.destination ? movement.destination.name : '-' }}</td>
-                        <td>{{ movement.occurredAt|date('j M Y, H:i') }}</td>
                         <td>{{ movement.recordedBy.name }}</td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="7" class="text-small">No movements recorded yet.</td></tr>
+                    <tr>
+                        <td colspan="7" class="text-small">No movements recorded yet.</td>
+                    </tr>
                 {% endfor %}
-            </tbody>
-        </table>
-    </section>
+            </table>
+        </div>
+    </div>
 {% endblock %}
