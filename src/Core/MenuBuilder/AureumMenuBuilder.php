@@ -25,9 +25,9 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
                 'icon' => 'ph ph-package',
                 'permission' => 'aureum.module.packages.view',
             ]),
-            new MenuItem('Transfers', $url('aureum_transfers'), [
-                'icon' => 'ph ph-car',
-                'permission' => 'aureum.module.transfers.view',
+            new MenuItem('Bookings', $url('aureum_bookings'), [
+                'icon' => 'ph ph-calendar-check',
+                'permission' => 'aureum.module.bookings.view',
             ]),
             new MenuItem('Lost Property', $url('aureum_lost_property'), [
                 'icon' => 'ph ph-t-shirt',

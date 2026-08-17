@@ -7,7 +7,7 @@ namespace Citadel\Aureum\Core\Entity\Enum;
 enum Module: string
 {
     case PACKAGES = 'packages';
-    case TRANSFERS = 'transfers';
+    case BOOKINGS = 'bookings';
     case LOST_PROPERTY = 'lost_property';
     case FINES = 'fines';
     case RESTAURANTS = 'restaurants';
@@ -18,7 +18,7 @@ enum Module: string
     {
         return match ($this) {
             self::PACKAGES => 'Packages',
-            self::TRANSFERS => 'Transfers',
+            self::BOOKINGS => 'Bookings',
             self::LOST_PROPERTY => 'Lost Property',
             self::FINES => 'Fines',
             self::RESTAURANTS => 'Restaurants',

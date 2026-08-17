@@ -23,6 +23,13 @@
         "fetch": "eager",
         "enabled": true,
         "autoimport": {}
+      },
+      "booking-form": {
+        "main": "dist/booking_form_controller.js",
+        "name": "booking-form",
+        "fetch": "eager",
+        "enabled": true,
+        "autoimport": {}
       }
     },
     "importmap": {
