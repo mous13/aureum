@@ -25,6 +25,8 @@ creates the accounts and holds the credentials.
 | [breach-response.md](breach-response.md) | Draft | Owner named; no deputy exists |
 | [sub-processors.md](sub-processors.md) | Draft | Mailgun region still to confirm |
 | [international-transfers.md](international-transfers.md) | **Action required** | Hosting is in the US with no transfer mechanism in place |
+| [isms/](isms/) | Draft | Scope, security policy, risk register, Statement of Applicability |
+| [pages/](pages/) | Ready to paste | Public page mockups: privacy notice, sub-processors, cookies, guest notice template |
 
 ## Read this first
 
@@ -49,10 +51,11 @@ allegations about their conduct, across every hotel on the platform. That is the
 shape of processing Art. 35 is aimed at. Whether one is formally required is a
 judgement for a data protection practitioner, not something to assume away.
 
-**The ISMS document set** — scope statement, risk register, information security
-policy, Statement of Applicability. These are prerequisites for an ISO 27001
-certification attempt and none of them exist yet. They describe how the
-organisation is run, so they cannot be generated from the codebase.
+**A signed DPA, a DPIA, and certification itself.** The ISMS document set now
+exists in [isms/](isms/) — scope statement, information security policy, risk
+register and Statement of Applicability — drafted honestly for a one-person
+operation. Certification additionally requires the management-system routine
+(reviews, internal audit) to have actually run, which only time provides.
 
 ## Standing warning
 
