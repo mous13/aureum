@@ -66,5 +66,16 @@
             </div>
         </div>
         {{ form_end(editForm) }}
+                {% if is_granted('aureum.module.lost_property.manage') %}
+                    <form
+                        method="post"
+                        action="{{ path('aureum_lost_property_delete', {id: property.id}) }}"
+                        onsubmit="return confirm('Permanently delete this record and its history? This cannot be undone.');"
+                        class="flex justify-end mt-2"
+                    >
+                        <input type="hidden" name="_token" value="{{ csrf_token('aureum_lost_property_delete_' ~ property.id) }}">
+                        <button type="submit" class="btn-link btn-small text-error">Delete record</button>
+                    </form>
+                {% endif %}
     {% endblock %}
 {% endembed %}
