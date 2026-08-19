@@ -9,6 +9,16 @@
                 <p>Give it to {{ employee.name }} now. They will be asked to choose their own when they first sign in.</p>
             </div>
 
+            {% if emailSent|default(false) %}
+                <div class="alert-info mb-4">
+                    <p>The sign-in details have also been emailed to {{ employee.name }}.</p>
+                </div>
+            {% else %}
+                <div class="alert-error mb-4">
+                    <p>The welcome email could not be sent, so this screen is the only copy of the password. Hand it over directly.</p>
+                </div>
+            {% endif %}
+
             <table class="table mb-4">
                 <tbody>
                     <tr>

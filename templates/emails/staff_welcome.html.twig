@@ -1,0 +1,16 @@
+{% extends '@Forumify/emails/base.html.twig' %}
+{% block body %}
+    <p>Hello {{ employee.name }},</p>
+    <p>An account has been created for you on {{ hotel.name }}'s concierge desk.</p>
+    <p>
+        Username: <strong>{{ username }}</strong><br>
+        Temporary password: <strong>{{ password }}</strong>
+    </p>
+    <p>This password works exactly once. When you first sign in you will be asked to choose your own password, and this one stops working.</p>
+    {% set link = absolute_url(path('forumify_core_login')) %}
+    {% include '@Forumify/emails/components/button.html.twig' with {
+        href: link,
+        label: 'Sign in'
+    } only %}
+    <p>If you were not expecting this account, contact your hotel administrator.</p>
+{% endblock %}
