@@ -109,6 +109,9 @@ class Employee implements HotelOwnedInterface
     {
         $this->user = null;
         $this->archivedAt = new \DateTime();
+        foreach ($this->hotelRoles as $role) {
+            $role->removeEmployee($this);
+        }
         $this->hotelRoles->clear();
     }
 

@@ -39,6 +39,8 @@ class EmployeeRepository extends AbstractRepository
     public function findByHotel(Hotel $hotel): array
     {
         return $this->createQueryBuilder('e')
+            ->leftJoin('e.hotelRoles', 'r')
+            ->addSelect('r')
             ->where('e.hotel = :hotel')
             ->andWhere('e.archivedAt IS NULL')
             ->setParameter('hotel', $hotel)

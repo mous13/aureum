@@ -22,10 +22,26 @@ trait HotelScopedCrudTrait
         return parent::edit($request, $identifier);
     }
 
-    #[Route('/{identifier}/delete', name: '_delete')]
+    #[Route('/{identifier}/delete', name: '_delete', methods: ['GET'])]
     public function delete(Request $request, string $identifier): Response
     {
         $this->denyUnlessSameHotel($identifier);
+
+        $request->query->remove('confirmed');
+
+        return parent::delete($request, $identifier);
+    }
+
+    #[Route('/{identifier}/delete', name: '_delete_confirm', methods: ['POST'])]
+    public function deleteConfirmed(Request $request, string $identifier): Response
+    {
+        $this->denyUnlessSameHotel($identifier);
+
+        if (!$this->isCsrfTokenValid('aureum_crud_delete_' . $identifier, (string)$request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        $request->query->set('confirmed', '1');
 
         return parent::delete($request, $identifier);
     }
@@ -34,7 +50,7 @@ trait HotelScopedCrudTrait
     {
         $entity = $this->repository->find($identifier);
         if ($entity === null) {
-            return;
+            throw $this->createNotFoundException();
         }
 
         $hotel = $this->getAureumService()->getHotel();

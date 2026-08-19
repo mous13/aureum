@@ -102,6 +102,12 @@ class RestaurantsController extends AbstractController
         $employee = $this->aureumService->getEmployee();
         $this->votingService->vote($restaurant, $employee, $direction, $this->restaurantRepository);
 
+        $referer = (string)$request->headers->get('referer');
+        $host = parse_url($referer, PHP_URL_HOST);
+        if ($referer !== '' && ($host === null || $host === $request->getHost())) {
+            return $this->redirect($referer);
+        }
+
         return $this->redirectToRoute('aureum_restaurants_list');
     }
 }
