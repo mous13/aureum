@@ -7,6 +7,8 @@ namespace Citadel\Aureum\Core\Entity;
 use Citadel\Aureum\Core\Entity\Enum\BookingField;
 use Citadel\Aureum\Core\Entity\Enum\BookingStatus;
 use Citadel\Aureum\Core\Entity\Enum\BookingType;
+use Citadel\Aureum\Core\Entity\Enum\Module;
+use Citadel\Aureum\Core\Entity\Trait\AnonymisableEntityTrait;
 use Citadel\Aureum\Core\Repository\BookingRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,9 +18,31 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 #[ORM\Table(name: 'aureum_bookings')]
 #[ORM\Index(name: 'idx_booking_hotel_date', columns: ['hotel_id', 'date'])]
 #[ORM\Index(name: 'idx_booking_hotel_type', columns: ['hotel_id', 'type'])]
-class Booking
+#[ORM\Index(name: 'IDX_aureum_bookings_anonymised_at', columns: ['anonymised_at'])]
+class Booking implements HotelOwnedInterface, AnonymisableInterface
 {
     use IdentifiableEntityTrait;
+    use AnonymisableEntityTrait;
+
+    public static function getModule(): Module
+    {
+        return Module::BOOKINGS;
+    }
+
+    public function getRetentionAnchor(): ?\DateTimeInterface
+    {
+        return $this->hasDate() ? $this->date : null;
+    }
+
+    public function anonymise(): void
+    {
+        $this->guest = null;
+        $this->number = null;
+        $this->email = null;
+        $this->notes = null;
+        $this->details = [];
+        $this->markAnonymised();
+    }
 
     #[ORM\Column(type: 'string', length: 255, enumType: BookingType::class)]
     private BookingType $type = BookingType::PRIVATE_TRANSFER;

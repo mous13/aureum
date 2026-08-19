@@ -1,0 +1,37 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title_page %}Access Log{% endblock %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">Access Log</div>
+        <div class="card-body">
+            <p class="text-small mb-4">
+                Who opened the modules holding guest contact details &mdash; packages, bookings,
+                fines and lost property. Use this to answer a guest asking who saw their details,
+                or to work out what was seen after an incident.
+                Entries are kept for {{ retainedMonths }} months, then removed.
+            </p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>When</th>
+                        <th>Employee</th>
+                        <th>Module</th>
+                        <th>Page</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in entries %}
+                        <tr>
+                            <td>{{ entry.accessedAt|date('j M Y, H:i') }}</td>
+                            <td>{{ entry.employeeName }}{% if entry.employee is null %} <span class="text-small">(no longer employed)</span>{% endif %}</td>
+                            <td>{{ entry.module.label }}</td>
+                            <td><code>{{ entry.method }} {{ entry.path }}</code></td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="4">Nothing recorded yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -8,17 +8,21 @@ use Citadel\Aureum\Admin\Form\DTO\NewEmployee;
 use Citadel\Aureum\Admin\Form\EmployeeEditType;
 use Citadel\Aureum\Admin\Form\EmployeeType;
 use Citadel\Aureum\Admin\Service\CreateEmployeeService;
+use Citadel\Aureum\Core\Entity\Employee;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
 use Citadel\Aureum\Core\Repository\HotelRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Forumify\Core\Exception\UserAlreadyExistsException;
 use Forumify\Core\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Psr\Log\LoggerInterface;
 
 #[Route('/employees', 'employees')]
+#[IsGranted('aureum.admin.employees.manage')]
 class EmployeeController extends AbstractController
 {
     public function __construct(
@@ -26,7 +30,8 @@ class EmployeeController extends AbstractController
         private readonly CreateEmployeeService $createEmployeeService,
         private readonly EmployeeRepository $employeeRepository,
         private readonly UserRepository $userRepository,
-        private readonly Security $security,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -123,7 +128,7 @@ class EmployeeController extends AbstractController
                 $this->addFlash('error', $e->getMessage());
             } catch (\Exception $e) {
                 $this->addFlash('error', 'An error occurred while creating the employee. Please try again.');
-                error_log('Employee creation error: ' . $e->getMessage());
+                $this->logger->error('Employee creation failed', ['exception' => $e]);
             }
         }
 
@@ -148,11 +153,9 @@ class EmployeeController extends AbstractController
     }
 
     #[Route('/edit/{id}', '_edit')]
-    public function edit(Request $request, ?int $id): Response
+    public function edit(Request $request, int $id): Response
     {
-        $employee = $this->employeeRepository->find($id);
-
-        $user = $this->security->getUser();
+        $employee = $this->findEmployeeOr404($id);
 
         $form = $this->createForm(EmployeeEditType::class, $employee);
 
@@ -160,10 +163,15 @@ class EmployeeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $isVerified = $form->get('verified')->getData();
-            $user->setEmailVerified($isVerified);
+            $isVerified = (bool)$form->get('verified')->getData();
 
-            $this->userRepository->save($user);
+            $user = $employee->getUser();
+            if ($user !== null) {
+                $this->entityManager->initializeObject($user);
+                $user->setEmailVerified($isVerified);
+                $this->userRepository->save($user);
+            }
+
             $this->employeeRepository->save($data);
 
             $this->addFlash('success', 'Employee updated successfully.');
@@ -176,22 +184,49 @@ class EmployeeController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', '_delete')]
+    #[Route('/delete/{id}', '_delete', methods: ['GET'])]
+    public function confirmDelete(int $id): Response
+    {
+        return $this->render('@CitadelAureum/admin/employee/delete.html.twig', [
+            'employee' => $this->findEmployeeOr404($id),
+        ]);
+    }
+
+    #[Route('/delete/{id}', '_delete_confirm', methods: ['POST'])]
     public function delete(Request $request, int $id): Response
     {
-        $employee = $this->employeeRepository->find($id);
-        if (!$request->get('confirmed')) {
-            return $this->render('@CitadelAureum/admin/employee/delete.html.twig', [
-                'employee' => $employee,
-            ]);
+        $employee = $this->findEmployeeOr404($id);
+
+        if (!$this->isCsrfTokenValid('aureum_employee_delete_' . $id, (string)$request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
         }
 
         $user = $employee->getUser();
+        if ($user !== null) {
+            $this->entityManager->initializeObject($user);
+        }
 
-        $this->userRepository->remove($user);
-        $this->employeeRepository->remove($employee);
+        $employee->archive();
+        $this->employeeRepository->save($employee, false);
 
-        $this->addFlash('success', 'Employee Deleted.');
+        if ($user !== null) {
+            $this->userRepository->remove($user, false);
+        }
+
+        $this->employeeRepository->flush();
+
+        $this->addFlash('success', 'Employee offboarded. Their history has been kept for the audit trail.');
+
         return $this->redirectToRoute('aureum_admin_hotels_list');
+    }
+
+    private function findEmployeeOr404(int $id): Employee
+    {
+        $employee = $this->employeeRepository->find($id);
+        if ($employee === null || $employee->isArchived()) {
+            throw $this->createNotFoundException();
+        }
+
+        return $employee;
     }
 }

@@ -1,0 +1,20 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title_page %}Add employee{% endblock %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">Add employee</div>
+        <div class="card-body">
+            <p class="text-small mb-4">
+                Aureum generates a temporary password for you to pass on. They will be asked to
+                choose their own the first time they sign in.
+            </p>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <div class="flex justify-end gap-2 mt-4">
+                <a href="{{ path('aureum_staff_list') }}" class="btn btn-outlined square">Cancel</a>
+                <button type="submit" class="btn btn-primary luxury-light square">Create employee</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

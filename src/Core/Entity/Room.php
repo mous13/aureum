@@ -14,7 +14,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
 #[ORM\Table(name: 'aureum_rooms')]
 #[ORM\UniqueConstraint(name: 'uniq_floor_number', columns: ['floor_id', 'number'])]
-class Room
+class Room implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 
@@ -49,6 +49,11 @@ class Room
 
     #[ORM\Column(type: 'json')]
     private array $cells = [];
+
+    public function getHotel(): ?Hotel
+    {
+        return $this->floor->getHotel();
+    }
 
     public function getFloor(): Floor
     {

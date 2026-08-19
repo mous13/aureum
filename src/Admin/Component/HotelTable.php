@@ -10,7 +10,7 @@ use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
-#[AsLiveComponent('HotelTable', '@Forumify/components/table/table.html.twig')]
+#[AsLiveComponent('HotelTable', '@CitadelAureum/core/components/table.html.twig')]
 #[IsGranted('aureum.admin.hotels.manage')]
 class HotelTable extends AbstractDoctrineTable
 {

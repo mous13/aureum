@@ -12,7 +12,7 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
-#[AsLiveComponent('EmployeeTable', '@Forumify/components/table/table.html.twig')]
+#[AsLiveComponent('EmployeeTable', '@CitadelAureum/core/components/table.html.twig')]
 #[IsGranted('aureum.admin.employees.manage')]
 class EmployeeTable extends AbstractDoctrineTable
 {

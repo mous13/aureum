@@ -10,7 +10,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 
 #[ORM\Entity(repositoryClass: CuisineRepository::class)]
 #[ORM\Table(name: 'aureum_cuisines')]
-class Cuisine
+class Cuisine implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 

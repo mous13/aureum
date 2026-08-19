@@ -13,7 +13,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 #[ORM\Entity(repositoryClass: HotelRoleRepository::class)]
 #[ORM\Table(name: 'aureum_hotel_roles')]
 #[ORM\UniqueConstraint(name: 'uniq_hotel_role_name', columns: ['hotel_id', 'name'])]
-class HotelRole
+class HotelRole implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 

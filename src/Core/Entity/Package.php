@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Entity;
 
 use Citadel\Aureum\Core\Entity\Enum\PackageStatus;
+use Citadel\Aureum\Core\Entity\Enum\Module;
+use Citadel\Aureum\Core\Entity\Trait\AnonymisableEntityTrait;
 use Citadel\Aureum\Core\Repository\PackageRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
@@ -12,10 +14,29 @@ use Forumify\Core\Entity\TimestampableEntityTrait;
 
 #[ORM\Entity(repositoryClass: PackageRepository::class)]
 #[ORM\Table(name: 'aureum_packages')]
-class Package
+#[ORM\Index(name: 'IDX_aureum_packages_anonymised_at', columns: ['anonymised_at'])]
+class Package implements HotelOwnedInterface, AnonymisableInterface
 {
     use IdentifiableEntityTrait;
     use TimestampableEntityTrait;
+    use AnonymisableEntityTrait;
+
+    public static function getModule(): Module
+    {
+        return Module::PACKAGES;
+    }
+
+    public function getRetentionAnchor(): ?\DateTimeInterface
+    {
+        return $this->getCreatedAt();
+    }
+
+    public function anonymise(): void
+    {
+        $this->name = self::ANONYMISED_PLACEHOLDER;
+        $this->note = null;
+        $this->markAnonymised();
+    }
 
     #[ORM\Column(length: 255)]
     private string $name;

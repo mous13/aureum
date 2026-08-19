@@ -71,8 +71,20 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
                 'icon' => 'ph ph-users-three',
                 'permission' => 'aureum.rbac.manage',
             ]),
+            new MenuItem('Staff', $url('aureum_staff_list'), [
+                'icon' => 'ph ph-user-plus',
+                'permission' => 'aureum.employees.manage',
+            ]),
             new MenuItem('Modules', $url('aureum_modules_edit'), [
                 'icon' => 'ph ph-squares-four',
+                'permission' => 'aureum.rbac.manage',
+            ]),
+            new MenuItem('Data Retention', $url('aureum_retention_edit'), [
+                'icon' => 'ph ph-clock-counter-clockwise',
+                'permission' => 'aureum.rbac.manage',
+            ]),
+            new MenuItem('Access Log', $url('aureum_access_log'), [
+                'icon' => 'ph ph-eye',
                 'permission' => 'aureum.rbac.manage',
             ]),
         ]);

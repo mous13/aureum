@@ -30,6 +30,11 @@
       "Citadel\\Aureum\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Citadel\\Aureum\\Tests\\": "tests/Tests/"
+    }
+  },
   "extra": {
     "forumify-plugin-class": "Citadel\\Aureum\\CitadelAureum"
   },

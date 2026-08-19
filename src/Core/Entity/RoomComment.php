@@ -12,7 +12,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 #[ORM\Entity(repositoryClass: RoomCommentRepository::class)]
 #[ORM\Table(name: 'aureum_room_comments')]
 #[ORM\Index(columns: ['room_id', 'created_at'])]
-class RoomComment
+class RoomComment implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
     use CommentEntityTrait;
@@ -20,6 +20,11 @@ class RoomComment
     #[ORM\ManyToOne(targetEntity: Room::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Room $room;
+
+    public function getHotel(): ?Hotel
+    {
+        return $this->room->getHotel();
+    }
 
     public function getRoom(): Room
     {
