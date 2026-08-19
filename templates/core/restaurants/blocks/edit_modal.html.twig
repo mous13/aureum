@@ -9,24 +9,47 @@
             <div class="card-title luxury">
                 Edit Restaurant — {{ restaurant.name }}
             </div>
-            <div class="card-body">
+            <div class="card-body form-split-body">
                 {{ form_start(editForm) }}
-                <div class="form-field-grid">
-                    {{ form_row(editForm.name) }}
-                    {{ form_row(editForm.neighbourhood) }}
-                    {{ form_row(editForm.street) }}
-                </div>
-                <div class="form-field-grid">
-                    {{ form_row(editForm.cuisines) }}
-                    {{ form_row(editForm.mealPeriods) }}
-                    {{ form_row(editForm.dietaryRequirements) }}
-                    {{ form_row(editForm.tags) }}
-                </div>
-                <div class="form-section">
-                    {{ form_row(editForm.connections) }}
-                </div>
-                <div class="flex justify-end mt-5">
-                    <button type="submit" class="btn btn-primary luxury-light square">Save Changes</button>
+                <div class="form-split">
+                    <div class="form-rail luxury">
+                        <div class="form-rail-inner">
+                            {{ form_row(editForm.name) }}
+                            {{ form_row(editForm.tags) }}
+                        </div>
+                    </div>
+
+                    <div class="form-detail-panel">
+                        <div class="form-detail-head">
+                            <i class="icon ph ph-bowl-steam"></i>
+                            <h2>Restaurant Details</h2>
+                        </div>
+
+                        <div>
+                            <span class="form-label">Location</span>
+                            <div class="form-field-grid">
+                                {{ form_row(editForm.neighbourhood) }}
+                                {{ form_row(editForm.street) }}
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <span class="form-label">Cuisine &amp; Dining</span>
+                            <div class="form-field-grid">
+                                {{ form_row(editForm.cuisines) }}
+                                {{ form_row(editForm.mealPeriods) }}
+                                {{ form_row(editForm.dietaryRequirements) }}
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            {{ form_row(editForm.connections) }}
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="btn btn-primary luxury-light square">Save Changes</button>
+                        </div>
+                    </div>
                 </div>
                 {{ form_end(editForm) }}
             </div>

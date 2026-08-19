@@ -7,23 +7,40 @@
     {% block modalContent %}
         <div class="card">
             <div class="card-title luxury">Edit Package - {{ package.name }}: {{ package.description }}</div>
-            <div class="card-body">
+            <div class="card-body form-split-body">
                 {{ form_start(editForm) }}
-                <div class="form-field-grid">
-                    {{ form_row(editForm.name) }}
-                    {{ form_row(editForm.description) }}
-                    {{ form_row(editForm.location) }}
-                </div>
-                <div class="form-section">
-                    {{ form_row(editForm.note) }}
-                </div>
-                <div class="form-section">
-                    {{ form_row(editForm.status) }}
-                </div>
-                <div class="flex gap-2 mt-5">
-                    <button type="submit" class="luxury-light square btn btn-primary">
-                        Save Changes
-                    </button>
+                <div class="form-split">
+                    <div class="form-rail luxury">
+                        <div class="form-rail-inner">
+                            {{ form_row(editForm.name) }}
+                            {{ form_row(editForm.status) }}
+                        </div>
+                    </div>
+
+                    <div class="form-detail-panel">
+                        <div class="form-detail-head">
+                            <i class="icon ph ph-package"></i>
+                            <h2>Package Details</h2>
+                        </div>
+
+                        <div>
+                            <span class="form-label">Package Information</span>
+                            <div class="form-field-grid">
+                                {{ form_row(editForm.description) }}
+                                {{ form_row(editForm.location) }}
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            {{ form_row(editForm.note) }}
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="luxury-light square btn btn-primary">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 {{ form_end(editForm) }}
             </div>
