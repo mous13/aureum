@@ -56,8 +56,6 @@ class EmployeeController extends AbstractController
 
         $hotel = $this->hotelRepository->find($hotelId);
 
-
-
         return $this->render('@CitadelAureum/admin/employee/list.html.twig', [
             'table' => 'EmployeeTable',
             'hotel' => $hotel,
@@ -81,8 +79,6 @@ class EmployeeController extends AbstractController
         return $this->handleEmployeeForm($request, $newEmployee, 'aureum_admin_employees_list');
     }
 
-
-
     #[Route('/hotel/{hotelId}/create', '_create_for_hotel')]
     public function createForHotel(Request $request, int $hotelId): Response
     {
@@ -92,7 +88,6 @@ class EmployeeController extends AbstractController
             throw $this->createNotFoundException('Hotel not found');
         }
 
-        // Set hotel in request attributes so the form can pick it up
         $request->attributes->set('hotelId', $hotelId);
 
         $newEmployee = new NewEmployee();

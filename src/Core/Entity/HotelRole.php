@@ -20,9 +20,7 @@ class HotelRole implements HotelOwnedInterface
     #[ORM\Column(length: 100)]
     private string $name;
 
-    /**
-     * @var array<string>
-     */
+    /** @var array<string> */
     #[ORM\Column(type: 'json')]
     private array $permissions = [];
 
@@ -50,17 +48,13 @@ class HotelRole implements HotelOwnedInterface
         $this->name = $name;
     }
 
-    /**
-     * @return array<string>
-     */
+    /** @return array<string> */
     public function getPermissions(): array
     {
         return $this->permissions;
     }
 
-    /**
-     * @param array<string> $permissions
-     */
+    /** @param array<string> $permissions */
     public function setPermissions(array $permissions): void
     {
         $this->permissions = array_values(array_unique($permissions));
@@ -81,9 +75,7 @@ class HotelRole implements HotelOwnedInterface
         $this->hotel = $hotel;
     }
 
-    /**
-     * @return Collection<int, Employee>
-     */
+    /** @return Collection<int, Employee> */
     public function getEmployees(): Collection
     {
         return $this->employees;

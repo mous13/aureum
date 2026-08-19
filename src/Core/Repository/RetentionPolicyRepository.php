@@ -9,9 +9,7 @@ use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Entity\RetentionPolicy;
 use Forumify\Core\Repository\AbstractRepository;
 
-/**
- * @extends AbstractRepository<RetentionPolicy>
- */
+/** @extends AbstractRepository<RetentionPolicy> */
 class RetentionPolicyRepository extends AbstractRepository
 {
     public static function getEntityClass(): string
@@ -19,9 +17,7 @@ class RetentionPolicyRepository extends AbstractRepository
         return RetentionPolicy::class;
     }
 
-    /**
-     * @return array<RetentionPolicy>
-     */
+    /** @return array<RetentionPolicy> */
     public function findEnforced(): array
     {
         return $this->createQueryBuilder('p')
@@ -31,9 +27,7 @@ class RetentionPolicyRepository extends AbstractRepository
             ->getResult();
     }
 
-    /**
-     * @return array<string, RetentionPolicy> keyed by module value
-     */
+    /** @return array<string, RetentionPolicy> keyed by module value */
     public function findByHotelKeyedByModule(Hotel $hotel): array
     {
         $policies = $this->createQueryBuilder('p')

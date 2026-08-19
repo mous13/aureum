@@ -19,7 +19,6 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
     {
         $url = $this->urlGenerator->generate(...);
 
-
         $general = new Menu('GENERAL', ['icon' => ''], [
             new MenuItem('Packages', $url('aureum_packages'), [
                 'icon' => 'ph ph-package',

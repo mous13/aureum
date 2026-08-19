@@ -180,8 +180,6 @@ class StaffController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        // Offboarding yourself would lock you out mid-request, and only a hotel
-        // admin should be able to remove another hotel admin.
         if ($current !== null && $employee->getId() === $current->getId()) {
             throw $this->createAccessDeniedException('You cannot offboard yourself.');
         }

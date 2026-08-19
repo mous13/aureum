@@ -11,10 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 class RetentionPolicyTest extends TestCase
 {
-    /**
-     * A blank period means "keep indefinitely", so it must never produce a
-     * cutoff - anything else would silently start deleting guest data.
-     */
     #[DataProvider('unenforcedProvider')]
     public function testUnsetOrZeroPeriodIsNotEnforced(?int $months): void
     {

@@ -20,11 +20,6 @@ class RetentionService
 {
     private const BATCH_SIZE = 100;
 
-    /**
-     * Entity class and the property holding the date retention is measured from,
-     * per module. Bookings are measured from the booking date; the rest from
-     * the date the record was created.
-     */
     private const SUBJECTS = [
         Module::FINES->value => [Fine::class, 'createdAt'],
         Module::PACKAGES->value => [Package::class, 'createdAt'],
@@ -32,10 +27,6 @@ class RetentionService
         Module::BOOKINGS->value => [Booking::class, 'date'],
     ];
 
-    /**
-     * Log tables whose changes payload holds copies of the values being removed,
-     * keyed by module.
-     */
     private const LOG_TABLES = [
         Module::FINES->value => ['aureum_logs_fines', 'fine_id'],
         Module::PACKAGES->value => ['aureum_logs_packages', 'package_id'],
@@ -43,11 +34,6 @@ class RetentionService
         Module::BOOKINGS->value => ['aureum_logs_bookings', 'booking_id'],
     ];
 
-    /**
-     * The access log is itself a record of what staff did, so it cannot be kept
-     * forever either. Twelve months is long enough to investigate an incident
-     * and answer a hotel asking who saw a guest's details.
-     */
     public const ACCESS_LOG_MONTHS = 12;
 
     public function __construct(
@@ -76,14 +62,9 @@ class RetentionService
         return isset(self::SUBJECTS[$module->value]);
     }
 
-    /**
-     * @return array<string, int> records anonymised, keyed by "hotel code / module"
-     */
+    /** @return array<string, int> records anonymised, keyed by "hotel code / module" */
     public function run(bool $dryRun = false): array
     {
-        // Everything needed from the policies is read up front. applyPolicy
-        // clears the entity manager between batches, which would detach any
-        // policy still waiting to be processed.
         $plans = [];
         foreach ($this->policyRepository->findEnforced() as $policy) {
             $hotel = $policy->getHotel();
@@ -178,14 +159,7 @@ class RetentionService
         return $processed;
     }
 
-    /**
-     * The log changes payload keeps before/after copies of the fields that have
-     * just been removed from the record itself, so it has to be cleared as well
-     * or the data survives the anonymisation.
-     */
-    /**
-     * @param array<int> $recordIds
-     */
+    /** @param array<int> $recordIds */
     private function scrubLogs(Module $module, array $recordIds): void
     {
         $table = self::LOG_TABLES[$module->value] ?? null;

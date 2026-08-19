@@ -78,17 +78,13 @@ class NewStaff
         $this->timezone = $timezone;
     }
 
-    /**
-     * @return Collection<int, HotelRole>
-     */
+    /** @return Collection<int, HotelRole> */
     public function getRoles(): Collection
     {
         return $this->roles;
     }
 
-    /**
-     * @param Collection<int, HotelRole> $roles
-     */
+    /** @param Collection<int, HotelRole> $roles */
     public function setRoles(Collection $roles): void
     {
         $this->roles = $roles;
