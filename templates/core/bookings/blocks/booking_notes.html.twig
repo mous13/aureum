@@ -6,17 +6,48 @@
     {% endblock %}
     {% block modalContent %}
         <div class="card">
-            <div class="card-title" style="background-color:#13233A;color:#ececec;">Transfer Notes & History</div>
+            <div class="card-title" style="background-color:#13233A;color:#ececec;">
+                {{ booking.type.label }} — {{ booking.guest }}
+            </div>
             <div class="card-body">
                 <div>
-                    <div class="card-title">Transfer Notes</div>
-                    <div class="card-body">{{ transfer.notes }}</div>
+                    <div class="card-title">Booking Details</div>
+                    <div class="card-body">
+                        <table class="w-100">
+                            <tr>
+                                <td class="text-bold">Status</td>
+                                <td>{{ booking.status.label }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">Date</td>
+                                <td>{{ booking.date|date('d/m/Y H:i') }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">{{ booking.type.vendorLabel }}</td>
+                                <td>{{ booking.vendor ?: '—' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">Reference</td>
+                                <td>{{ booking.reference ?: '—' }}</td>
+                            </tr>
+                            {% for key, value in booking.details %}
+                                <tr>
+                                    <td class="text-bold">{{ key|replace({'_': ' '})|title }}</td>
+                                    <td>{{ value }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
                 </div>
                 <div class="mt-5">
-                    <div class="card-title">Transfer History</div>
+                    <div class="card-title">Booking Notes</div>
+                    <div class="card-body">{{ booking.notes ?: 'No notes on this booking.' }}</div>
+                </div>
+                <div class="mt-5">
+                    <div class="card-title">Booking History</div>
                     <div class="card-body">
-                        {% if logs is empty%}
-                            No History available for this transfer.
+                        {% if logs is empty %}
+                            No history available for this booking.
                         {% else %}
                             <table class="w-100">
                                 <thead>
@@ -31,9 +62,7 @@
                                 {% for log in logs %}
                                     <tr>
                                         <td>{{ log.createdAt|date('d/m/Y H:i') }}</td>
-                                        <td>
-                                            <span>{{ log.action.label }}</span>
-                                        </td>
+                                        <td><span>{{ log.action.label }}</span></td>
                                         <td>{{ log.performedBy.name }}</td>
                                         <td>
                                             {% if log.changes %}
@@ -45,16 +74,17 @@
                                                                 <li>
                                                                     <strong>{{ field|title }}:</strong>
                                                                     <span style="text-decoration: line-through; color: #999;">
-                                                                    {{ change.old is iterable ? change.old|join(', ') : (change.old ?? 'empty') }}
-                                                                </span>
+                                                                        {{ change.old is iterable ? change.old|join(', ') : (change.old ?? 'empty') }}
+                                                                    </span>
                                                                     <i class="ph ph-arrow-right"></i>
                                                                     <span style="color: #28a745;">
-                                                                    {{ change.new is iterable ? change.new|join(', ') : (change.new ?? 'empty') }}
-                                                                </span>
+                                                                        {{ change.new is iterable ? change.new|join(', ') : (change.new ?? 'empty') }}
+                                                                    </span>
                                                                 </li>
                                                             {% else %}
                                                                 <li>
-                                                                    <span class="text-bold">{{ field|title }}:</span> {{ change is iterable ? change|join(', ') : change }}
+                                                                    <span class="text-bold">{{ field|title }}:</span>
+                                                                    {{ change is iterable ? change|join(', ') : change }}
                                                                 </li>
                                                             {% endif %}
                                                         {% endfor %}
@@ -73,6 +103,5 @@
                 </div>
             </div>
         </div>
-
     {% endblock %}
 {% endembed %}

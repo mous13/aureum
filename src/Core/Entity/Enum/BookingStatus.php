@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Entity\Enum;
 
-enum TransferStatus: string
+enum BookingStatus: string
 {
     case UNCONFIRMED = 'unconfirmed';
     case CONFIRMED = 'confirmed';
-
     case COMPLETED = 'completed';
     case CANCELLED = 'cancelled';
 
@@ -20,5 +19,23 @@ enum TransferStatus: string
             self::COMPLETED => 'Completed',
             self::CANCELLED => 'Cancelled',
         };
+    }
+
+    public function isOpen(): bool
+    {
+        return $this === self::UNCONFIRMED || $this === self::CONFIRMED;
+    }
+
+    /**
+     * @return array<string, self>
+     */
+    public static function choices(): array
+    {
+        $choices = [];
+        foreach (self::cases() as $status) {
+            $choices[$status->getLabel()] = $status;
+        }
+
+        return $choices;
     }
 }

@@ -1,0 +1,122 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block body %}
+    {{ component('Aureum\\Announcements', { module: 'bookings' }) }}
+
+    {% if is_granted('aureum.module.bookings.manage') %}
+        <div class="card" data-controller="booking-form" data-type-meta="{{ typeMeta|json_encode|e('html_attr') }}">
+            <div class="card-title luxury">
+                New Booking
+            </div>
+            <div class="card-body booking-card-body">
+                {{ form_start(form) }}
+                <div class="booking-split">
+                    <div class="booking-rail luxury">
+                        <div class="booking-rail-inner">
+                            <div>
+                                <span class="booking-label">{{ form.type.vars.label }}</span>
+                                <div class="booking-type-list" role="radiogroup" aria-label="Booking type">
+                                    {% for radio in form.type %}
+                                        <label class="booking-type-item" for="{{ radio.vars.id }}">
+                                            {{ form_widget(radio) }}
+                                            <i class="{{ typeMeta[radio.vars.value].icon }}"></i>
+                                            <span>{{ radio.vars.label }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {{ form_row(form.date) }}
+                            {{ form_row(form.status) }}
+                            {{ form_row(form.reference) }}
+                        </div>
+                    </div>
+
+                    <div class="booking-detail-panel">
+                        <div class="booking-detail-head">
+                            <i class="icon" data-booking-form-target="serviceIcon"></i>
+                            <h2 data-booking-form-target="serviceHeading">Booking Details</h2>
+                        </div>
+                        {% include '@CitadelAureum/core/bookings/blocks/details_fields.html.twig' with {
+                            'details': form.details,
+                            'showLabels': true,
+                            'layout': 'grid'
+                        } %}
+
+                        <div class="booking-section">
+                            <span class="booking-label">Guest</span>
+                            <div class="booking-field-grid">
+                                {{ form_row(form.guest) }}
+                                {{ form_row(form.number) }}
+                                {{ form_row(form.email) }}
+                            </div>
+                        </div>
+
+                        <div class="booking-section">
+                            <span class="booking-label">Supplier</span>
+                            <div class="booking-field-grid">
+                                {{ form_row(form.middleman) }}
+                                {{ form_row(form.vendor) }}
+                                {{ form_row(form.cost) }}
+                            </div>
+                        </div>
+
+                        <div class="booking-section">
+                            {{ form_row(form.notes) }}
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="luxury-light square btn btn-primary">Submit Booking</button>
+                        </div>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="mt-5">
+        <div>
+            {% embed '@Forumify/components/tabs.html.twig' %}
+                {% block tabs %}
+                    <button type="button" class="luxury-light square btn-link" data-tab-id="not_completed">Not Completed</button>
+                    <button type="button" class="luxury-light square btn-link" data-tab-id="completed">Completed</button>
+                    <button type="button" class="luxury-light square btn-link" data-tab-id="cancelled">Cancelled</button>
+                    <button type="button" class="luxury-light square btn-link btn-icon" data-tab-id="help">Help</button>
+                {% endblock %}
+                {% block tabpanels %}
+                    <div id="not_completed" class="card w-100">
+                        <div class="card-title" style="background-color:#13233A;color:#ececec;">Scheduled Bookings</div>
+                        <div class="card-body">
+                            {{ component('Aureum\\BookingTable', {
+                                hotelId: hotelId,
+                                statuses: ['unconfirmed', 'confirmed']
+                            }) }}
+                        </div>
+                    </div>
+                    <div id="completed" class="card w-100">
+                        <div class="card-title" style="background-color:#13233A;color:#ececec;">Completed Bookings</div>
+                        <div class="card-body">
+                            {{ component('Aureum\\BookingTable', {
+                                hotelId: hotelId,
+                                statuses: ['completed']
+                            }) }}
+                        </div>
+                    </div>
+                    <div id="cancelled" class="card w-100">
+                        <div class="card-title" style="background-color:#13233A;color:#ececec;">Cancelled Bookings</div>
+                        <div class="card-body">
+                            {{ component('Aureum\\BookingTable', {
+                                hotelId: hotelId,
+                                statuses: ['cancelled']
+                            }) }}
+                        </div>
+                    </div>
+                    <div id="help" class="w-100">
+                        {% include '@CitadelAureum/core/bookings/blocks/help.html.twig' with {
+                            'types': types
+                        } %}
+                    </div>
+                {% endblock %}
+            {% endembed %}
+        </div>
+    </div>
+{% endblock %}

@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Service;
 
+use Citadel\Aureum\Core\Entity\Enum\BookingStatus;
 use Citadel\Aureum\Core\Entity\Enum\FineStatus;
 use Citadel\Aureum\Core\Entity\Enum\LostPropertyStatus;
 use Citadel\Aureum\Core\Entity\Enum\Module;
 use Citadel\Aureum\Core\Entity\Enum\PackageStatus;
-use Citadel\Aureum\Core\Entity\Enum\TransferStatus;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Repository\AbstractLogRepository;
 use Citadel\Aureum\Core\Repository\AnnouncementRepository;
+use Citadel\Aureum\Core\Repository\BookingLogRepository;
+use Citadel\Aureum\Core\Repository\BookingRepository;
 use Citadel\Aureum\Core\Repository\EventRepository;
 use Citadel\Aureum\Core\Repository\FineLogRepository;
 use Citadel\Aureum\Core\Repository\FineRepository;
@@ -20,8 +22,6 @@ use Citadel\Aureum\Core\Repository\LostPropertyRepository;
 use Citadel\Aureum\Core\Repository\PackageLogRepository;
 use Citadel\Aureum\Core\Repository\PackageRepository;
 use Citadel\Aureum\Core\Repository\RestaurantLogRepository;
-use Citadel\Aureum\Core\Repository\TransferLogRepository;
-use Citadel\Aureum\Core\Repository\TransferRepository;
 use DateTime;
 use DateTimeImmutable;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -33,11 +33,11 @@ class DashboardService
     public function __construct(
         private readonly Security $security,
         private readonly PackageRepository $packageRepository,
-        private readonly TransferRepository $transferRepository,
+        private readonly BookingRepository $bookingRepository,
         private readonly FineRepository $fineRepository,
         private readonly LostPropertyRepository $lostPropertyRepository,
         private readonly PackageLogRepository $packageLogRepository,
-        private readonly TransferLogRepository $transferLogRepository,
+        private readonly BookingLogRepository $bookingLogRepository,
         private readonly FineLogRepository $fineLogRepository,
         private readonly LostPropertyLogRepository $lostPropertyLogRepository,
         private readonly RestaurantLogRepository $restaurantLogRepository,
@@ -79,20 +79,20 @@ class DashboardService
             ];
         }
 
-        if ($this->canView(Module::TRANSFERS)) {
+        if ($this->canView(Module::BOOKINGS)) {
             $queue[] = [
-                'module' => Module::TRANSFERS,
-                'count' => $this->transferRepository->count(['hotel' => $hotel, 'status' => TransferStatus::UNCONFIRMED]),
-                'label' => 'Transfers awaiting confirmation',
-                'icon' => 'ph-car',
-                'route' => 'aureum_transfers',
+                'module' => Module::BOOKINGS,
+                'count' => $this->bookingRepository->count(['hotel' => $hotel, 'status' => BookingStatus::UNCONFIRMED]),
+                'label' => 'Bookings awaiting confirmation',
+                'icon' => 'ph-bookmark-simple',
+                'route' => 'aureum_bookings',
             ];
             $queue[] = [
-                'module' => Module::TRANSFERS,
-                'count' => $this->countTransfersToday($hotel),
-                'label' => 'Confirmed transfers due today',
+                'module' => Module::BOOKINGS,
+                'count' => $this->countBookingsToday($hotel),
+                'label' => 'Confirmed bookings due today',
                 'icon' => 'ph-calendar-check',
-                'route' => 'aureum_transfers',
+                'route' => 'aureum_bookings',
             ];
         }
 
@@ -123,19 +123,19 @@ class DashboardService
         return $queue;
     }
 
-    private function countTransfersToday(Hotel $hotel): int
+    private function countBookingsToday(Hotel $hotel): int
     {
         $start = new DateTime('today');
         $end = new DateTime('tomorrow');
 
-        return (int)$this->transferRepository->createQueryBuilder('t')
-            ->select('COUNT(t.id)')
-            ->where('t.hotel = :hotel')
-            ->andWhere('t.status = :status')
-            ->andWhere('t.date >= :start')
-            ->andWhere('t.date < :end')
+        return (int)$this->bookingRepository->createQueryBuilder('b')
+            ->select('COUNT(b.id)')
+            ->where('b.hotel = :hotel')
+            ->andWhere('b.status = :status')
+            ->andWhere('b.date >= :start')
+            ->andWhere('b.date < :end')
             ->setParameter('hotel', $hotel)
-            ->setParameter('status', TransferStatus::CONFIRMED)
+            ->setParameter('status', BookingStatus::CONFIRMED)
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ->getQuery()
@@ -230,7 +230,7 @@ class DashboardService
     {
         return [
             [Module::PACKAGES, $this->packageLogRepository],
-            [Module::TRANSFERS, $this->transferLogRepository],
+            [Module::BOOKINGS, $this->bookingLogRepository],
             [Module::FINES, $this->fineLogRepository],
             [Module::LOST_PROPERTY, $this->lostPropertyLogRepository],
             [Module::RESTAURANTS, $this->restaurantLogRepository],

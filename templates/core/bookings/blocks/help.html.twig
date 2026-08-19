@@ -1,0 +1,141 @@
+<div class="flex flex-col gap-5">
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            Help
+        </div>
+        <div class="card-body">
+            <div>
+                The bookings module is the log of everything the desk arranges on a guest's behalf —
+                private transfers, taxis, restaurants, tours, spa treatments, tickets and anything else.
+                Every booking is recorded the same way, and every change made to one is kept in its history.
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            New Booking
+        </div>
+        <div class="card-body">
+            <div>
+                Pick the booking type first — the form then shows the fields that matter for that type.
+                Fill in the rest and hit Submit Booking.
+            </div>
+            <table class="mt-5">
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Type</td>
+                    <td>What is being booked. This decides which extra fields appear underneath.</td>
+                </tr>
+                <tr>
+                    <td>Date (dd/mm/yyyy --:--)</td>
+                    <td>The date and time of the booking itself — pickup time, table time, tour start.</td>
+                </tr>
+                <tr>
+                    <td>Select Concierge</td>
+                    <td>The concierge who is dealing with the booking.</td>
+                </tr>
+                <tr>
+                    <td>Supplier</td>
+                    <td>Who is fulfilling it: the driver, taxi firm, restaurant, tour operator, spa or ticket agent.</td>
+                </tr>
+                <tr>
+                    <td>Confirmation Reference</td>
+                    <td>The reference the supplier gave you, so it can be quoted back to them later.</td>
+                </tr>
+                <tr>
+                    <td>Booking Cost</td>
+                    <td>The cost of the booking. Only visible to employees who can manage bookings.</td>
+                </tr>
+                <tr>
+                    <td>Select Status</td>
+                    <td>
+                        Start a booking as <span class="text-bold">Unconfirmed</span> when the guest has asked
+                        but it is not placed yet. Move it on as things settle.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Guest Name / Number / Email</td>
+                    <td>The main contact on the day, or the agent acting for the guest.</td>
+                </tr>
+                <tr>
+                    <td>Notes</td>
+                    <td>
+                        Anything that does not fit a field — a <span class="text-bold">wait &amp; return</span>
+                        transfer, a stop on the way, an allergy the restaurant already knows about.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            Booking Types
+        </div>
+        <div class="card-body">
+            <div>Each type asks for its own details on top of the shared fields.</div>
+            <table class="mt-5">
+                <tr>
+                    <th>Type</th>
+                    <th>Supplier is the</th>
+                    <th>Extra fields</th>
+                </tr>
+                {% for type in types %}
+                    <tr>
+                        <td><i class="{{ type.icon }}"></i> {{ type.label }}</td>
+                        <td>{{ type.vendorLabel }}</td>
+                        <td>
+                            {% for field in type.fields %}
+                                {{ field.label }}{{ not loop.last ? ',' : '' }}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">
+            Tabs &amp; Searching
+        </div>
+        <div class="card-body">
+            The tabs split every booking, of every type, by status:
+            <ul class="mt-2">
+                <li><span class="text-bold">Not Completed</span> &mdash; unconfirmed and confirmed bookings.</li>
+                <li><span class="text-bold">Completed</span> &mdash; bookings that have happened.</li>
+                <li><span class="text-bold">Cancelled</span> &mdash; bookings that fell through.</li>
+            </ul>
+            Each tab is one table covering all booking types. Use the search boxes under the column headings to
+            narrow it down &mdash; typing in the Type box filters to that kind of booking, and the Guest box
+            searches names, numbers and email addresses together. Click the arrows beside a heading to sort.
+
+            <div class="mt-2">
+                Any booking with <i class="text-huge ph ph-clock-countdown" style="color:red;" title="OVERDUE"></i>
+                beside its status is past its date but still open. It has most likely happened &mdash; update it to
+                Completed, or to Cancelled if it never went ahead.
+            </div>
+
+            <div class="mt-2">
+                <div>
+                    <span class="text-bold">To modify a booking</span> click the
+                    <button type="button" class="btn-link btn-icon">
+                        <i class="ph ph-pencil-simple-line" style="color:#1a3f5f;"></i>
+                    </button>
+                    and change what you need. Changing the type swaps the detail fields, and anything that does
+                    not belong to the new type is dropped &mdash; the history records exactly what was removed.
+                </div>
+                <div>
+                    <span class="text-bold">To view a booking's details, notes and history</span> click the
+                    <button type="button" class="btn-link btn-icon">
+                        <i class="ph ph-notebook" style="color:#1a3f5f;"></i>
+                    </button>.
+                    The history lists every change, who made it, and what it went from and to.
+                </div>
+            </div>
+        </div>
+    </div>

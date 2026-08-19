@@ -38,8 +38,8 @@ class Hotel
     #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Fine::class, cascade: ['persist', 'remove'])]
     private Collection $fines;
 
-    #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Transfer::class, cascade: ['persist', 'remove'])]
-    private Collection $transfers;
+    #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Booking::class, cascade: ['persist', 'remove'])]
+    private Collection $bookings;
 
     #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Restaurant::class, cascade: ['persist', 'remove'])]
     private Collection $restaurants;
@@ -71,7 +71,7 @@ class Hotel
         $this->joinDate = new DateTime();
         $this->packages = new ArrayCollection();
         $this->fines = new ArrayCollection();
-        $this->transfers = new ArrayCollection();
+        $this->bookings = new ArrayCollection();
         $this->restaurants = new ArrayCollection();
         $this->events = new ArrayCollection();
     }
@@ -152,6 +152,14 @@ class Hotel
     public function setFines(Collection $fines): void
     {
         $this->fines = $fines;
+    }
+
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
     }
 
     public function getRestaurants(): Collection
