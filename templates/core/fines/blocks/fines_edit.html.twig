@@ -43,6 +43,17 @@
                     </div>
                 </div>
                 {{ form_end(editForm) }}
+                {% if is_granted('aureum.module.fines.manage') %}
+                    <form
+                        method="post"
+                        action="{{ path('aureum_fines_delete', {id: fine.id}) }}"
+                        onsubmit="return confirm('Permanently delete this record and its history? This cannot be undone.');"
+                        class="flex justify-end mt-2"
+                    >
+                        <input type="hidden" name="_token" value="{{ csrf_token('aureum_fine_delete_' ~ fine.id) }}">
+                        <button type="submit" class="btn-link btn-small text-error">Delete record</button>
+                    </form>
+                {% endif %}
             </div>
         </div>
 
