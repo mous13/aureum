@@ -182,7 +182,7 @@ class RestaurantTable extends AbstractDoctrineTable
     private function renderBoxes(array $items): string
     {
         $boxes = implode('', array_map(
-            fn($item) => '<div class="text-small">' . $item . '</div>',
+            fn($item) => '<div class="text-small">' . htmlspecialchars((string)$item, ENT_QUOTES) . '</div>',
             $items
         ));
 
@@ -222,6 +222,7 @@ class RestaurantTable extends AbstractDoctrineTable
 
     private function renderName(string $name, Restaurant $restaurant): string
     {
+        $name = htmlspecialchars($name, ENT_QUOTES);
         if ($this->hasUpcomingEvent($restaurant)) {
             $name .= ' <i class="ph-fill ph-tag text-luxury-light-alternative"></i>';
         }

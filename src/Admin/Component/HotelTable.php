@@ -43,7 +43,7 @@ class HotelTable extends AbstractDoctrineTable
     private function renderActions(int $id): string
     {
         $actions = '';
-        if ($this->security->isGranted('aureum.admin.hotels.manage')) {
+        if ($this->security->isGranted('aureum.admin.employees.manage')) {
             $actions .= $this->renderAction('aureum_admin_employees_list_by_hotel', ['hotelId' => $id], 'person');
         }
         if ($this->security->isGranted('aureum.admin.hotels.manage')) {

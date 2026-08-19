@@ -26,6 +26,7 @@ class TagController extends AbstractCrudController
     }
 
     protected string $listTemplate = '@CitadelAureum/core/components/list.html.twig';
+    protected string $deleteTemplate = '@CitadelAureum/core/components/delete.html.twig';
     protected string $formTemplate = '@CitadelAureum/core/components/form.html.twig';
 
     protected function getAureumService(): AureumService

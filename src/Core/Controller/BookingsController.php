@@ -35,7 +35,7 @@ class BookingsController extends AbstractController
 
         $booking = new Booking();
         $form = $this->createForm(BookingFormType::class, $booking, [
-            'userTimezone' => $employee->getUser()->getTimezone(),
+            'userTimezone' => $employee->getUser()?->getTimezone() ?? 'UTC',
             'hotel' => $hotel,
         ]);
         $form->handleRequest($request);
@@ -72,7 +72,7 @@ class BookingsController extends AbstractController
         $originalData = $this->logService->captureCurrentState($booking);
 
         $form = $this->createForm(BookingEditType::class, $booking, [
-            'userTimezone' => $employee->getUser()->getTimezone(),
+            'userTimezone' => $employee->getUser()?->getTimezone() ?? 'UTC',
             'hotel' => $booking->getHotel(),
         ]);
         $form->handleRequest($request);

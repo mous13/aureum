@@ -12,6 +12,9 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class AureumService
 {
+    private ?Employee $employee = null;
+    private mixed $resolvedFor = false;
+
     public function __construct(
         private readonly Security $security,
         private readonly EmployeeRepository $employeeRepository,
@@ -26,7 +29,14 @@ class AureumService
             return null;
         }
 
-        return $this->employeeRepository->findOneBy(['user' => $user, 'archivedAt' => null]);
+        if ($this->resolvedFor === $user) {
+            return $this->employee;
+        }
+
+        $this->employee = $this->employeeRepository->findOneBy(['user' => $user, 'archivedAt' => null]);
+        $this->resolvedFor = $user;
+
+        return $this->employee;
     }
 
     public function isEmployee(): bool

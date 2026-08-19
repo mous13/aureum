@@ -128,6 +128,19 @@ class RetentionService
 
         [$entityClass, $anchorField] = $subject;
 
+        if ($dryRun) {
+            return (int)$this->entityManager->createQueryBuilder()
+                ->select('COUNT(e.id)')
+                ->from($entityClass, 'e')
+                ->where('IDENTITY(e.hotel) = :hotelId')
+                ->andWhere("e.{$anchorField} < :cutoff")
+                ->andWhere('e.anonymisedAt IS NULL')
+                ->setParameter('hotelId', $hotelId)
+                ->setParameter('cutoff', $cutoff)
+                ->getQuery()
+                ->getSingleScalarResult();
+        }
+
         $processed = 0;
         do {
             $batch = $this->entityManager->createQueryBuilder()
@@ -146,25 +159,18 @@ class RetentionService
                 break;
             }
 
+            $ids = [];
             foreach ($batch as $record) {
                 if (!$record instanceof AnonymisableInterface) {
                     continue;
                 }
 
                 $processed++;
-
-                if ($dryRun) {
-                    continue;
-                }
-
                 $record->anonymise();
-                $this->scrubLogs($module, $record->getId());
+                $ids[] = $record->getId();
             }
 
-            if ($dryRun) {
-                break;
-            }
-
+            $this->scrubLogs($module, $ids);
             $this->entityManager->flush();
             $this->entityManager->clear();
         } while (count($batch) === self::BATCH_SIZE);
@@ -177,18 +183,22 @@ class RetentionService
      * just been removed from the record itself, so it has to be cleared as well
      * or the data survives the anonymisation.
      */
-    private function scrubLogs(Module $module, int $recordId): void
+    /**
+     * @param array<int> $recordIds
+     */
+    private function scrubLogs(Module $module, array $recordIds): void
     {
         $table = self::LOG_TABLES[$module->value] ?? null;
-        if ($table === null) {
+        if ($table === null || $recordIds === []) {
             return;
         }
 
         [$tableName, $foreignKey] = $table;
 
         $this->entityManager->getConnection()->executeStatement(
-            "UPDATE {$tableName} SET changes = NULL, notes = NULL WHERE {$foreignKey} = :id",
-            ['id' => $recordId],
+            "UPDATE {$tableName} SET changes = NULL, notes = NULL WHERE {$foreignKey} IN (:ids)",
+            ['ids' => $recordIds],
+            ['ids' => \Doctrine\DBAL\ArrayParameterType::INTEGER],
         );
     }
 }

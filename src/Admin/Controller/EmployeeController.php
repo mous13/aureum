@@ -158,6 +158,7 @@ class EmployeeController extends AbstractController
         $employee = $this->findEmployeeOr404($id);
 
         $form = $this->createForm(EmployeeEditType::class, $employee);
+        $form->get('verified')->setData($employee->getUser()?->isEmailVerified() ?? false);
 
         $form->handleRequest($request);
 

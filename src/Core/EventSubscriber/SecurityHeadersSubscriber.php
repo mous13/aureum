@@ -20,14 +20,22 @@ final class SecurityHeadersSubscriber
         $request = $event->getRequest();
         $headers = $event->getResponse()->headers;
 
-        $headers->set('X-Content-Type-Options', 'nosniff');
-        $headers->set('X-Frame-Options', 'DENY');
-        $headers->set('Content-Security-Policy', "frame-ancestors 'none'; object-src 'none'; base-uri 'self'");
-        $headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
-        $headers->set('X-Permitted-Cross-Domain-Policies', 'none');
+        $defaults = [
+            'X-Content-Type-Options' => 'nosniff',
+            'X-Frame-Options' => 'DENY',
+            'Content-Security-Policy' => "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+            'Referrer-Policy' => 'strict-origin-when-cross-origin',
+            'X-Permitted-Cross-Domain-Policies' => 'none',
+        ];
 
         if ($request->isSecure()) {
-            $headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+            $defaults['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains';
+        }
+
+        foreach ($defaults as $name => $value) {
+            if (!$headers->has($name)) {
+                $headers->set($name, $value);
+            }
         }
     }
 }

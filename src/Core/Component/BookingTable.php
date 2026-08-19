@@ -263,7 +263,7 @@ class BookingTable extends AbstractDoctrineTable
 
         $editForm = $this->formFactory->create(BookingEditType::class, $booking, [
             'action' => $this->urlGenerator->generate('aureum_bookings_edit', ['id' => $id]),
-            'userTimezone' => $this->aureumService->getEmployee()->getUser()->getTimezone(),
+            'userTimezone' => $this->aureumService->getEmployee()?->getUser()?->getTimezone() ?? 'UTC',
             'hotel' => $booking->getHotel(),
         ]);
 

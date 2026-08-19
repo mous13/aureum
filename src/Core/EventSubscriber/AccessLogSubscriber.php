@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\EventSubscriber;
 
-use Citadel\Aureum\Core\Entity\AccessLog;
 use Citadel\Aureum\Core\Entity\Enum\Module;
-use Citadel\Aureum\Core\Repository\AccessLogRepository;
 use Citadel\Aureum\Core\Service\AureumService;
+use Doctrine\DBAL\Connection;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -36,9 +35,17 @@ final class AccessLogSubscriber
         'aureum_fines' => Module::FINES,
     ];
 
+    /**
+     * LiveComponent AJAX requests all run under the ux_live_component route, so
+     * the components rendering guest data are mapped by component name.
+     */
+    private const COMPONENT_MODULES = [
+        'Aureum\\BookingTable' => Module::BOOKINGS,
+    ];
+
     public function __construct(
         private readonly AureumService $aureumService,
-        private readonly AccessLogRepository $accessLogRepository,
+        private readonly Connection $connection,
     ) {
     }
 
@@ -51,7 +58,9 @@ final class AccessLogSubscriber
         $request = $event->getRequest();
         $route = (string)$request->attributes->get('_route');
 
-        $module = $this->moduleForRoute($route);
+        $module = $route === 'ux_live_component'
+            ? self::COMPONENT_MODULES[(string)$request->attributes->get('_live_component')] ?? null
+            : $this->moduleForRoute($route);
         if ($module === null) {
             return;
         }
@@ -61,15 +70,15 @@ final class AccessLogSubscriber
             return;
         }
 
-        $log = new AccessLog();
-        $log->setHotel($employee->getHotel());
-        $log->setEmployee($employee);
-        $log->setEmployeeName($employee->getName());
-        $log->setModule($module);
-        $log->setMethod($request->getMethod());
-        $log->setPath(substr($request->getPathInfo(), 0, 255));
-
-        $this->accessLogRepository->save($log);
+        $this->connection->insert('aureum_logs_access', [
+            'hotel_id' => $employee->getHotel()->getId(),
+            'employee_id' => $employee->getId(),
+            'employee_name' => mb_substr($employee->getName(), 0, 100),
+            'module' => $module->value,
+            'method' => mb_substr($request->getMethod(), 0, 20),
+            'path' => mb_substr($request->getPathInfo(), 0, 255),
+            'accessed_at' => (new \DateTime())->format('Y-m-d H:i:s'),
+        ]);
     }
 
     private function moduleForRoute(string $route): ?Module
