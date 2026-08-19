@@ -1,0 +1,178 @@
+@import url("./tokens.css");
+
+.form-split-body {
+    padding: 0 !important;
+    container-type: inline-size;
+}
+
+.form-split {
+    display: grid;
+    grid-template-columns: 15.5rem 1fr;
+    gap: 0;
+    align-items: stretch;
+}
+
+.form-rail {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--au-space-lg, 1.5rem);
+    padding: var(--au-space-lg, 1.5rem);
+    border-radius: 0 0 0 var(--border-radius, 8px);
+}
+
+.form-rail-inner {
+    position: sticky;
+    top: var(--au-space-lg, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: var(--au-space-lg, 1.5rem);
+}
+
+.form-rail.luxury .form-label,
+.form-rail.luxury .form-row > label {
+    color: #F4F1EA;
+    opacity: 0.85;
+}
+
+.form-rail.luxury .form-row .text-secondary,
+.form-rail.luxury .form-row .text-italic {
+    color: #F4F1EA;
+    opacity: 0.6;
+}
+
+.form-rail.luxury .form-row input,
+.form-rail.luxury .form-row select,
+.form-rail.luxury .form-row textarea {
+    color: #1b1c1f;
+}
+.form-rail.luxury .form-row input::placeholder,
+.form-rail.luxury .form-row textarea::placeholder {
+    color: rgba(27, 28, 31, 0.5);
+}
+
+.form-detail-panel {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--au-space-xl, 2rem);
+    padding: var(--au-space-xl, 2rem);
+}
+
+.form-section {
+    padding-top: var(--au-space-lg, 1.5rem);
+    border-top: 1px solid var(--au-rule, #ddd);
+}
+
+.form-label {
+    display: block;
+    font-size: var(--au-text-xs, 0.72rem);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--au-muted, #666);
+    margin-bottom: var(--au-space-sm, 0.75rem);
+}
+
+.form-detail-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.form-detail-head .icon {
+    color: #1a3f5f;
+    font-size: 1.3rem;
+}
+.form-detail-head h2 {
+    font-family: var(--au-font-display);
+    font-weight: 500;
+    font-size: var(--au-text-md, 1.25rem);
+    margin: 0;
+}
+
+.form-field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: var(--au-space-md, 1rem);
+}
+
+.type-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.type-toggle-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid transparent;
+    border-radius: var(--au-radius, 3px);
+    cursor: pointer;
+    color: #F4F1EA;
+    opacity: 0.7;
+    font-size: var(--au-text-sm, 0.85rem);
+    transition: background-color var(--au-dur-short, 180ms) var(--au-ease-out, ease-out),
+                color var(--au-dur-short, 180ms) var(--au-ease-out, ease-out),
+                opacity var(--au-dur-short, 180ms) var(--au-ease-out, ease-out);
+}
+.type-toggle-item i {
+    font-size: 1.05rem;
+    transition: color var(--au-dur-short, 180ms) var(--au-ease-out, ease-out);
+}
+.type-toggle-item input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+.type-toggle-item:hover {
+    background: #1a3f5f;
+    opacity: 1;
+}
+.type-toggle-item:has(input:disabled) {
+    cursor: default;
+}
+.type-toggle-item:has(input:disabled):hover {
+    background: transparent;
+    opacity: 0.7;
+}
+.type-toggle-item:has(input:checked):hover {
+    background: #F4F1EA;
+    opacity: 1;
+}
+.type-toggle-item:has(input:checked) {
+    background: #F4F1EA;
+    color: #13233A;
+    opacity: 1;
+    font-weight: 600;
+}
+.type-toggle-item:has(input:checked) i {
+    color: #1a3f5f;
+}
+.type-toggle-item:has(input:focus-visible) {
+    outline: 2px solid #F4F1EA;
+    outline-offset: 2px;
+}
+
+@container (max-width: 40rem) {
+    .form-split {
+        grid-template-columns: 1fr;
+    }
+    .form-rail {
+        border-radius: 0;
+    }
+    .form-rail-inner {
+        position: static;
+    }
+    .type-toggle {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .type-toggle-item {
+        flex: 1 1 auto;
+    }
+}

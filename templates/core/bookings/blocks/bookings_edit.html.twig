@@ -10,15 +10,15 @@
             <div class="card-title luxury">
                 Edit Booking - {{ booking.guest }}
             </div>
-            <div class="card-body booking-card-body">
-                <div class="booking-split">
-                    <div class="booking-rail luxury">
-                        <div class="booking-rail-inner">
+            <div class="card-body form-split-body">
+                <div class="form-split">
+                    <div class="form-rail luxury">
+                        <div class="form-rail-inner">
                             <div>
-                                <span class="booking-label">{{ editForm.type.vars.label }}</span>
-                                <div class="booking-type-list" role="radiogroup" aria-label="Booking type">
+                                <span class="form-label">{{ editForm.type.vars.label }}</span>
+                                <div class="type-toggle" role="radiogroup" aria-label="Booking type">
                                     {% for radio in editForm.type %}
-                                        <label class="booking-type-item" for="{{ radio.vars.id }}">
+                                        <label class="type-toggle-item" for="{{ radio.vars.id }}">
                                             {{ form_widget(radio) }}
                                             <i class="{{ typeMeta[radio.vars.value].icon }}"></i>
                                             <span>{{ radio.vars.label }}</span>
@@ -32,8 +32,8 @@
                         </div>
                     </div>
 
-                    <div class="booking-detail-panel">
-                        <div class="booking-detail-head">
+                    <div class="form-detail-panel">
+                        <div class="form-detail-head">
                             <i class="icon" data-booking-form-target="serviceIcon"></i>
                             <h2 data-booking-form-target="serviceHeading">Booking Details</h2>
                         </div>
@@ -43,25 +43,25 @@
                             'layout': 'grid'
                         } %}
 
-                        <div class="booking-section">
-                            <span class="booking-label">Guest</span>
-                            <div class="booking-field-grid">
+                        <div class="form-section">
+                            <span class="form-label">Guest</span>
+                            <div class="form-field-grid">
                                 {{ form_row(editForm.guest) }}
                                 {{ form_row(editForm.number) }}
                                 {{ form_row(editForm.email) }}
                             </div>
                         </div>
 
-                        <div class="booking-section">
-                            <span class="booking-label">Supplier</span>
-                            <div class="booking-field-grid">
+                        <div class="form-section">
+                            <span class="form-label">Supplier</span>
+                            <div class="form-field-grid">
                                 {{ form_row(editForm.middleman) }}
                                 {{ form_row(editForm.vendor) }}
                                 {{ form_row(editForm.cost) }}
                             </div>
                         </div>
 
-                        <div class="booking-section">
+                        <div class="form-section">
                             {{ form_row(editForm.notes) }}
                         </div>
 

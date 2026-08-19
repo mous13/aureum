@@ -5,35 +5,58 @@
         <div class="card-title luxury">
             New Restaurant
         </div>
-        <div class="card-body">
+        <div class="card-body form-split-body">
             {{ form_start(form) }}
-            <div class="flex gap-2 mb-2">
-                {{ form_widget(form.name) }}
-                {{ form_widget(form.neighbourhood) }}
-                {{ form_widget(form.street) }}
-            </div>
-            <div class="flex gap-2 mb-2">
-                <div class="flex-grow">{{ form_widget(form.cuisines) }}</div>
-                <div class="flex-grow">{{ form_widget(form.mealPeriods) }}</div>
-                <div class="flex-grow">{{ form_widget(form.dietaryRequirements) }}</div>
-                <div class="flex-grow">{{ form_widget(form.tags) }}</div>
-            </div>
-            <div class="mb-2">
-                {{ form_widget(form.connections) }}
-            </div>
-            <div class="flex gap-2 justify-end">
-                <button type="submit" class="luxury-light square btn btn-primary">Submit Restaurant</button>
-                {% embed '@Forumify/components/menu.html.twig' with {
-                    placement: 'bottom-end',
-                    hideAdornment: false,
-                    buttonClass: 'btn-primary btn luxury-light square'
-                } %}
-                    {% block button_text %}<i class="ph ph-gear"></i>{% endblock %}
-                    {% block menu_items %}
-                        <a class="btn-link" href="{{ path('aureum_tags_create') }}">New Tag</a>
-                        <a class="btn-link" href="{{ path('aureum_cuisines_create') }}">New Cuisine</a>
-                    {% endblock %}
-                {% endembed %}
+            <div class="form-split">
+                <div class="form-rail luxury">
+                    <div class="form-rail-inner">
+                        {{ form_row(form.name) }}
+                        {{ form_row(form.tags) }}
+                    </div>
+                </div>
+
+                <div class="form-detail-panel">
+                    <div class="form-detail-head">
+                        <i class="icon ph ph-bowl-steam"></i>
+                        <h2>Restaurant Details</h2>
+                    </div>
+
+                    <div>
+                        <span class="form-label">Location</span>
+                        <div class="form-field-grid">
+                            {{ form_row(form.neighbourhood) }}
+                            {{ form_row(form.street) }}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <span class="form-label">Cuisine &amp; Dining</span>
+                        <div class="form-field-grid">
+                            {{ form_row(form.cuisines) }}
+                            {{ form_row(form.mealPeriods) }}
+                            {{ form_row(form.dietaryRequirements) }}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        {{ form_row(form.connections) }}
+                    </div>
+
+                    <div class="flex gap-2 justify-end">
+                        <button type="submit" class="luxury-light square btn btn-primary">Submit Restaurant</button>
+                        {% embed '@Forumify/components/menu.html.twig' with {
+                            placement: 'bottom-end',
+                            hideAdornment: false,
+                            buttonClass: 'btn-primary btn luxury-light square'
+                        } %}
+                            {% block button_text %}<i class="ph ph-gear"></i>{% endblock %}
+                            {% block menu_items %}
+                                <a class="btn-link" href="{{ path('aureum_tags_create') }}">New Tag</a>
+                                <a class="btn-link" href="{{ path('aureum_cuisines_create') }}">New Cuisine</a>
+                            {% endblock %}
+                        {% endembed %}
+                    </div>
+                </div>
             </div>
             {{ form_end(form) }}
         </div>

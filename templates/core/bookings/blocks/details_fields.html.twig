@@ -1,6 +1,6 @@
 {% set showLabels = showLabels|default(false) %}
 {% set layout = layout|default('flex') %}
-<div class="{{ layout == 'grid' ? 'booking-field-grid' : 'flex gap-2 mb-2 flex-wrap' }}">
+<div class="{{ layout == 'grid' ? 'form-field-grid' : 'flex gap-2 mb-2 flex-wrap' }}">
     {% for field in details %}
         <div class="booking-detail-field"
              data-booking-form-target="detail"

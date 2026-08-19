@@ -43,13 +43,13 @@ class RestaurantType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => '',
+                'label' => 'Restaurant Name',
                 'attr' => [
                     'placeholder' => 'Restaurant Name',
                 ],
             ])
             ->add('cuisines', EntityType::class, [
-                'label' => '',
+                'label' => 'Cuisine',
                 'class' => Cuisine::class,
                 'multiple' => true,
                 'autocomplete' => true,
@@ -58,21 +58,22 @@ class RestaurantType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Cuisine',
                 ],
+                'required' => false,
             ])
             ->add('neighbourhood', TextType::class, [
-                'label' => '',
+                'label' => 'Neighbourhood',
                 'attr' => [
                     'placeholder' => 'Neighbourhood',
                 ],
             ])
             ->add('street', TextType::class, [
-                'label' => '',
+                'label' => 'Street',
                 'attr' => [
                     'placeholder' => 'Street',
                 ],
             ])
             ->add('mealPeriods', EnumType::class, [
-                'label' => '',
+                'label' => 'Meal Periods',
                 'class' => MealPeriods::class,
                 'multiple' => true,
                 'autocomplete' => true,
@@ -80,10 +81,10 @@ class RestaurantType extends AbstractType
                     'placeholder' => 'Meal Periods',
                 ],
                 'choice_label' => fn(MealPeriods $periods) => $periods->value,
-
+                'required' => false,
             ])
             ->add('dietaryRequirements', EnumType::class, [
-                'label' => '',
+                'label' => 'Dietary Requirements',
                 'class' => DietaryRequirements::class,
                 'multiple' => true,
                 'autocomplete' => true,
@@ -91,11 +92,12 @@ class RestaurantType extends AbstractType
                     'placeholder' => 'Dietary Requirements',
                 ],
                 'choice_label' => fn(DietaryRequirements $requirements) => $requirements->value,
+                'required' => false,
             ])
             ->add('connections', EntityType::class, [
                 'class' => Employee::class,
                 'choice_label' => 'name',
-                'label' => '',
+                'label' => 'Concierge Connections',
                 'multiple' => true,
                 'autocomplete' => true,
                 'query_builder' => function (EmployeeRepository $repository) use ($options) {
@@ -113,12 +115,13 @@ class RestaurantType extends AbstractType
                 'class' => Tag::class,
                 'choices' => $this->tagRepository->findBy(['hotel' => $options['hotel']]),
                 'choice_label' => 'name',
-                'label' => '',
+                'label' => 'Tags',
                 'multiple' => true,
                 'autocomplete' => true,
                 'attr' => [
                     'placeholder' => 'Tags',
                 ],
+                'required' => false,
             ])
         ;
 

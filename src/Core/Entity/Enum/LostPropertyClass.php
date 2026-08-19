@@ -16,4 +16,12 @@ enum LostPropertyClass: string
             self::FOUND => 'Found',
         };
     }
+
+    public function getIcon(): string
+    {
+        return match ($this) {
+            self::LOST => 'ph ph-map-pin-line',
+            self::FOUND => 'ph ph-check-circle',
+        };
+    }
 }

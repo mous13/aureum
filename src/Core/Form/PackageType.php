@@ -25,25 +25,25 @@ class PackageType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => '',
+                'label' => 'Guest Name',
                 'attr' => [
                     'placeholder' => 'Guest Name',
                 ],
             ])
             ->add('description', TextType::class, [
-                'label' => '',
+                'label' => 'Description',
                 'attr' => [
                     'placeholder' => 'Package Description',
                 ],
             ])
             ->add('location', TextType::class, [
-                'label' => '',
+                'label' => 'Location Stored',
                 'attr' => [
                     'placeholder' => 'Location Stored',
                 ],
             ])
             ->add('note', TextType::class, [
-                'label' => '',
+                'label' => 'Notes',
                 'attr' => [
                     'placeholder' => 'Notes',
                 ],

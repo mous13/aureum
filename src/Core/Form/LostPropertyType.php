@@ -9,74 +9,34 @@ use Citadel\Aureum\Core\Entity\Enum\LostPropertyStatus;
 use Citadel\Aureum\Core\Entity\LostProperty;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LostPropertyType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => LostProperty::class,
         ]);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('type', ChoiceType::class, [
-                'label' => '',
+                'label' => 'Type',
                 'choices' => [
                     'Lost' => LostPropertyClass::LOST,
                     'Found' => LostPropertyClass::FOUND,
                 ],
-                'placeholder' => 'Select Type',
-            ])
-            ->add('description', TextType::class, [
-                'label' => '',
-                'attr' => [
-                    'placeholder' => 'What does it look like',
-                ],
-            ])
-            ->add('location', TextType::class, [
-                'label' => '',
-                'attr' => [
-                    'placeholder' => 'What room or area was it lost/found',
-                ],
-            ])
-            ->add('storedLocation', TextType::class, [
-                'label' => '',
-                'required' => false,
-                'attr' => [
-                    'placeholder' => 'If found, where is it stored?',
-                ],
-            ])
-            ->add('reportedBy', HiddenType::class, [
-            ])
-            ->add('guest', TextType::class, [
-                'label' => '',
-                'required' => false,
-                'attr' => [
-                    'placeholder' => 'Guest Name',
-                ],
-            ])
-            ->add('contact', TextType::class, [
-                'label' => '',
-                'required' => false,
-                'attr' => [
-                    'placeholder' => 'Guest Email or Number',
-                ],
-            ])
-            ->add('note', TextType::class, [
-                'label' => '',
-                'attr' => [
-                    'placeholder' => 'Add a note',
-                ],
+                'choice_value' => static fn (?LostPropertyClass $type) => $type?->value,
+                'expanded' => true,
+                'multiple' => false,
             ])
             ->add('status', ChoiceType::class, [
-                'label' => '',
+                'label' => 'Status',
                 'choices' => [
                     'Open' => LostPropertyStatus::OPEN,
                     'Collected' => LostPropertyStatus::COLLECTED,
@@ -85,6 +45,45 @@ class LostPropertyType extends AbstractType
                     'Waiting for collection' => LostPropertyStatus::WAITING_COLLECTION,
                     'Waiting to be posted' => LostPropertyStatus::WAITING_POSTED,
                     'Stored' => LostPropertyStatus::STORED,
+                ],
+            ])
+            ->add('description', TextType::class, [
+                'label' => 'Description',
+                'attr' => [
+                    'placeholder' => 'What does it look like',
+                ],
+            ])
+            ->add('location', TextType::class, [
+                'label' => 'Location',
+                'attr' => [
+                    'placeholder' => 'What room or area was it lost/found',
+                ],
+            ])
+            ->add('storedLocation', TextType::class, [
+                'label' => 'Stored Location',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'If found, where is it stored?',
+                ],
+            ])
+            ->add('guest', TextType::class, [
+                'label' => 'Guest Name',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'Guest Name',
+                ],
+            ])
+            ->add('contact', TextType::class, [
+                'label' => 'Guest Contact',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'Guest Email or Number',
+                ],
+            ])
+            ->add('note', TextType::class, [
+                'label' => 'Notes',
+                'attr' => [
+                    'placeholder' => 'Add a note',
                 ],
             ]);
     }
