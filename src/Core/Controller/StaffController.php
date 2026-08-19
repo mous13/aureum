@@ -12,10 +12,14 @@ use Citadel\Aureum\Core\Security\AureumVoter;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\PasswordGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use Forumify\Core\Entity\User;
 use Forumify\Core\Exception\UserAlreadyExistsException;
 use Forumify\Core\Form\DTO\NewUser;
 use Forumify\Core\Repository\UserRepository;
 use Forumify\Core\Service\CreateUserService;
+use Forumify\Core\Service\Mailer;
+use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,6 +37,8 @@ class StaffController extends AbstractController
         private readonly CreateUserService $createUserService,
         private readonly PasswordGenerator $passwordGenerator,
         private readonly EntityManagerInterface $entityManager,
+        private readonly Mailer $mailer,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -93,10 +99,13 @@ class StaffController extends AbstractController
 
             $this->employeeRepository->save($employee);
 
+            $emailSent = $this->sendWelcomeEmail($user, $employee, $data->getUsername(), $password);
+
             return $this->render('@CitadelAureum/core/staff/created.html.twig', [
                 'employee' => $employee,
                 'username' => $data->getUsername(),
                 'password' => $password,
+                'emailSent' => $emailSent,
             ]);
         }
 
@@ -138,6 +147,29 @@ class StaffController extends AbstractController
         $this->addFlash('success', 'Employee offboarded. Their history has been kept.');
 
         return $this->redirectToRoute('aureum_staff_list');
+    }
+
+    private function sendWelcomeEmail(User $user, Employee $employee, string $username, string $password): bool
+    {
+        $email = (new TemplatedEmail())
+            ->subject('Your concierge desk account')
+            ->htmlTemplate('@CitadelAureum/emails/staff_welcome.html.twig')
+            ->context([
+                'employee' => $employee,
+                'hotel' => $employee->getHotel(),
+                'username' => $username,
+                'password' => $password,
+            ]);
+
+        try {
+            $this->mailer->send($email, $user);
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to send staff welcome email', ['exception' => $e]);
+
+            return false;
+        }
+
+        return true;
     }
 
     private function denyUnlessOffboardable(Employee $employee): void
