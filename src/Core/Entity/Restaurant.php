@@ -14,7 +14,7 @@ use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: RestaurantRepository::class)]
 #[ORM\Table(name: 'aureum_restaurants')]
-class Restaurant
+class Restaurant implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
     use TimestampableEntityTrait;

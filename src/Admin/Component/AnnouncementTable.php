@@ -11,7 +11,7 @@ use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
-#[AsLiveComponent('Aureum\AnnouncementTable', '@Forumify/components/table/table.html.twig')]
+#[AsLiveComponent('Aureum\AnnouncementTable', '@CitadelAureum/core/components/table.html.twig')]
 #[IsGranted('aureum.admin.announcements.manage')]
 class AnnouncementTable extends AbstractDoctrineTable
 {

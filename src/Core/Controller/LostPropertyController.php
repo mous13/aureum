@@ -93,4 +93,19 @@ class LostPropertyController extends AbstractController
         }
         return $this->redirectToRoute('aureum_lost_property');
     }
+
+    #[Route('/lostproperty/{id}/delete', name: 'lost_property_delete', methods: ['POST'])]
+    #[IsGranted('aureum.module.lost_property.manage')]
+    public function delete(Request $request, LostProperty $lostProperty): Response
+    {
+        $token = (string)$request->request->get('_token');
+        if (!$this->isCsrfTokenValid('aureum_lost_property_delete_' . $lostProperty->getId(), $token)) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        $this->lostPropertyRepository->remove($lostProperty);
+        $this->addFlash('success', 'Record deleted.');
+
+        return $this->redirectToRoute('aureum_lost_property');
+    }
 }

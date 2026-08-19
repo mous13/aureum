@@ -10,7 +10,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ORM\Table(name: 'aureum_tags')]
-class Tag
+class Tag implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 

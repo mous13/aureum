@@ -13,12 +13,13 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 #[ORM\Table(name: 'aureum_logs_bookings')]
 #[ORM\Index(name: 'idx_booking_log_hotel_created', columns: ['hotel_id', 'created_at'])]
 #[ORM\Index(name: 'idx_booking_log_booking_created', columns: ['booking_id', 'created_at'])]
-class BookingLog
+class BookingLog implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
     use LogEntityTrait;
 
     #[ORM\ManyToOne(targetEntity: Booking::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'cascade')]
     private Booking $booking;
 
     public function getBooking(): Booking

@@ -51,7 +51,11 @@
                         <tr>
                             {% for colName, value in row %}
                                 <td class="{{ this.columns[colName].class|default(loop.last ? 'text-right' : '') }}">
-                                    {{- value|raw -}}
+                                    {%- if this.columns[colName].renderer is null -%}
+                                        {{- value -}}
+                                    {%- else -%}
+                                        {{- value|raw -}}
+                                    {%- endif -%}
                                 </td>
                             {% endfor %}
                         </tr>

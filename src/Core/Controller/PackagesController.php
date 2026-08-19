@@ -105,4 +105,19 @@ class PackagesController extends AbstractController
         }
         return $this->redirectToRoute('aureum_packages');
     }
+
+    #[Route('/packages/{id}/delete', name: 'packages_delete', methods: ['POST'])]
+    #[IsGranted('aureum.module.packages.manage')]
+    public function delete(Request $request, Package $package): Response
+    {
+        $token = (string)$request->request->get('_token');
+        if (!$this->isCsrfTokenValid('aureum_package_delete_' . $package->getId(), $token)) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        $this->packageRepository->remove($package);
+        $this->addFlash('success', 'Record deleted.');
+
+        return $this->redirectToRoute('aureum_packages');
+    }
 }

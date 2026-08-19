@@ -16,6 +16,8 @@ class AureumVoter extends Voter
 {
     public const MODULE_PREFIX = 'aureum.module.';
     public const RBAC_MANAGE = 'aureum.rbac.manage';
+    public const EMPLOYEE_MANAGE = 'aureum.employees.manage';
+    public const EMPLOYEE_MANAGE_PERMISSION = 'employees.manage';
 
     public function __construct(
         private readonly AureumService $aureumService,
@@ -24,7 +26,9 @@ class AureumVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return $attribute === self::RBAC_MANAGE || str_starts_with($attribute, self::MODULE_PREFIX);
+        return $attribute === self::RBAC_MANAGE
+            || $attribute === self::EMPLOYEE_MANAGE
+            || str_starts_with($attribute, self::MODULE_PREFIX);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -36,6 +40,20 @@ class AureumVoter extends Voter
 
         if ($attribute === self::RBAC_MANAGE) {
             return $employee->isHotelAdmin();
+        }
+
+        if ($attribute === self::EMPLOYEE_MANAGE) {
+            if ($employee->isHotelAdmin()) {
+                return true;
+            }
+
+            foreach ($employee->getHotelRoles() as $role) {
+                if ($role->hasPermission(self::EMPLOYEE_MANAGE_PERMISSION)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         [$moduleValue, $action] = $this->parse($attribute);

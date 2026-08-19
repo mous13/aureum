@@ -22,8 +22,11 @@ class AureumService
     public function getEmployee(): ?Employee
     {
         $user = $this->security->getUser();
+        if ($user === null) {
+            return null;
+        }
 
-        return $this->employeeRepository->findOneBy(['user' => $user]);
+        return $this->employeeRepository->findOneBy(['user' => $user, 'archivedAt' => null]);
     }
 
     public function isEmployee(): bool

@@ -11,7 +11,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ORM\Table(name: 'aureum_events')]
-class Event
+class Event implements HotelOwnedInterface
 {
 
     use IdentifiableEntityTrait;

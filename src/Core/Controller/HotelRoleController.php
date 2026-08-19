@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Controller;
 
+use Citadel\Aureum\Core\Controller\Trait\HotelScopedCrudTrait;
 use Citadel\Aureum\Core\Entity\HotelRole;
 use Citadel\Aureum\Core\Form\HotelRoleType;
 use Citadel\Aureum\Core\Security\AureumVoter;
 use Citadel\Aureum\Core\Service\AureumService;
 use Forumify\Admin\Crud\AbstractCrudController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -19,6 +19,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(AureumVoter::RBAC_MANAGE)]
 class HotelRoleController extends AbstractCrudController
 {
+    use HotelScopedCrudTrait;
+
     public function __construct(
         private readonly AureumService $aureumService,
     ) {
@@ -59,20 +61,9 @@ class HotelRoleController extends AbstractCrudController
         ]));
     }
 
-    #[Route('/{identifier}/edit', name: '_edit')]
-    public function edit(Request $request, string $identifier): Response
+    protected function getAureumService(): AureumService
     {
-        $this->denyUnlessSameHotel((int)$identifier);
-
-        return parent::edit($request, $identifier);
-    }
-
-    #[Route('/{identifier}/delete', name: '_delete')]
-    public function delete(Request $request, string $identifier): Response
-    {
-        $this->denyUnlessSameHotel((int)$identifier);
-
-        return parent::delete($request, $identifier);
+        return $this->aureumService;
     }
 
     protected function save(bool $isNew, FormInterface $form): object
@@ -84,15 +75,5 @@ class HotelRoleController extends AbstractCrudController
         }
 
         return parent::save($isNew, $form);
-    }
-
-    private function denyUnlessSameHotel(int $identifier): void
-    {
-        $role = $this->repository->find($identifier);
-        $hotel = $this->aureumService->getHotel();
-
-        if ($role instanceof HotelRole && $role->getHotel()->getId() !== $hotel?->getId()) {
-            throw $this->createNotFoundException();
-        }
     }
 }

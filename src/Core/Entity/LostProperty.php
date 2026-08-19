@@ -6,6 +6,8 @@ namespace Citadel\Aureum\Core\Entity;
 
 use Citadel\Aureum\Core\Entity\Enum\LostPropertyClass;
 use Citadel\Aureum\Core\Entity\Enum\LostPropertyStatus;
+use Citadel\Aureum\Core\Entity\Enum\Module;
+use Citadel\Aureum\Core\Entity\Trait\AnonymisableEntityTrait;
 use Citadel\Aureum\Core\Repository\LostPropertyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
@@ -13,10 +15,30 @@ use Forumify\Core\Entity\TimestampableEntityTrait;
 
 #[ORM\Entity(repositoryClass: LostPropertyRepository::class)]
 #[ORM\Table(name: 'aureum_lost_property')]
-class LostProperty
+#[ORM\Index(name: 'IDX_aureum_lost_property_anonymised_at', columns: ['anonymised_at'])]
+class LostProperty implements HotelOwnedInterface, AnonymisableInterface
 {
     use IdentifiableEntityTrait;
     use TimestampableEntityTrait;
+    use AnonymisableEntityTrait;
+
+    public static function getModule(): Module
+    {
+        return Module::LOST_PROPERTY;
+    }
+
+    public function getRetentionAnchor(): ?\DateTimeInterface
+    {
+        return $this->getCreatedAt();
+    }
+
+    public function anonymise(): void
+    {
+        $this->guest = null;
+        $this->contact = null;
+        $this->note = null;
+        $this->markAnonymised();
+    }
 
 
     #[ORM\Column(type: 'string', length: 255, enumType: LostPropertyClass::class)]

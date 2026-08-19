@@ -1,0 +1,18 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title_page %}Offboard employee{% endblock %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">Offboard {{ employee.name }}</div>
+        <div class="card-body">
+            <div class="alert-warning mb-4">
+                <p class="mb-2">Their sign-in account will be deleted and they will lose access immediately.</p>
+                <p>Their name stays on past packages, fines, bookings and lost property so those records remain attributable.</p>
+            </div>
+            <form method="post" action="{{ path('aureum_staff_offboard_confirm', { id: employee.id }) }}" class="flex justify-end gap-2">
+                <input type="hidden" name="_token" value="{{ csrf_token('aureum_staff_offboard_' ~ employee.id) }}">
+                <a href="{{ path('aureum_staff_list') }}" class="btn btn-outlined square">Cancel</a>
+                <button type="submit" class="btn btn-primary luxury-light square">Offboard</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

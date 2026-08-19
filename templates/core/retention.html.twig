@@ -1,0 +1,61 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title_page %}Data Retention{% endblock %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">Data Retention</div>
+        <div class="card-body">
+            <p class="text-small mb-4">
+                Guest details are removed once a record passes the period you set here. The record itself is kept,
+                so your history and totals stay intact, but the guest's name, contact details and any notes are
+                cleared and cannot be recovered. Leave a module blank to keep guest details indefinitely.
+            </p>
+
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <div class="flex justify-end mt-4">
+                <button type="submit" class="btn btn-primary luxury-light square">Save</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    {% if pending is not empty %}
+        <div class="card mt-4">
+            <div class="card-title luxury">Waiting to be cleared</div>
+            <div class="card-body">
+                <p class="text-small mb-4">
+                    Records already past their retention period. They are cleared the next time the nightly
+                    retention job runs.
+                </p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Records</th>
+                            <th>Period</th>
+                            <th>Last changed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for moduleValue, count in pending %}
+                            {% set policy = policies[moduleValue] %}
+                            <tr>
+                                <td>{{ policy.module.label }}</td>
+                                <td>{{ count }}</td>
+                                <td>{{ policy.retainForMonths }} months</td>
+                                <td>
+                                    {% if policy.updatedAt %}
+                                        {{ policy.updatedAt|date('j M Y') }}
+                                        {% if policy.updatedBy %}by {{ policy.updatedBy.name }}{% endif %}
+                                    {% else %}
+                                        &mdash;
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

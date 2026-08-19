@@ -10,7 +10,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 #[ORM\Entity(repositoryClass: VoteRepository::class)]
 #[ORM\Table(name: 'aureum_votes')]
 #[ORM\UniqueConstraint(name: 'unique_vote', columns: ['employee_id', 'subject_type', 'subject_id'])]
-class Vote
+class Vote implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 
@@ -26,6 +26,11 @@ class Vote
 
     #[ORM\Column(length: 10)]
     private string $type;
+
+    public function getHotel(): ?Hotel
+    {
+        return $this->employee->getHotel();
+    }
 
     public function getEmployee(): Employee
     {

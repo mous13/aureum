@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Controller;
 
+use Citadel\Aureum\Core\Controller\Trait\HotelScopedCrudTrait;
 use Citadel\Aureum\Core\Entity\RoomType;
 use Citadel\Aureum\Core\Form\RoomTypeType;
 use Citadel\Aureum\Core\Service\AureumService;
 use Forumify\Admin\Crud\AbstractCrudController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/rooms/types', 'room_types')]
 class RoomTypeController extends AbstractCrudController
 {
+    use HotelScopedCrudTrait;
+
     public function __construct(
         private readonly AureumService $aureumService,
     ) {
@@ -61,12 +63,9 @@ class RoomTypeController extends AbstractCrudController
         ]));
     }
 
-    #[Route('/{identifier}/edit', name: '_edit')]
-    public function edit(Request $request, string $identifier): Response
+    protected function getAureumService(): AureumService
     {
-        $this->denyUnlessSameHotel((int)$identifier);
-
-        return parent::edit($request, $identifier);
+        return $this->aureumService;
     }
 
     protected function save(bool $isNew, FormInterface $form): object
@@ -78,15 +77,5 @@ class RoomTypeController extends AbstractCrudController
         }
 
         return parent::save($isNew, $form);
-    }
-
-    private function denyUnlessSameHotel(int $identifier): void
-    {
-        $roomType = $this->repository->find($identifier);
-        $hotel = $this->aureumService->getHotel();
-
-        if ($roomType instanceof RoomType && $roomType->getHotel()->getId() !== $hotel?->getId()) {
-            throw $this->createNotFoundException();
-        }
     }
 }

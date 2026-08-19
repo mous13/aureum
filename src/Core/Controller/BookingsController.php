@@ -86,4 +86,19 @@ class BookingsController extends AbstractController
 
         return $this->redirectToRoute('aureum_bookings');
     }
+
+    #[Route('/bookings/{id}/delete', name: 'bookings_delete', methods: ['POST'])]
+    #[IsGranted('aureum.module.bookings.manage')]
+    public function delete(Request $request, Booking $booking): Response
+    {
+        $token = (string)$request->request->get('_token');
+        if (!$this->isCsrfTokenValid('aureum_booking_delete_' . $booking->getId(), $token)) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        $this->bookingRepository->remove($booking);
+        $this->addFlash('success', 'Record deleted.');
+
+        return $this->redirectToRoute('aureum_bookings');
+    }
 }

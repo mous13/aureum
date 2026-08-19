@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Controller;
 
+use Citadel\Aureum\Core\Controller\Trait\HotelScopedCrudTrait;
 use Citadel\Aureum\Core\Entity\Tag;
 use Citadel\Aureum\Core\Form\TagType;
 use Citadel\Aureum\Core\Service\AureumService;
@@ -17,6 +18,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[IsGranted('aureum.module.restaurants.manage')]
 class TagController extends AbstractCrudController
 {
+    use HotelScopedCrudTrait;
+
     public function __construct(
         private readonly AureumService $aureumService,
     ) {
@@ -24,6 +27,11 @@ class TagController extends AbstractCrudController
 
     protected string $listTemplate = '@CitadelAureum/core/components/list.html.twig';
     protected string $formTemplate = '@CitadelAureum/core/components/form.html.twig';
+
+    protected function getAureumService(): AureumService
+    {
+        return $this->aureumService;
+    }
 
     protected function getTranslationPrefix(): string
     {

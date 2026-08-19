@@ -11,7 +11,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 
 #[ORM\Entity(repositoryClass: FloorFeatureRepository::class)]
 #[ORM\Table(name: 'aureum_floor_features')]
-class FloorFeature
+class FloorFeature implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 
@@ -55,6 +55,11 @@ class FloorFeature
     public function setContents(?string $contents): void
     {
         $this->contents = $contents;
+    }
+
+    public function getHotel(): ?Hotel
+    {
+        return $this->floor->getHotel();
     }
 
     public function getFloor(): Floor
