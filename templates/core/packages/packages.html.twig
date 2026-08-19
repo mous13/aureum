@@ -7,15 +7,15 @@
         </div>
         <div class="card-body">
             {{ form_start(form) }}
-            <div class="flex gap-2 mb-2">
-                {{ form_widget(form.name) }}
-                {{ form_widget(form.description) }}
-                {{ form_widget(form.location) }}
+            <div class="form-field-grid">
+                {{ form_row(form.name) }}
+                {{ form_row(form.description) }}
+                {{ form_row(form.location) }}
             </div>
-            <div class="mb-2">
-                {{ form_widget(form.note) }}
+            <div class="form-section">
+                {{ form_row(form.note) }}
             </div>
-            <div class="flex justify-end">
+            <div class="flex justify-end mt-5">
                 <button type="submit" class="luxury-light square btn btn-primary">Submit Package</button>
             </div>
             {{ form_end(form) }}

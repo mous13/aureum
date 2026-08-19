@@ -25,36 +25,36 @@ class PackageEditType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('status', CheckBoxType::class, [
-                'label' => 'Mark as Picked Up',
-                'required' => false,
-                'data' => false,
-                'mapped' => false,
-            ])
             ->add('name', TextType::class, [
-                'label' => '',
+                'label' => 'Guest Name',
                 'attr' => [
                     'placeholder' => 'Guest Name',
                 ],
             ])
             ->add('description', TextType::class, [
-                'label' => '',
+                'label' => 'Description',
                 'attr' => [
                     'placeholder' => 'Package Description',
                 ],
             ])
             ->add('location', TextType::class, [
-                'label' => '',
+                'label' => 'Location Stored',
                 'attr' => [
                     'placeholder' => 'Location Stored',
                 ],
             ])
             ->add('note', TextType::class, [
-                'label' => '',
+                'label' => 'Notes',
                 'attr' => [
                     'placeholder' => 'Notes',
                 ],
                 'required' => false,
+            ])
+            ->add('status', CheckBoxType::class, [
+                'label' => 'Mark as Picked Up',
+                'required' => false,
+                'data' => false,
+                'mapped' => false,
             ]);
     }
 }
