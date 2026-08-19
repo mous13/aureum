@@ -7,42 +7,61 @@
     {% block modalContent %}
         {{ form_start(editForm) }}
         <div class="card w-100">
-            <div class="card-title" style="background-color:#13233A;color:#ececec;">Edit Property - {{ property.description }}</div>
-            <div class="card-body">
-                <div class="">
-                    Property Information
-                    <div class="flex gap-2 mb-2">
-                        {{ form_widget(editForm.type) }}
-                        {{ form_widget(editForm.location) }}
-                        {{ form_widget(editForm.storedLocation) }}
-                        {{ form_widget(editForm.reportedBy) }}
-                    </div>
-                    <div class="flex gap-2 mb-2">
-                        <div class="w-20">
-                            {{ form_widget(editForm.status) }}
+            <div class="card-title luxury">Edit Property - {{ property.description }}</div>
+            <div class="card-body form-split-body">
+                <div class="form-split">
+                    <div class="form-rail luxury">
+                        <div class="form-rail-inner">
+                            <div>
+                                <span class="form-label">{{ editForm.type.vars.label }}</span>
+                                <div class="type-toggle" role="radiogroup" aria-label="Property type">
+                                    {% for radio in editForm.type %}
+                                        <label class="type-toggle-item" for="{{ radio.vars.id }}">
+                                            {{ form_widget(radio) }}
+                                            <i class="{{ radio.vars.value == 'lost' ? 'ph ph-map-pin-line' : 'ph ph-check-circle' }}"></i>
+                                            <span>{{ radio.vars.label }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {{ form_row(editForm.status) }}
                         </div>
-                        <div class="w-80">
-                            {{ form_widget(editForm.description) }}
+                    </div>
+
+                    <div class="form-detail-panel">
+                        <div class="form-detail-head">
+                            <i class="icon ph ph-suitcase-simple"></i>
+                            <h2>Property Details</h2>
+                        </div>
+
+                        <div>
+                            <span class="form-label">Property Information</span>
+                            <div class="form-field-grid">
+                                {{ form_row(editForm.location) }}
+                                {{ form_row(editForm.storedLocation) }}
+                                {{ form_row(editForm.reportedBy) }}
+                            </div>
+                            <div class="mt-2">
+                                {{ form_row(editForm.description) }}
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <span class="form-label">Guest</span>
+                            <div class="form-field-grid">
+                                {{ form_row(editForm.guest) }}
+                                {{ form_row(editForm.contact) }}
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            {{ form_row(editForm.note) }}
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="luxury-light square btn btn-primary">Save Changes</button>
                         </div>
                     </div>
-                </div>
-                <div class="mt-5">
-                    Guest Details
-                    <div class="flex gap-2 mb-2">
-                        {{ form_widget(editForm.guest) }}
-                        {{ form_widget(editForm.contact) }}
-                    </div>
-                </div>
-                <div class="mt-5">
-                    Property Notes
-                    <div class="flex gap-2 mb-2">
-                        {{ form_widget(editForm.note) }}
-                    </div>
-                </div>
-                <div class="flex gap-2">
-                    <button type="submit" class="btn btn-primary" style="background-color:#1a3f5f;">
-                        Save Changes
-                    </button>
                 </div>
             </div>
         </div>

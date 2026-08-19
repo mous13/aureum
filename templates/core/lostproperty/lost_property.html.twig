@@ -1,45 +1,70 @@
 {% extends '@CitadelAureum/core/base.html.twig' %}
 {% block body %}
     {{ component('Aureum\\Announcements', { module: 'lost_property' }) }}
-    <div class="card">
-        <div class="card-title luxury">
-            New Entry
-        </div>
-        <div class="card-body">
-            {{ form_start(form) }}
-            <div class="">
-                Property Information
-                <div class="flex gap-2 mb-2">
-                    {{ form_widget(form.type) }}
-                    {{ form_widget(form.location) }}
-                    {{ form_widget(form.storedLocation) }}
-                    {{ form_widget(form.status) }}
-                </div>
-                <div class="flex gap-2 mb-2">
-                    <div class="w-100">
-                        {{ form_widget(form.description) }}
+
+    {% if is_granted('aureum.module.lost_property.manage') %}
+        <div class="card">
+            <div class="card-title luxury">
+                New Entry
+            </div>
+            <div class="card-body form-split-body">
+                {{ form_start(form) }}
+                <div class="form-split">
+                    <div class="form-rail luxury">
+                        <div class="form-rail-inner">
+                            <div>
+                                <span class="form-label">{{ form.type.vars.label }}</span>
+                                <div class="type-toggle" role="radiogroup" aria-label="Property type">
+                                    {% for radio in form.type %}
+                                        <label class="type-toggle-item" for="{{ radio.vars.id }}">
+                                            {{ form_widget(radio) }}
+                                            <i class="{{ radio.vars.value == 'lost' ? 'ph ph-map-pin-line' : 'ph ph-check-circle' }}"></i>
+                                            <span>{{ radio.vars.label }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {{ form_row(form.status) }}
+                        </div>
+                    </div>
+
+                    <div class="form-detail-panel">
+                        <div class="form-detail-head">
+                            <i class="icon ph ph-suitcase-simple"></i>
+                            <h2>Property Details</h2>
+                        </div>
+                        <div>
+                            <span class="form-label">Property Information</span>
+                            <div class="form-field-grid">
+                                {{ form_row(form.location) }}
+                                {{ form_row(form.storedLocation) }}
+                            </div>
+                            <div class="mt-2">
+                                {{ form_row(form.description) }}
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <span class="form-label">Guest</span>
+                            <div class="form-field-grid">
+                                {{ form_row(form.guest) }}
+                                {{ form_row(form.contact) }}
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            {{ form_row(form.note) }}
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="luxury-light square btn btn-primary">Submit Entry</button>
+                        </div>
                     </div>
                 </div>
+                {{ form_end(form) }}
             </div>
-            <div class="mt-5">
-                Guest Details
-                <div class="flex gap-2 mb-2">
-                    {{ form_widget(form.guest) }}
-                    {{ form_widget(form.contact) }}
-                </div>
-            </div>
-            <div class="mt-5">
-                Notes
-                <div class="flex gap-2 mb-2">
-                    {{ form_widget(form.note) }}
-                </div>
-            </div>
-            <div class="flex justify-end">
-                <button type="submit" class="luxury-light square btn btn-primary">Submit Entry</button>
-            </div>
-            {{ form_end(form) }}
         </div>
-    </div>
+    {% endif %}
 
     <div class="mt-5">
         <div>
