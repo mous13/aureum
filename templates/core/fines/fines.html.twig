@@ -7,16 +7,16 @@
         </div>
         <div class="card-body">
             {{ form_start(form) }}
-            <div class="flex gap-2 mb-2">
-                {{ form_widget(form.number) }}
-                {{ form_widget(form.name) }}
-                {{ form_widget(form.email) }}
-                {{ form_widget(form.status) }}
+            <div class="form-field-grid">
+                {{ form_row(form.number) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.status) }}
             </div>
-            <div class="mb-2">
-                {{ form_widget(form.note) }}
+            <div class="form-section">
+                {{ form_row(form.note) }}
             </div>
-            <div class="flex justify-end">
+            <div class="flex justify-end mt-5">
                 <button type="submit" class="luxury-light square btn btn-primary">Submit Fine</button>
             </div>
             {{ form_end(form) }}

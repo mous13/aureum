@@ -27,39 +27,39 @@ class FineEditType extends AbstractType
     {
         $builder
             ->add('number', TextType::class, [
-                'label' => '',
+                'label' => 'Fine Number',
                 'attr' => [
                     'placeholder' => 'Fine Number',
                 ],
                 'required' => false,
             ])
             ->add('name', TextType::class, [
-                'label' => '',
+                'label' => 'Guest Name',
                 'attr' => [
                     'placeholder' => 'Guest Name',
                 ],
             ])
             ->add('email', TextType::class, [
-                'label' => '',
+                'label' => 'Guest Email',
                 'attr' => [
                     'placeholder' => 'Guest Email',
                 ],
             ])
-            ->add('note', TextType::class, [
-                'label' => '',
-                'attr' => [
-                    'placeholder' => 'Notes',
-                ],
-                'required' => false,
-            ])
             ->add('status', ChoiceType::class, [
-                'label' => '',
+                'label' => 'Status',
                 'choices' => [
                     'Not Appealed' => FineStatus::NOT_APPEALED,
                     'Appeal Submitted' => FineStatus::APPEAL_SUBMITTED,
                     'Appeal Completed' => FineStatus::APPEAL_COMPLETED,
                 ],
                 'placeholder' => 'Select Status',
+            ])
+            ->add('note', TextType::class, [
+                'label' => 'Notes',
+                'attr' => [
+                    'placeholder' => 'Notes',
+                ],
+                'required' => false,
             ]);
     }
 }
