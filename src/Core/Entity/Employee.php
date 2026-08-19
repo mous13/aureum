@@ -47,9 +47,7 @@ class Employee implements HotelOwnedInterface
         $this->hotelRoles = new ArrayCollection();
     }
 
-    /**
-     * @return Collection<int, HotelRole>
-     */
+    /** @return Collection<int, HotelRole> */
     public function getHotelRoles(): Collection
     {
         return $this->hotelRoles;

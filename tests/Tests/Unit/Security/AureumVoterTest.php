@@ -36,10 +36,6 @@ class AureumVoterTest extends TestCase
         );
     }
 
-    /**
-     * Disabling a module has to override role grants, otherwise turning a module
-     * off would leave it reachable for anyone who already had the permission.
-     */
     public function testDisabledModuleBeatsEvenHotelAdmin(): void
     {
         $employee = $this->employee(hotelAdmin: true, enabledModules: []);

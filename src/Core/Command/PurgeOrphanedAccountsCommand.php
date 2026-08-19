@@ -14,13 +14,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-/**
- * Once an employee is archived their user link is set to null, so there is no
- * way to tell from the data which leftover account belonged to which archived
- * employee. This lists accounts that no employee points at and deletes only the
- * ids explicitly named, rather than guessing: the same list legitimately
- * contains forum members who were never employees.
- */
 #[AsCommand(
     name: 'aureum:staff:orphaned-accounts',
     description: 'List sign-in accounts belonging to no employee, and delete named ones',

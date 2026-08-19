@@ -40,7 +40,6 @@ class LostProperty implements HotelOwnedInterface, AnonymisableInterface
         $this->markAnonymised();
     }
 
-
     #[ORM\Column(type: 'string', length: 255, enumType: LostPropertyClass::class)]
     private LostPropertyClass $type;
 
@@ -70,7 +69,6 @@ class LostProperty implements HotelOwnedInterface, AnonymisableInterface
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $note = null;
-
 
     public function getType(): LostPropertyClass
     {

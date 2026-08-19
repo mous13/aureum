@@ -21,7 +21,6 @@ class Tag implements HotelOwnedInterface
     #[ORM\JoinColumn(name: 'hotel_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private Hotel $hotel;
 
-
     public function getName(): string
     {
         return $this->name;

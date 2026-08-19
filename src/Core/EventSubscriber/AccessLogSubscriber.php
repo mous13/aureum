@@ -11,23 +11,9 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-/**
- * Records who looked at the modules holding guest contact details.
- *
- * Without this there is no way to answer a hotel asking which of its staff
- * viewed a particular guest's details, and no way to scope who saw what after
- * an incident. Only the modules carrying guest personal data are covered, and
- * only the route and actor are stored - never the records returned.
- *
- * Runs on kernel.terminate so a slow write cannot delay the response.
- */
 #[AsEventListener(event: KernelEvents::TERMINATE)]
 final class AccessLogSubscriber
 {
-    /**
-     * Route name prefix to the module it belongs to. Longest prefixes first so
-     * aureum_lost_property is not swallowed by a shorter match.
-     */
     private const ROUTE_MODULES = [
         'aureum_lost_property' => Module::LOST_PROPERTY,
         'aureum_bookings' => Module::BOOKINGS,
@@ -35,10 +21,6 @@ final class AccessLogSubscriber
         'aureum_fines' => Module::FINES,
     ];
 
-    /**
-     * LiveComponent AJAX requests all run under the ux_live_component route, so
-     * the components rendering guest data are mapped by component name.
-     */
     private const COMPONENT_MODULES = [
         'Aureum\\BookingTable' => Module::BOOKINGS,
     ];

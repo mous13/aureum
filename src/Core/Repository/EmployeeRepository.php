@@ -9,9 +9,7 @@ use Forumify\Core\Repository\AbstractRepository;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Doctrine\ORM\QueryBuilder;
 
-/**
- * @extends AbstractRepository<Employee>
- */
+/** @extends AbstractRepository<Employee> */
 class EmployeeRepository extends AbstractRepository
 {
     public static function getEntityClass(): string
@@ -33,9 +31,7 @@ class EmployeeRepository extends AbstractRepository
         return $qb;
     }
 
-    /**
-     * @return array<Employee>
-     */
+    /** @return array<Employee> */
     public function findByHotel(Hotel $hotel): array
     {
         return $this->createQueryBuilder('e')

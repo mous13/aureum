@@ -9,9 +9,7 @@ use Citadel\Aureum\Core\Entity\Hotel;
 use DateTimeInterface;
 use Forumify\Core\Repository\AbstractRepository;
 
-/**
- * @extends AbstractRepository<AccessLog>
- */
+/** @extends AbstractRepository<AccessLog> */
 class AccessLogRepository extends AbstractRepository
 {
     public static function getEntityClass(): string
@@ -19,9 +17,7 @@ class AccessLogRepository extends AbstractRepository
         return AccessLog::class;
     }
 
-    /**
-     * @return array<AccessLog>
-     */
+    /** @return array<AccessLog> */
     public function findRecentForHotel(Hotel $hotel, int $limit = 200): array
     {
         return $this->createQueryBuilder('a')

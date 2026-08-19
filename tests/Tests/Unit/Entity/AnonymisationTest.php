@@ -55,8 +55,6 @@ class AnonymisationTest extends TestCase
         self::assertNull($fine->getNote());
         self::assertTrue($fine->isAnonymised());
 
-        // The fine reference is not personal data and is what makes the
-        // remaining row useful for counts and dispute history.
         self::assertSame('FINE-2026-0031', $fine->getNumber());
     }
 

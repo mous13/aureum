@@ -44,10 +44,6 @@ class HotelTenantSubscriberTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    /**
-     * A route that resolves several entities is only safe if every one of them
-     * is checked, not just the first.
-     */
     public function testRejectsWhenAnyOneArgumentBelongsToAnotherHotel(): void
     {
         $subscriber = $this->subscriber(self::OWN_HOTEL);
@@ -69,10 +65,6 @@ class HotelTenantSubscriberTest extends TestCase
         $subscriber($this->event([$this->fineFor(self::OWN_HOTEL)], 'aureum_fines_edit'));
     }
 
-    /**
-     * The platform admin surface is gated on ROLE_ADMIN and legitimately spans
-     * every hotel, so it must not be scoped to the caller's own hotel.
-     */
     public function testLeavesTheAdminSurfaceAlone(): void
     {
         $subscriber = $this->subscriber(self::OWN_HOTEL);
@@ -146,9 +138,7 @@ class HotelTenantSubscriberTest extends TestCase
         return $booking;
     }
 
-    /**
-     * @param array<mixed> $arguments
-     */
+    /** @param array<mixed> $arguments */
     private function event(array $arguments, string $route): ControllerArgumentsEvent
     {
         $request = new Request();

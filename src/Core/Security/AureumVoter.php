@@ -9,9 +9,7 @@ use Citadel\Aureum\Core\Service\AureumService;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-/**
- * @extends Voter<string, mixed>
- */
+/** @extends Voter<string, mixed> */
 class AureumVoter extends Voter
 {
     public const MODULE_PREFIX = 'aureum.module.';
@@ -84,9 +82,7 @@ class AureumVoter extends Voter
         return false;
     }
 
-    /**
-     * @return array{0: string, 1: string} [module value, action]
-     */
+    /** @return array{0: string, 1: string} [module value, action] */
     private function parse(string $attribute): array
     {
         $rest = substr($attribute, strlen(self::MODULE_PREFIX));

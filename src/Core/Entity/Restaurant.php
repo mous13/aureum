@@ -23,7 +23,6 @@ class Restaurant implements HotelOwnedInterface
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
 
-
     #[ORM\ManyToMany(targetEntity: Employee::class)]
     #[ORM\JoinTable(name: 'aureum_restaurant_connections')]
     private Collection $connections;

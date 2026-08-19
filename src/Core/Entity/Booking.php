@@ -74,9 +74,7 @@ class Booking implements HotelOwnedInterface, AnonymisableInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $notes = null;
 
-    /**
-     * @var array<string, string>
-     */
+    /** @var array<string, string> */
     #[ORM\Column(type: 'json')]
     private array $details = [];
 
@@ -198,17 +196,13 @@ class Booking implements HotelOwnedInterface, AnonymisableInterface
         $this->notes = $notes;
     }
 
-    /**
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     public function getDetails(): array
     {
         return $this->details;
     }
 
-    /**
-     * @param array<string, string|null> $details
-     */
+    /** @param array<string, string|null> $details */
     public function setDetails(array $details): void
     {
         $this->details = $this->filterDetails($details);
@@ -219,9 +213,7 @@ class Booking implements HotelOwnedInterface, AnonymisableInterface
         return $this->details[$field->value] ?? null;
     }
 
-    /**
-     * @return array<array{label: string, value: string}>
-     */
+    /** @return array<array{label: string, value: string}> */
     public function getSummary(): array
     {
         $summary = [];

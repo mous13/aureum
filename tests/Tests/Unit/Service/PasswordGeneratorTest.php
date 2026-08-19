@@ -31,10 +31,6 @@ class PasswordGeneratorTest extends TestCase
         self::assertCount(200, array_unique($passwords));
     }
 
-    /**
-     * These get read aloud at a front desk and typed by hand, so glyphs that are
-     * easily confused have to stay out.
-     */
     public function testExcludesAmbiguousCharacters(): void
     {
         $generator = new PasswordGenerator();
