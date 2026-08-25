@@ -1,0 +1,36 @@
+{% extends '@CitadelAureum/core/docs/layout.html.twig' %}
+
+{% block article %}
+    <p>
+        Amenities replaces the paper sheet the concierge team works from each
+        day. A manager starts a fresh board every morning and adds one card per
+        room: the room number, the guest's lastname, and the items to deliver.
+        Concierge staff drag each card across the board as the delivery
+        progresses.
+    </p>
+
+    <h2>The four columns</h2>
+    <ol class="au-docs-steps">
+        <li><strong>Room Not Ready</strong> - the amenity is planned but housekeeping has not released the room yet.</li>
+        <li><strong>Room Ready</strong> - the room is clean and the amenity can go up.</li>
+        <li><strong>In Progress</strong> - someone is preparing or delivering the items.</li>
+        <li><strong>Completed</strong> - the amenity is in the room.</li>
+    </ol>
+
+    <h2>Common tasks</h2>
+    <ol class="au-docs-steps">
+        <li>Each morning a manager opens <strong>General → Amenities</strong> and presses <strong>Start new board</strong>. The new board always starts empty.</li>
+        <li>The manager adds a card per room with the <strong>+</strong> button on a column, or edits a card by clicking its pencil.</li>
+        <li>Concierge staff drag cards between columns as they work, or use a card's arrow button to move it to the next column.</li>
+        <li>Older boards stay available read-only under <strong>Previous boards</strong>.</li>
+    </ol>
+
+    <div class="au-docs-note">
+        <i class="ph ph-info"></i>
+        <p>
+            Anyone with view access can move cards, but only staff with the
+            manage permission can start or delete boards and change what is on
+            the cards.
+        </p>
+    </div>
+{% endblock %}
