@@ -1,0 +1,106 @@
+<div {{ attributes }}>
+    <div class="flex items-center justify-between mb-2">
+        <p class="amenity-progress">
+            {{ this.completedCount }} of {{ this.totalCount }} completed
+        </p>
+        <span class="amenity-progress__hint" data-loading="show">Saving...</span>
+    </div>
+
+    <div class="amenity-board" {% if not this.readOnly %}data-controller="amenity-board"{% endif %}>
+        {% for column in this.columns %}
+            <div class="amenity-column amenity-column--{{ column.status.value }}">
+                <div class="amenity-column__header">
+                    <span class="amenity-column__title">{{ column.status.label }}</span>
+                    <span class="amenity-column__count">{{ column.cards|length }}</span>
+                    {% if this.canManage %}
+                        <button type="button" class="btn-icon btn-link" title="Add room"
+                                data-action="live#action"
+                                data-live-action-param="openCreate"
+                                data-live-status-param="{{ column.status.value }}">
+                            <i class="ph ph-plus"></i>
+                        </button>
+                    {% endif %}
+                </div>
+                <div class="amenity-column__cards"
+                     data-amenity-board-target="column"
+                     data-status="{{ column.status.value }}">
+                    {% for card in column.cards %}
+                        <div class="amenity-card {{ card.status.value == 'completed' ? 'amenity-card--completed' }}"
+                             {% if not this.readOnly %}draggable="true" data-amenity-board-target="card" data-card-id="{{ card.id }}"{% endif %}>
+                            <div class="amenity-card__row">
+                                <span class="amenity-card__room">{{ card.roomNumber }}</span>
+                                <span class="amenity-card__guest">{{ card.guestLastName ?? '[removed]' }}</span>
+                                {% if this.canManage %}
+                                    <button type="button" class="btn-icon btn-link amenity-card__action" title="Edit card"
+                                            data-action="live#action"
+                                            data-live-action-param="openEdit"
+                                            data-live-card-id-param="{{ card.id }}">
+                                        <i class="ph ph-pencil-simple"></i>
+                                    </button>
+                                {% endif %}
+                                {% if not this.readOnly and card.status.next is not null %}
+                                    <button type="button" class="btn-icon btn-link amenity-card__action" title="Move to {{ card.status.next.label }}"
+                                            data-action="live#action"
+                                            data-live-action-param="advanceCard"
+                                            data-live-card-id-param="{{ card.id }}">
+                                        <i class="ph ph-arrow-right"></i>
+                                    </button>
+                                {% endif %}
+                            </div>
+                            <p class="amenity-card__items">{{ card.items }}</p>
+                        </div>
+                    {% else %}
+                        {% if column.status.value == 'not_started' and this.totalCount == 0 %}
+                            <p class="amenity-column__empty">
+                                {{ this.canManage ? 'Add the first room with the + button above.' : 'Nothing on the board yet.' }}
+                            </p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if this.createStatus is not null or this.editCardId is not null %}
+        <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="{{ this.editCardId ? 'Edit card' : 'New card' }}">
+            <div class="card modal-overlay__card">
+                <div class="card-title luxury items-center justify-between">
+                    {% if this.editCardId %}
+                        Edit Card - Room {{ this.editCard ? this.editCard.roomNumber : '' }}
+                    {% else %}
+                        New Card
+                    {% endif %}
+                    <button type="button" class="btn-icon btn-link" title="Close"
+                            data-action="live#action" data-live-action-param="closeModal">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, { attr: { 'data-action': 'live#action:prevent', 'data-live-action-param': 'save' } }) }}
+                    <div class="flex gap-2 mb-2">
+                        {{ form_row(form.roomNumber) }}
+                        {{ form_row(form.guestLastName) }}
+                    </div>
+                    <div class="mb-2">
+                        {{ form_row(form.items) }}
+                        {{ form_row(form.status) }}
+                    </div>
+                    <div class="flex gap-2 justify-end">
+                        <button type="submit" class="luxury-light square btn btn-primary">
+                            {{ this.editCardId ? 'Save changes' : 'Add card' }}
+                        </button>
+                        {% if this.editCardId %}
+                            <button type="button" class="btn btn-outlined"
+                                    data-action="live#action"
+                                    data-live-action-param="delete"
+                                    data-live-confirm-param="Delete this card? This cannot be undone.">
+                                <i class="ph ph-trash"></i> Delete
+                            </button>
+                        {% endif %}
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
