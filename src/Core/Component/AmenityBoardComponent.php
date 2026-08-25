@@ -99,6 +99,8 @@ class AmenityBoardComponent extends AbstractController
     {
         $this->createStatus = null;
         $this->editCardId = null;
+        $this->isValidated = false;
+        $this->validatedFields = [];
         $this->resetForm();
     }
 

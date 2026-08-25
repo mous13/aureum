@@ -12,6 +12,7 @@ use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AmenityCardRepository::class)]
 #[ORM\Table(name: 'aureum_amenity_cards')]
@@ -47,12 +48,17 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
     private Hotel $hotel;
 
     #[ORM\Column(length: 20)]
-    private string $roomNumber;
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 20)]
+    private string $roomNumber = '';
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
     private ?string $guestLastName = null;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank]
     private string $items = '';
 
     #[ORM\Column(type: 'string', length: 50, enumType: AmenityCardStatus::class)]
@@ -98,9 +104,9 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
         return $this->roomNumber;
     }
 
-    public function setRoomNumber(string $roomNumber): void
+    public function setRoomNumber(?string $roomNumber): void
     {
-        $this->roomNumber = $roomNumber;
+        $this->roomNumber = $roomNumber ?? '';
     }
 
     public function getGuestLastName(): ?string
@@ -118,9 +124,9 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
         return $this->items;
     }
 
-    public function setItems(string $items): void
+    public function setItems(?string $items): void
     {
-        $this->items = $items;
+        $this->items = $items ?? '';
     }
 
     public function getStatus(): AmenityCardStatus
