@@ -86,9 +86,11 @@ class AmenityBoard implements HotelOwnedInterface
 
     public function addCard(AmenityCard $card): void
     {
-        if (!$this->cards->contains($card)) {
-            $this->cards->add($card);
-            $card->setBoard($this);
+        if ($this->cards->contains($card)) {
+            return;
         }
+
+        $this->cards->add($card);
+        $card->setBoard($this);
     }
 }

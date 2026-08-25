@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Controller;
 
-use Citadel\Aureum\Core\Entity\AmenityBoard;
 use Citadel\Aureum\Core\Repository\AmenityBoardRepository;
 use Citadel\Aureum\Core\Service\AmenityBoardService;
 use Citadel\Aureum\Core\Service\AureumService;
