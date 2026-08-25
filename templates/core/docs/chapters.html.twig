@@ -1,0 +1,16 @@
+<nav class="au-docs-chapters" aria-label="Documentation chapters">
+    {% for section, pages in chapters %}
+        <p class="au-docs-section">{{ section }}</p>
+        <ul class="au-docs-list">
+            {% for pageSlug, chapter in pages %}
+                <li>
+                    <a href="{{ path('aureum_docs_page', {slug: pageSlug}) }}"
+                       class="au-docs-link{{ pageSlug == slug ? ' is-current' }}"
+                       {{ pageSlug == slug ? 'aria-current="page"' }}>
+                        {{ chapter.title }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</nav>

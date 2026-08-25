@@ -1,0 +1,23 @@
+{% extends '@CitadelAureum/core/docs/layout.html.twig' %}
+
+{% block article %}
+    <p>
+        Packages logs deliveries that arrive for guests, so nothing sits
+        unclaimed in the back office and any team member can answer "has my
+        parcel arrived?" with certainty.
+    </p>
+
+    <h2>Common tasks</h2>
+    <ol class="au-docs-steps">
+        <li>When a delivery arrives, open <strong>General → Packages</strong> and log it as <strong>received</strong> with the guest's details.</li>
+        <li>When the guest collects it, mark it <strong>picked up</strong>. The change is recorded in the package's log.</li>
+    </ol>
+
+    <div class="au-docs-note">
+        <i class="ph ph-info"></i>
+        <p>
+            Packages still marked received appear in the dashboard's attention
+            list, so chase them before checkout day.
+        </p>
+    </div>
+{% endblock %}

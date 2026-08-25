@@ -1,0 +1,46 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+
+{% block title %}{{ page.title }} · Aureum documentation{% endblock %}
+
+{% block body %}
+    <div class="au-docs">
+        <details class="au-docs-toc-mobile">
+            <summary>
+                <i class="ph ph-list"></i>
+                {{ page.title }}
+            </summary>
+            {{ include('@CitadelAureum/core/docs/chapters.html.twig') }}
+        </details>
+
+        <aside class="au-docs-rail">
+            {{ include('@CitadelAureum/core/docs/chapters.html.twig') }}
+        </aside>
+
+        <article class="au-docs-article">
+            <header class="au-docs-head">
+                <p class="au-docs-kicker">{{ page.section }}</p>
+                <h1 class="au-docs-title">{{ page.title }}</h1>
+                <p class="au-docs-summary">{{ page.summary }}</p>
+            </header>
+
+            {% block article %}{% endblock %}
+
+            <nav class="au-docs-pager" aria-label="Documentation pages">
+                {% if previous %}
+                    <a class="au-docs-pager-link" href="{{ path('aureum_docs_page', {slug: previous.slug}) }}">
+                        <span class="au-docs-pager-label"><i class="ph ph-arrow-left"></i> Previous</span>
+                        <span class="au-docs-pager-title">{{ previous.title }}</span>
+                    </a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+                {% if next %}
+                    <a class="au-docs-pager-link is-next" href="{{ path('aureum_docs_page', {slug: next.slug}) }}">
+                        <span class="au-docs-pager-label">Next <i class="ph ph-arrow-right"></i></span>
+                        <span class="au-docs-pager-title">{{ next.title }}</span>
+                    </a>
+                {% endif %}
+            </nav>
+        </article>
+    </div>
+{% endblock %}

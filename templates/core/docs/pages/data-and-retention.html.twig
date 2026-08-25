@@ -1,0 +1,35 @@
+{% extends '@CitadelAureum/core/docs/layout.html.twig' %}
+
+{% block article %}
+    <p>
+        Aureum stores guest details, so it comes with the controls needed to
+        stay on the right side of data-protection rules: retention policies,
+        anonymisation, and an access log.
+    </p>
+
+    <h2>Retention policies</h2>
+    <p>
+        Under <strong>Manager → Data Retention</strong>, set how many months
+        guest details are kept per module (between 1 and 240). When a record
+        passes its retention period, the guest's personal details are
+        anonymised while the operational record itself is kept for reporting.
+        Leaving a module blank keeps its details indefinitely, so set a policy
+        deliberately rather than by default.
+    </p>
+
+    <h2>Access log</h2>
+    <p>
+        <strong>Manager → Access Log</strong> records who viewed and changed
+        what. Use it to answer "who looked at this guest's details?", and
+        expect it to be checked during audits.
+    </p>
+
+    <div class="au-docs-note">
+        <i class="ph ph-info"></i>
+        <p>
+            Collect the minimum: if a booking doesn't need a phone number,
+            don't record one. Retention policies can shorten what you keep,
+            but the best data protection is data you never stored.
+        </p>
+    </div>
+{% endblock %}

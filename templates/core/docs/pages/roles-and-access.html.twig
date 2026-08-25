@@ -1,0 +1,33 @@
+{% extends '@CitadelAureum/core/docs/layout.html.twig' %}
+
+{% block article %}
+    <p>
+        Access in Aureum is role-based. A role bundles module permissions
+        (view and manage, per module), and an employee holds one or more roles.
+        What someone sees in the menu is exactly what their roles allow.
+    </p>
+
+    <h2>View versus manage</h2>
+    <p>
+        <strong>View</strong> lets someone open a module and read it.
+        <strong>Manage</strong> adds creating, editing, and deleting. Most
+        front-desk roles need view on the directories and manage on the working
+        modules they own; keep manage tight elsewhere.
+    </p>
+
+    <h2>Common tasks</h2>
+    <ol class="au-docs-steps">
+        <li>Open <strong>Manager → Roles</strong> to see the hotel's roles.</li>
+        <li>Create a role per job, not per person: "Front desk", "Housekeeping", "Duty manager".</li>
+        <li>Assign roles when creating staff, or adjust an existing employee's roles from <strong>Manager → Staff</strong>.</li>
+        <li>Use <strong>Manager → Modules</strong> to switch whole modules on or off for the hotel.</li>
+    </ol>
+
+    <div class="au-docs-note">
+        <i class="ph ph-warning"></i>
+        <p>
+            Managers can only grant permissions they hold themselves. You
+            can't create a role more powerful than your own access.
+        </p>
+    </div>
+{% endblock %}

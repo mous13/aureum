@@ -91,6 +91,9 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
         $menu->addItem($manager);
 
         $settings = new Menu('SETTINGS', ['icon' => ''], [
+            new MenuItem('Documentation', $url('aureum_docs_index'), [
+                'icon' => 'ph ph-book-open',
+            ]),
             new MenuItem('Settings', $url('forumify_core_settings'), [
                 'icon' => 'ph ph-gear',
             ]),

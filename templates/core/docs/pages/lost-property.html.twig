@@ -1,0 +1,25 @@
+{% extends '@CitadelAureum/core/docs/layout.html.twig' %}
+
+{% block article %}
+    <p>
+        Lost property registers items found in the hotel and tracks them until
+        they're back with their owner, or responsibly disposed of.
+    </p>
+
+    <h2>How an item moves</h2>
+    <p>
+        A found item starts <strong>open</strong>. Once stored, mark it
+        <strong>stored</strong>. When the owner is identified it becomes
+        <strong>waiting for collection</strong> or <strong>waiting to be
+        posted</strong>, and finally <strong>collected</strong> or
+        <strong>posted</strong>. Unclaimed items end as
+        <strong>disposed</strong>. Each change is recorded in the item's log.
+    </p>
+
+    <h2>Common tasks</h2>
+    <ol class="au-docs-steps">
+        <li>Open <strong>General → Lost Property</strong> and register the item with where and when it was found.</li>
+        <li>Describe the item well. A good description is how a phone call from a guest gets matched to a shelf in the store room.</li>
+        <li>With manage permission, update the status as the item moves, so the register always matches the shelf.</li>
+    </ol>
+{% endblock %}

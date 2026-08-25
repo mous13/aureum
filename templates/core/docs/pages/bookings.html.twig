@@ -1,0 +1,34 @@
+{% extends '@CitadelAureum/core/docs/layout.html.twig' %}
+
+{% block article %}
+    <p>
+        Bookings tracks arrangements made on behalf of guests: private transfers,
+        taxis, restaurant reservations, tours, spa appointments, tickets, and
+        anything else the desk organises. It is not the room reservation system;
+        it's the concierge's ledger.
+    </p>
+
+    <h2>How a booking moves</h2>
+    <p>
+        Each booking has a status: <strong>unconfirmed</strong> when it's first
+        logged, <strong>confirmed</strong> once the supplier has agreed,
+        <strong>completed</strong> after it happens, or <strong>cancelled</strong>.
+        Open bookings whose date has passed are flagged on the dashboard as
+        needing attention.
+    </p>
+
+    <h2>Common tasks</h2>
+    <ol class="au-docs-steps">
+        <li>Open <strong>General → Bookings</strong> to see the hotel's bookings.</li>
+        <li>Create a booking with the guest's details, the type, and the date.</li>
+        <li>Update the status as the arrangement progresses; every change is recorded in the booking's log.</li>
+    </ol>
+
+    <div class="au-docs-note">
+        <i class="ph ph-info"></i>
+        <p>
+            Editing and deleting bookings requires manage permission on the
+            module. Deleting is permanent, so prefer cancelling.
+        </p>
+    </div>
+{% endblock %}
