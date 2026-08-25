@@ -194,7 +194,7 @@ class RestaurantTable extends AbstractDoctrineTable
         $upUrl = $this->urlGenerator->generate('aureum_restaurants_upvote', ['id' => $id]);
         $downUrl = $this->urlGenerator->generate('aureum_restaurants_downvote', ['id' => $id]);
         $token = htmlspecialchars(
-            $this->csrfTokenManager->getToken('aureum_restaurant_vote_' . $id)->getValue(),
+            $this->csrfTokenManager->getToken('aureum_restaurant_vote')->getValue(),
             ENT_QUOTES,
         );
 

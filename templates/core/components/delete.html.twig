@@ -11,7 +11,7 @@
             <p>{{ 'warning_continue'|trans }}</p>
         </div>
         <div class="flex justify-center items-center gap-2">
-            <form method="post" action="{{ path(route ~ '_delete_confirm', app.current_route_parameters) }}">
+            <form method="post" action="{{ path(route ~ '_destroy', app.current_route_parameters) }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('aureum_crud_delete_' ~ app.current_route_parameters.identifier) }}">
                 <button type="submit" class="btn-primary">{{ 'confirm'|trans }}</button>
             </form>

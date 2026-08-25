@@ -21,6 +21,7 @@ class NewStaffType extends AbstractType
     {
         $resolver->setDefaults(['data_class' => NewStaff::class]);
         $resolver->setRequired('hotel');
+        $resolver->setRequired('creator');
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -53,11 +54,25 @@ class NewStaffType extends AbstractType
                 'required' => false,
                 'by_reference' => false,
                 'help' => 'What this employee can see and do. You can change this later.',
-                'query_builder' => static fn (HotelRoleRepository $repository) => $repository
-                    ->createQueryBuilder('r')
-                    ->andWhere('r.hotel = :hotel')
-                    ->setParameter('hotel', $options['hotel'])
-                    ->orderBy('r.name', 'ASC'),
+                'query_builder' => static function (HotelRoleRepository $repository) use ($options) {
+                    $builder = $repository
+                        ->createQueryBuilder('r')
+                        ->andWhere('r.hotel = :hotel')
+                        ->setParameter('hotel', $options['hotel'])
+                        ->orderBy('r.name', 'ASC');
+
+                    $creator = $options['creator'];
+                    if (!$creator->isHotelAdmin()) {
+                        $ownRoleIds = $creator->getHotelRoles()
+                            ->map(static fn ($role) => $role->getId())
+                            ->toArray();
+                        $builder
+                            ->andWhere('r.id IN (:ownRoles)')
+                            ->setParameter('ownRoles', $ownRoleIds ?: [0]);
+                    }
+
+                    return $builder;
+                },
             ])
         ;
     }

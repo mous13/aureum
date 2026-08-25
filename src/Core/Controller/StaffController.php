@@ -59,13 +59,14 @@ class StaffController extends AbstractController
     #[Route('/create', name: 'create')]
     public function create(Request $request): Response
     {
-        $hotel = $this->aureumService->getHotel();
-        if ($hotel === null) {
+        $employee = $this->aureumService->getEmployee();
+        $hotel = $employee?->getHotel();
+        if ($employee === null || $hotel === null) {
             throw $this->createNotFoundException();
         }
 
         $data = new NewStaff();
-        $form = $this->createForm(NewStaffType::class, $data, ['hotel' => $hotel]);
+        $form = $this->createForm(NewStaffType::class, $data, ['hotel' => $hotel, 'creator' => $employee]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

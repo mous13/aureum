@@ -52,6 +52,10 @@ final class AccessLogSubscriber
             return;
         }
 
+        if ($route === 'ux_live_component' && $this->recentlyLogged($employee->getId(), $module)) {
+            return;
+        }
+
         $this->connection->insert('aureum_logs_access', [
             'hotel_id' => $employee->getHotel()->getId(),
             'employee_id' => $employee->getId(),
@@ -61,6 +65,18 @@ final class AccessLogSubscriber
             'path' => mb_substr($request->getPathInfo(), 0, 255),
             'accessed_at' => (new \DateTime())->format('Y-m-d H:i:s'),
         ]);
+    }
+
+    private function recentlyLogged(int $employeeId, Module $module): bool
+    {
+        $cutoff = (new \DateTime('-10 minutes'))->format('Y-m-d H:i:s');
+
+        return (bool)$this->connection->fetchOne(
+            'SELECT 1 FROM aureum_logs_access
+             WHERE employee_id = :employee AND module = :module AND accessed_at >= :cutoff
+             LIMIT 1',
+            ['employee' => $employeeId, 'module' => $module->value, 'cutoff' => $cutoff],
+        );
     }
 
     private function moduleForRoute(string $route): ?Module

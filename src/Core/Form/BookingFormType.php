@@ -75,6 +75,7 @@ class BookingFormType extends AbstractType
                 'query_builder' => fn (EmployeeRepository $repository) => $repository
                     ->createQueryBuilder('e')
                     ->where('e.hotel = :hotel')
+                    ->andWhere('e.archivedAt IS NULL')
                     ->setParameter('hotel', $options['hotel'])
                     ->orderBy('e.name', 'ASC'),
                 'placeholder' => 'Select Concierge',

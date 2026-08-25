@@ -11,3 +11,4 @@ coverage/
 .phpunit.*
 var
 docs/
+.claude/

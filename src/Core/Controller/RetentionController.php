@@ -95,7 +95,10 @@ class RetentionController extends AbstractController
                 continue;
             }
 
-            $pending[$moduleValue] = $this->retentionService->applyPolicy($policy, true);
+            $count = $this->retentionService->applyPolicy($policy, true);
+            if ($count > 0) {
+                $pending[$moduleValue] = $count;
+            }
         }
 
         return $this->render('@CitadelAureum/core/retention.html.twig', [

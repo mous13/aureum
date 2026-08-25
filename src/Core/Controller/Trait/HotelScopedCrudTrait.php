@@ -32,7 +32,7 @@ trait HotelScopedCrudTrait
         return parent::delete($request, $identifier);
     }
 
-    #[Route('/{identifier}/delete', name: '_delete_confirm', methods: ['POST'])]
+    #[Route('/{identifier}/delete', name: '_destroy', methods: ['POST'])]
     public function deleteConfirmed(Request $request, string $identifier): Response
     {
         $this->denyUnlessSameHotel($identifier);

@@ -57,10 +57,10 @@ class EmployeeTable extends AbstractDoctrineTable
     private function renderActions(int $id): string
     {
         $actions = '';
-        if ($this->security->isGranted('aureum.admin.hotels.manage')) {
+        if ($this->security->isGranted('aureum.admin.employees.manage')) {
             $actions .= $this->renderAction('aureum_admin_employees_edit', ['id' => $id], 'pencil-simple-line');
         }
-        if ($this->security->isGranted('aureum.admin.hotels.delete')) {
+        if ($this->security->isGranted('aureum.admin.employees.manage')) {
             $actions .= $this->renderAction('aureum_admin_employees_delete', ['id' => $id], 'x');
         }
 

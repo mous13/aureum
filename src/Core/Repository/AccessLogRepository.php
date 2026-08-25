@@ -31,11 +31,16 @@ class AccessLogRepository extends AbstractRepository
 
     public function deleteOlderThan(DateTimeInterface $cutoff): int
     {
-        return (int)$this->createQueryBuilder('a')
-            ->delete()
-            ->where('a.accessedAt < :cutoff')
-            ->setParameter('cutoff', $cutoff)
-            ->getQuery()
-            ->execute();
+        $connection = $this->getEntityManager()->getConnection();
+        $total = 0;
+        do {
+            $deleted = (int)$connection->executeStatement(
+                'DELETE FROM aureum_logs_access WHERE accessed_at < :cutoff LIMIT 1000',
+                ['cutoff' => $cutoff->format('Y-m-d H:i:s')],
+            );
+            $total += $deleted;
+        } while ($deleted === 1000);
+
+        return $total;
     }
 }

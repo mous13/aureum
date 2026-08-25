@@ -95,7 +95,7 @@ class RestaurantsController extends AbstractController
     private function handleVote(Request $request, Restaurant $restaurant, string $direction): Response
     {
         $token = (string)$request->request->get('_token');
-        if (!$this->isCsrfTokenValid('aureum_restaurant_vote_' . $restaurant->getId(), $token)) {
+        if (!$this->isCsrfTokenValid('aureum_restaurant_vote', $token)) {
             throw $this->createAccessDeniedException('Invalid CSRF token.');
         }
 
@@ -103,8 +103,9 @@ class RestaurantsController extends AbstractController
         $this->votingService->vote($restaurant, $employee, $direction, $this->restaurantRepository);
 
         $referer = (string)$request->headers->get('referer');
-        $host = parse_url($referer, PHP_URL_HOST);
-        if ($referer !== '' && ($host === null || $host === $request->getHost())) {
+        if (str_starts_with($referer, $request->getSchemeAndHttpHost() . '/')
+            || preg_match('#^/(?![/\\\\])#', $referer) === 1
+        ) {
             return $this->redirect($referer);
         }
 

@@ -151,8 +151,10 @@ class RetentionService
                 $ids[] = $record->getId();
             }
 
-            $this->scrubLogs($module, $ids);
-            $this->entityManager->flush();
+            $this->entityManager->wrapInTransaction(function () use ($module, $ids): void {
+                $this->scrubLogs($module, $ids);
+                $this->entityManager->flush();
+            });
             $this->entityManager->clear();
         } while (count($batch) === self::BATCH_SIZE);
 
