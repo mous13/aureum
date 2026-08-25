@@ -77,6 +77,20 @@ class AmenityBoardComponent extends AbstractController
     }
 
     #[LiveAction]
+    public function toggleItem(#[LiveArg] int $cardId, #[LiveArg] int $index): void
+    {
+        $this->denyUnlessActive();
+        $card = $this->findCard($cardId);
+        if ($card === null) {
+            return;
+        }
+
+        $card->toggleItem($index);
+        $card->setUpdatedAt(new DateTime());
+        $this->cardRepository->save($card);
+    }
+
+    #[LiveAction]
     public function openCreate(#[LiveArg] string $status): void
     {
         $this->denyUnlessCanManage();

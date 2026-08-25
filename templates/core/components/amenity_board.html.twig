@@ -25,29 +25,55 @@
                      data-amenity-board-target="column"
                      data-status="{{ column.status.value }}">
                     {% for card in column.cards %}
-                        <div class="amenity-card {{ card.status.value == 'completed' ? 'amenity-card--completed' }}"
+                        <div class="card amenity-card {{ card.status.value == 'completed' ? 'amenity-card--completed' }}"
                              {% if not this.readOnly %}draggable="true" data-amenity-board-target="card" data-card-id="{{ card.id }}"{% endif %}>
-                            <div class="amenity-card__row">
-                                <span class="amenity-card__room">{{ card.roomNumber }}</span>
-                                <span class="amenity-card__guest">{{ card.guestLastName ?? '[removed]' }}</span>
-                                {% if this.canManage %}
-                                    <button type="button" class="btn-icon btn-link amenity-card__action" title="Edit card"
-                                            data-action="live#action"
-                                            data-live-action-param="openEdit"
-                                            data-live-card-id-param="{{ card.id }}">
-                                        <i class="ph ph-pencil-simple"></i>
-                                    </button>
-                                {% endif %}
-                                {% if not this.readOnly and card.status.next is not null %}
-                                    <button type="button" class="btn-icon btn-link amenity-card__action" title="Move to {{ card.status.next.label }}"
-                                            data-action="live#action"
-                                            data-live-action-param="advanceCard"
-                                            data-live-card-id-param="{{ card.id }}">
-                                        <i class="ph ph-arrow-right"></i>
-                                    </button>
+                            <div class="card-title amenity-card__title">
+                                <span class="amenity-card__name">Room {{ card.roomNumber }} - {{ card.guestLastName ?? '[removed]' }}</span>
+                                <span class="amenity-card__actions">
+                                    {% if this.canManage %}
+                                        <button type="button" class="btn-icon btn-link" title="Edit card"
+                                                data-action="live#action"
+                                                data-live-action-param="openEdit"
+                                                data-live-card-id-param="{{ card.id }}">
+                                            <i class="ph ph-pencil-simple"></i>
+                                        </button>
+                                    {% endif %}
+                                    {% if not this.readOnly and card.status.next is not null %}
+                                        <button type="button" class="btn-icon btn-link" title="Move to {{ card.status.next.label }}"
+                                                data-action="live#action"
+                                                data-live-action-param="advanceCard"
+                                                data-live-card-id-param="{{ card.id }}">
+                                            <i class="ph ph-arrow-right"></i>
+                                        </button>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="card-body amenity-card__body">
+                                <ul class="amenity-checklist">
+                                    {% for item in card.items %}
+                                        <li class="amenity-checklist__item {{ item.done ? 'amenity-checklist__item--done' }}">
+                                            <label>
+                                                <input type="checkbox"
+                                                       {{ item.done ? 'checked' }}
+                                                       {% if this.readOnly %}
+                                                           disabled
+                                                       {% else %}
+                                                           data-action="change->live#action"
+                                                           data-live-action-param="toggleItem"
+                                                           data-live-card-id-param="{{ card.id }}"
+                                                           data-live-index-param="{{ loop.index0 }}"
+                                                       {% endif %}>
+                                                <span>{{ item.label }}</span>
+                                            </label>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                {% if card.items|length > 0 %}
+                                    <p class="amenity-card__progress {{ card.doneCount == card.items|length ? 'amenity-card__progress--full' }}">
+                                        <i class="ph ph-check-square"></i> {{ card.doneCount }}/{{ card.items|length }}
+                                    </p>
                                 {% endif %}
                             </div>
-                            <p class="amenity-card__items">{{ card.items }}</p>
                         </div>
                     {% else %}
                         {% if column.status.value == 'not_started' and this.totalCount == 0 %}

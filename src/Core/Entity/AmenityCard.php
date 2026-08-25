@@ -57,9 +57,9 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
     #[Assert\Length(max: 100)]
     private ?string $guestLastName = null;
 
-    #[ORM\Column(type: 'text')]
-    #[Assert\NotBlank]
-    private string $items = '';
+    /** @var array<array{label: string, done: bool}> */
+    #[ORM\Column(type: 'json')]
+    private array $items = [];
 
     #[ORM\Column(type: 'string', length: 50, enumType: AmenityCardStatus::class)]
     private AmenityCardStatus $status = AmenityCardStatus::NOT_STARTED;
@@ -119,14 +119,65 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
         $this->guestLastName = $guestLastName;
     }
 
-    public function getItems(): string
+    /** @return array<array{label: string, done: bool}> */
+    public function getItems(): array
     {
         return $this->items;
     }
 
-    public function setItems(?string $items): void
+    /** @param array<array{label?: mixed, done?: mixed}> $items */
+    public function setItems(array $items): void
     {
-        $this->items = $items ?? '';
+        $normalised = [];
+        foreach ($items as $item) {
+            $label = trim((string)($item['label'] ?? ''));
+            if ($label === '') {
+                continue;
+            }
+
+            $normalised[] = ['label' => $label, 'done' => (bool)($item['done'] ?? false)];
+        }
+
+        $this->items = $normalised;
+    }
+
+    public function getItemsText(): string
+    {
+        return implode("\n", array_column($this->items, 'label'));
+    }
+
+    public function setItemsText(?string $text): void
+    {
+        $doneByLabel = [];
+        foreach ($this->items as $item) {
+            $doneByLabel[$item['label']] ??= $item['done'];
+        }
+
+        $items = [];
+        foreach (preg_split('/\R/', $text ?? '') ?: [] as $line) {
+            $label = trim($line);
+            if ($label === '') {
+                continue;
+            }
+
+            $items[] = ['label' => $label, 'done' => $doneByLabel[$label] ?? false];
+        }
+
+        $this->items = $items;
+    }
+
+    public function toggleItem(int $index): void
+    {
+        if (!isset($this->items[$index])) {
+            return;
+        }
+
+        $this->items[$index]['done'] = !$this->items[$index]['done'];
+    }
+
+    public function getDoneCount(): int
+    {
+        return count(array_filter(array_column($this->items, 'done')));
     }
 
     public function getStatus(): AmenityCardStatus

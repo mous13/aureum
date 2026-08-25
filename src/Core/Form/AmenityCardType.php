@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class AmenityCardType extends AbstractType
 {
@@ -34,8 +35,10 @@ class AmenityCardType extends AbstractType
                 'attr' => ['placeholder' => 'e.g. Whitfield'],
             ])
             ->add('items', TextareaType::class, [
-                'label' => 'Items',
-                'attr' => ['rows' => 2, 'placeholder' => 'e.g. 2 beers, sweets'],
+                'label' => 'Items (one per line)',
+                'property_path' => 'itemsText',
+                'constraints' => [new NotBlank()],
+                'attr' => ['rows' => 4, 'placeholder' => "e.g.\n2x Beer\n1x Card"],
             ])
             ->add('status', EnumType::class, [
                 'class' => AmenityCardStatus::class,

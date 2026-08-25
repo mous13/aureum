@@ -99,14 +99,17 @@ class AnonymisationTest extends TestCase
         $card = new AmenityCard();
         $card->setRoomNumber('412');
         $card->setGuestLastName('Whitfield');
-        $card->setItems('2 beers, sweets');
+        $card->setItemsText("2x Beer\n1x Sweets");
 
         $card->anonymise();
 
         self::assertNull($card->getGuestLastName());
         self::assertTrue($card->isAnonymised());
         self::assertSame('412', $card->getRoomNumber());
-        self::assertSame('2 beers, sweets', $card->getItems());
+        self::assertSame([
+            ['label' => '2x Beer', 'done' => false],
+            ['label' => '1x Sweets', 'done' => false],
+        ], $card->getItems());
     }
 
     #[DataProvider('anonymisableProvider')]
