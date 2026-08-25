@@ -1,0 +1,64 @@
+{% extends '@CitadelAureum/core/docs/layout.html.twig' %}
+
+{% block article %}
+    <p>
+        Every employee account is created by a manager; there is no public
+        signup. Creating an account, handing over credentials, and the
+        employee's first login together take a couple of minutes.
+    </p>
+
+    <h2>Creating a new employee</h2>
+    <ol class="au-docs-steps">
+        <li>
+            Open <strong>Manager → Staff</strong> and choose
+            <strong>Create staff member</strong>.
+        </li>
+        <li>
+            Fill in their name, username, email, and timezone, then pick one or
+            more roles. Roles decide which modules they can see and manage.
+            You can only assign roles at or below your own level.
+        </li>
+        <li>
+            Submit the form. Aureum generates a temporary password, emails a
+            welcome message to the new employee, and shows you the credentials
+            once. If the email fails to send, pass the credentials on securely
+            yourself, because they are not shown again.
+        </li>
+    </ol>
+
+    <div class="au-docs-note">
+        <i class="ph ph-warning"></i>
+        <p>
+            If the username or email is already taken, the form will tell you.
+            Check with other managers before retrying, as the person may already
+            have an account.
+        </p>
+    </div>
+
+    <h2>The employee's first login</h2>
+    <ol class="au-docs-steps">
+        <li>They sign in with the username and temporary password from the welcome email.</li>
+        <li>
+            Before anything else, Aureum requires them to set their own password:
+            at least 12 characters, and not one that has appeared in a known data
+            breach. The temporary password stops working immediately.
+        </li>
+        <li>They land on the dashboard with exactly the modules their roles allow.</li>
+    </ol>
+
+    <h2>Offboarding</h2>
+    <p>
+        When someone leaves, open <strong>Manager → Staff</strong>, choose the
+        employee, and use <strong>Offboard</strong>. You'll be asked to confirm
+        before anything happens. Offboarding removes their access; records they
+        created (bookings, fines, logs) stay attached to the hotel.
+    </p>
+
+    <div class="au-docs-note">
+        <i class="ph ph-info"></i>
+        <p>
+            Need a new role first? Roles and their module permissions are covered
+            in the Roles &amp; access chapter.
+        </p>
+    </div>
+{% endblock %}

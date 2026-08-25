@@ -1,0 +1,24 @@
+{% extends '@CitadelAureum/core/docs/layout.html.twig' %}
+
+{% block article %}
+    <p>
+        Fines records chargeable incidents (damage, smoking, missed
+        cancellations) with a clear paper trail from the incident to its
+        resolution, including any appeal the guest raises.
+    </p>
+
+    <h2>How a fine moves</h2>
+    <p>
+        A fine starts as <strong>not appealed</strong>. If the guest disputes it,
+        record the appeal as <strong>appeal submitted</strong>, and once a
+        decision is made, <strong>appeal completed</strong>. Every change is
+        kept in the fine's log.
+    </p>
+
+    <h2>Common tasks</h2>
+    <ol class="au-docs-steps">
+        <li>Open <strong>General → Fines</strong> to see recorded fines.</li>
+        <li>Record a fine promptly with the incident details and amount. Accuracy matters if it's appealed later.</li>
+        <li>With manage permission, update the status as the appeal progresses.</li>
+    </ol>
+{% endblock %}

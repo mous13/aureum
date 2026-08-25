@@ -1,0 +1,28 @@
+{% extends '@CitadelAureum/core/docs/layout.html.twig' %}
+
+{% block article %}
+    <p>
+        The rooms directory is the reference guide to the building: every room,
+        organised by floor, with its room type, bed size, bathroom style, view,
+        and any tags or comments staff have added.
+    </p>
+
+    <h2>Using the directory</h2>
+    <ol class="au-docs-steps">
+        <li>Open <strong>Directory → Rooms Directory</strong> and pick a floor.</li>
+        <li>Select a room to see its details and comments.</li>
+        <li>
+            Add a comment when you learn something the next person should know:
+            a quirk with the heating, a guest preference, a maintenance note.
+        </li>
+    </ol>
+
+    <h2>For managers</h2>
+    <p>
+        With rooms manage permission, two extra menu items appear:
+        <strong>Manage Floors</strong>, where floors and their features are laid
+        out, and <strong>Room Types</strong>, where the shared definitions
+        (bed size, bathroom, view) that rooms reference are maintained. Set up
+        room types first, since every room needs one.
+    </p>
+{% endblock %}
