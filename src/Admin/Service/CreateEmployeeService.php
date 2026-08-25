@@ -76,6 +76,7 @@ class CreateEmployeeService
         $employee->setHotelAdmin($data->isHotelAdmin());
         $employee->setUser($user);
         $employee->setHotel($data->getHotel());
+        $employee->setMustChangePassword(true);
 
         $this->employeeRepository->save($employee);
 

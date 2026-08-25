@@ -1,0 +1,44 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title_page %}Staff{% endblock %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">
+            Staff
+            <a href="{{ path('aureum_staff_create') }}" class="btn-primary btn-small btn-icon" aria-label="Add employee">
+                <i class="ph ph-plus"></i>
+            </a>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Roles</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                        <tr>
+                            <td>
+                                {{ employee.name }}
+                                {% if employee.hotelAdmin %}<span class="text-small">(manager)</span>{% endif %}
+                                {% if employee.mustChangePassword %}<span class="text-small">&mdash; has not signed in yet</span>{% endif %}
+                            </td>
+                            <td>
+                                {% for role in employee.hotelRoles %}{{ role.name }}{% if not loop.last %}, {% endif %}{% else %}&mdash;{% endfor %}
+                            </td>
+                            <td class="text-right">
+                                <a href="{{ path('aureum_staff_offboard', { id: employee.id }) }}" class="btn-link" aria-label="Offboard {{ employee.name }}">
+                                    <i class="ph ph-x"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3">No employees yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

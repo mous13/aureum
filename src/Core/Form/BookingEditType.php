@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 
 class BookingEditType extends AbstractType
 {
@@ -58,6 +59,7 @@ class BookingEditType extends AbstractType
                 'query_builder' => fn (EmployeeRepository $repository) => $repository
                     ->createQueryBuilder('e')
                     ->where('e.hotel = :hotel')
+                    ->andWhere('e.archivedAt IS NULL')
                     ->setParameter('hotel', $options['hotel'])
                     ->orderBy('e.name', 'ASC'),
             ])
@@ -111,7 +113,10 @@ class BookingEditType extends AbstractType
                 'label' => 'Notes',
                 'attr' => [
                     'placeholder' => 'Notes',
+                    'maxlength' => 255,
                 ],
+                'help' => 'Operational details only. Do not record health information or allegations of misconduct here.',
+                'constraints' => [new Length(max: 255)],
                 'required' => false,
             ]);
     }

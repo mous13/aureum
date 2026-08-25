@@ -142,7 +142,7 @@ class EventComponent extends AbstractController
 
         return $this->createForm(EventFormType::class, $event, [
             'hotel' => $this->aureumService->getHotel(),
-            'userTimezone' => $this->aureumService->getEmployee()->getUser()->getTimezone(),
+            'userTimezone' => $this->aureumService->getEmployee()?->getUser()?->getTimezone() ?? 'UTC',
         ]);
     }
 

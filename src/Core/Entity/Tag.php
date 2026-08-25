@@ -10,7 +10,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ORM\Table(name: 'aureum_tags')]
-class Tag
+class Tag implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 
@@ -20,7 +20,6 @@ class Tag
     #[ORM\ManyToOne(targetEntity: Hotel::class)]
     #[ORM\JoinColumn(name: 'hotel_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private Hotel $hotel;
-
 
     public function getName(): string
     {

@@ -12,7 +12,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 #[ORM\Table(name: 'aureum_room_types')]
 #[ORM\UniqueConstraint(name: 'uniq_hotel_code', columns: ['hotel_id', 'code'])]
 #[ORM\UniqueConstraint(name: 'uniq_hotel_name', columns: ['hotel_id', 'name'])]
-class RoomType
+class RoomType implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 

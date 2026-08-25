@@ -13,7 +13,8 @@ use Forumify\Core\Entity\User;
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
 #[ORM\Table(name: 'aureum_employees')]
-class Employee
+#[ORM\Index(name: 'IDX_65A90A71_archived_at', columns: ['archived_at'])]
+class Employee implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 
@@ -24,8 +25,14 @@ class Employee
     private bool $hotelAdmin = false;
 
     #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    private User $user;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
+
+    #[ORM\Column(name: 'archived_at', type: 'datetime', nullable: true)]
+    private ?\DateTime $archivedAt = null;
+
+    #[ORM\Column(name: 'must_change_password', type: 'boolean', options: ['default' => 0])]
+    private bool $mustChangePassword = false;
 
     #[ORM\ManyToOne(targetEntity: Hotel::class, inversedBy: 'employees')]
     #[ORM\JoinColumn(name: 'hotel_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
@@ -40,9 +47,7 @@ class Employee
         $this->hotelRoles = new ArrayCollection();
     }
 
-    /**
-     * @return Collection<int, HotelRole>
-     */
+    /** @return Collection<int, HotelRole> */
     public function getHotelRoles(): Collection
     {
         return $this->hotelRoles;
@@ -68,14 +73,44 @@ class Employee
         $this->name = $name;
     }
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(User $user): void
+    public function setUser(?User $user): void
     {
         $this->user = $user;
+    }
+
+    public function mustChangePassword(): bool
+    {
+        return $this->mustChangePassword;
+    }
+
+    public function setMustChangePassword(bool $mustChangePassword): void
+    {
+        $this->mustChangePassword = $mustChangePassword;
+    }
+
+    public function getArchivedAt(): ?\DateTime
+    {
+        return $this->archivedAt;
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archivedAt !== null;
+    }
+
+    public function archive(): void
+    {
+        $this->user = null;
+        $this->archivedAt = new \DateTime();
+        foreach ($this->hotelRoles as $role) {
+            $role->removeEmployee($this);
+        }
+        $this->hotelRoles->clear();
     }
 
     public function getHotel(): Hotel

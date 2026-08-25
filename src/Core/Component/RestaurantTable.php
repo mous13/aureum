@@ -14,12 +14,13 @@ use Citadel\Aureum\Core\Repository\RestaurantRepository;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Twig\Environment;
 
-#[AsLiveComponent('RestaurantTable', '@Forumify/components/table/table.html.twig')]
+#[AsLiveComponent('RestaurantTable', '@CitadelAureum/core/components/table.html.twig')]
 #[IsGranted('aureum.module.restaurants.view')]
 class RestaurantTable extends AbstractDoctrineTable
 {
@@ -35,6 +36,7 @@ class RestaurantTable extends AbstractDoctrineTable
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
         private readonly EventRepository $eventRepository,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {
     }
 
@@ -180,7 +182,7 @@ class RestaurantTable extends AbstractDoctrineTable
     private function renderBoxes(array $items): string
     {
         $boxes = implode('', array_map(
-            fn($item) => '<div class="text-small">' . $item . '</div>',
+            fn($item) => '<div class="text-small">' . htmlspecialchars((string)$item, ENT_QUOTES) . '</div>',
             $items
         ));
 
@@ -191,23 +193,36 @@ class RestaurantTable extends AbstractDoctrineTable
     {
         $upUrl = $this->urlGenerator->generate('aureum_restaurants_upvote', ['id' => $id]);
         $downUrl = $this->urlGenerator->generate('aureum_restaurants_downvote', ['id' => $id]);
+        $token = htmlspecialchars(
+            $this->csrfTokenManager->getToken('aureum_restaurant_vote')->getValue(),
+            ENT_QUOTES,
+        );
 
         return sprintf(
             '<div class="flex items-center justify-center">
-            <a href="%s" class="btn-link btn-icon btn-small" title="+2">
-                <i class="ph ph-thumbs-up"></i>
-            </a>
-            <a href="%s" class="btn-link btn-icon btn-small" title="-1">
-                <i class="ph ph-thumbs-down"></i>
-            </a>
+            <form method="post" action="%s">
+                <input type="hidden" name="_token" value="%s">
+                <button type="submit" class="btn-link btn-icon btn-small" title="+2">
+                    <i class="ph ph-thumbs-up"></i>
+                </button>
+            </form>
+            <form method="post" action="%s">
+                <input type="hidden" name="_token" value="%s">
+                <button type="submit" class="btn-link btn-icon btn-small" title="-1">
+                    <i class="ph ph-thumbs-down"></i>
+                </button>
+            </form>
         </div>',
             $upUrl,
-            $downUrl
+            $token,
+            $downUrl,
+            $token
         );
     }
 
     private function renderName(string $name, Restaurant $restaurant): string
     {
+        $name = htmlspecialchars($name, ENT_QUOTES);
         if ($this->hasUpcomingEvent($restaurant)) {
             $name .= ' <i class="ph-fill ph-tag text-luxury-light-alternative"></i>';
         }

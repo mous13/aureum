@@ -14,7 +14,7 @@ use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: RestaurantRepository::class)]
 #[ORM\Table(name: 'aureum_restaurants')]
-class Restaurant
+class Restaurant implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
     use TimestampableEntityTrait;
@@ -22,7 +22,6 @@ class Restaurant
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
-
 
     #[ORM\ManyToMany(targetEntity: Employee::class)]
     #[ORM\JoinTable(name: 'aureum_restaurant_connections')]

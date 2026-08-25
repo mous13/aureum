@@ -8,6 +8,7 @@ use Citadel\Aureum\Core\Entity\Employee;
 use Citadel\Aureum\Core\Entity\Enum\Module;
 use Citadel\Aureum\Core\Entity\HotelRole;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
+use Citadel\Aureum\Core\Security\AureumVoter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -35,6 +36,10 @@ class HotelRoleType extends AbstractType
             ];
         }
 
+        $permissionChoices['Staff'] = [
+            'Add and remove employees' => AureumVoter::EMPLOYEE_MANAGE_PERMISSION,
+        ];
+
         $builder
             ->add('name', TextType::class, [
                 'attr' => ['placeholder' => 'e.g. Front Desk', 'maxlength' => 100],
@@ -56,6 +61,7 @@ class HotelRoleType extends AbstractType
                 'query_builder' => static fn (EmployeeRepository $repository) => $repository
                     ->createQueryBuilder('e')
                     ->andWhere('e.hotel = :hotel')
+                    ->andWhere('e.archivedAt IS NULL')
                     ->setParameter('hotel', $options['hotel'])
                     ->orderBy('e.name', 'ASC'),
             ])

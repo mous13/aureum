@@ -26,6 +26,14 @@ class CitadelAureum extends AbstractForumifyPlugin
                     'view',
                     'manage',
                 ],
+                'hotels' => [
+                    'view',
+                    'manage',
+                    'delete',
+                ],
+                'employees' => [
+                    'manage',
+                ],
             ],
             'core' => [
                 'concierge' => [

@@ -100,4 +100,19 @@ class FinesController extends AbstractController
         }
         return $this->redirectToRoute('aureum_fines');
     }
+
+    #[Route('/fines/{id}/delete', name: 'fines_delete', methods: ['POST'])]
+    #[IsGranted('aureum.module.fines.manage')]
+    public function delete(Request $request, Fine $fine): Response
+    {
+        $token = (string)$request->request->get('_token');
+        if (!$this->isCsrfTokenValid('aureum_fine_delete_' . $fine->getId(), $token)) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        $this->fineRepository->remove($fine);
+        $this->addFlash('success', 'Record deleted.');
+
+        return $this->redirectToRoute('aureum_fines');
+    }
 }

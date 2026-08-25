@@ -13,16 +13,14 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 #[ORM\Entity(repositoryClass: HotelRoleRepository::class)]
 #[ORM\Table(name: 'aureum_hotel_roles')]
 #[ORM\UniqueConstraint(name: 'uniq_hotel_role_name', columns: ['hotel_id', 'name'])]
-class HotelRole
+class HotelRole implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
 
     #[ORM\Column(length: 100)]
     private string $name;
 
-    /**
-     * @var array<string>
-     */
+    /** @var array<string> */
     #[ORM\Column(type: 'json')]
     private array $permissions = [];
 
@@ -50,17 +48,13 @@ class HotelRole
         $this->name = $name;
     }
 
-    /**
-     * @return array<string>
-     */
+    /** @return array<string> */
     public function getPermissions(): array
     {
         return $this->permissions;
     }
 
-    /**
-     * @param array<string> $permissions
-     */
+    /** @param array<string> $permissions */
     public function setPermissions(array $permissions): void
     {
         $this->permissions = array_values(array_unique($permissions));
@@ -81,9 +75,7 @@ class HotelRole
         $this->hotel = $hotel;
     }
 
-    /**
-     * @return Collection<int, Employee>
-     */
+    /** @return Collection<int, Employee> */
     public function getEmployees(): Collection
     {
         return $this->employees;

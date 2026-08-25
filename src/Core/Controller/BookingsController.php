@@ -35,7 +35,7 @@ class BookingsController extends AbstractController
 
         $booking = new Booking();
         $form = $this->createForm(BookingFormType::class, $booking, [
-            'userTimezone' => $employee->getUser()->getTimezone(),
+            'userTimezone' => $employee->getUser()?->getTimezone() ?? 'UTC',
             'hotel' => $hotel,
         ]);
         $form->handleRequest($request);
@@ -72,7 +72,7 @@ class BookingsController extends AbstractController
         $originalData = $this->logService->captureCurrentState($booking);
 
         $form = $this->createForm(BookingEditType::class, $booking, [
-            'userTimezone' => $employee->getUser()->getTimezone(),
+            'userTimezone' => $employee->getUser()?->getTimezone() ?? 'UTC',
             'hotel' => $booking->getHotel(),
         ]);
         $form->handleRequest($request);
@@ -83,6 +83,21 @@ class BookingsController extends AbstractController
 
             $this->addFlash('success', 'Booking updated');
         }
+
+        return $this->redirectToRoute('aureum_bookings');
+    }
+
+    #[Route('/bookings/{id}/delete', name: 'bookings_delete', methods: ['POST'])]
+    #[IsGranted('aureum.module.bookings.manage')]
+    public function delete(Request $request, Booking $booking): Response
+    {
+        $token = (string)$request->request->get('_token');
+        if (!$this->isCsrfTokenValid('aureum_booking_delete_' . $booking->getId(), $token)) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        $this->bookingRepository->remove($booking);
+        $this->addFlash('success', 'Record deleted.');
 
         return $this->redirectToRoute('aureum_bookings');
     }

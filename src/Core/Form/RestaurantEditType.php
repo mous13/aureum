@@ -99,6 +99,7 @@ class RestaurantEditType extends AbstractType
                 'query_builder' => function (EmployeeRepository $repository) use ($options) {
                     return $repository->createQueryBuilder('e')
                         ->where('e.hotel = :hotel')
+                        ->andWhere('e.archivedAt IS NULL')
                         ->setParameter('hotel', $options['hotel'])
                         ->orderBy('e.name', 'ASC');
                 },

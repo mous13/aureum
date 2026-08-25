@@ -1,0 +1,41 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title_page %}Employee added{% endblock %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury">{{ employee.name }} has been added</div>
+        <div class="card-body">
+            <div class="alert-warning mb-4">
+                <p class="mb-2"><strong>This password is shown once and cannot be retrieved.</strong></p>
+                <p>Give it to {{ employee.name }} now. They will be asked to choose their own when they first sign in.</p>
+            </div>
+
+            {% if emailSent|default(false) %}
+                <div class="alert-info mb-4">
+                    <p>The sign-in details have also been emailed to {{ employee.name }}.</p>
+                </div>
+            {% else %}
+                <div class="alert-error mb-4">
+                    <p>The welcome email could not be sent, so this screen is the only copy of the password. Hand it over directly.</p>
+                </div>
+            {% endif %}
+
+            <table class="table mb-4">
+                <tbody>
+                    <tr>
+                        <th style="width: 12rem;">Username</th>
+                        <td><code>{{ username }}</code></td>
+                    </tr>
+                    <tr>
+                        <th>Temporary password</th>
+                        <td><code style="font-size: 1.15rem; letter-spacing: 0.05em;">{{ password }}</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="flex justify-end gap-2">
+                <a href="{{ path('aureum_staff_create') }}" class="btn btn-outlined square">Add another</a>
+                <a href="{{ path('aureum_staff_list') }}" class="btn btn-primary luxury-light square">Done</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

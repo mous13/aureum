@@ -10,7 +10,7 @@ use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
-#[AsLiveComponent('HotelTable', '@Forumify/components/table/table.html.twig')]
+#[AsLiveComponent('HotelTable', '@CitadelAureum/core/components/table.html.twig')]
 #[IsGranted('aureum.admin.hotels.manage')]
 class HotelTable extends AbstractDoctrineTable
 {
@@ -43,7 +43,7 @@ class HotelTable extends AbstractDoctrineTable
     private function renderActions(int $id): string
     {
         $actions = '';
-        if ($this->security->isGranted('aureum.admin.hotels.manage')) {
+        if ($this->security->isGranted('aureum.admin.employees.manage')) {
             $actions .= $this->renderAction('aureum_admin_employees_list_by_hotel', ['hotelId' => $id], 'person');
         }
         if ($this->security->isGranted('aureum.admin.hotels.manage')) {

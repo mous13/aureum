@@ -9,13 +9,13 @@ use Citadel\Aureum\Core\Service\AureumService;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-/**
- * @extends Voter<string, mixed>
- */
+/** @extends Voter<string, mixed> */
 class AureumVoter extends Voter
 {
     public const MODULE_PREFIX = 'aureum.module.';
     public const RBAC_MANAGE = 'aureum.rbac.manage';
+    public const EMPLOYEE_MANAGE = 'aureum.employees.manage';
+    public const EMPLOYEE_MANAGE_PERMISSION = 'employees.manage';
 
     public function __construct(
         private readonly AureumService $aureumService,
@@ -24,7 +24,9 @@ class AureumVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return $attribute === self::RBAC_MANAGE || str_starts_with($attribute, self::MODULE_PREFIX);
+        return $attribute === self::RBAC_MANAGE
+            || $attribute === self::EMPLOYEE_MANAGE
+            || str_starts_with($attribute, self::MODULE_PREFIX);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -36,6 +38,20 @@ class AureumVoter extends Voter
 
         if ($attribute === self::RBAC_MANAGE) {
             return $employee->isHotelAdmin();
+        }
+
+        if ($attribute === self::EMPLOYEE_MANAGE) {
+            if ($employee->isHotelAdmin()) {
+                return true;
+            }
+
+            foreach ($employee->getHotelRoles() as $role) {
+                if ($role->hasPermission(self::EMPLOYEE_MANAGE_PERMISSION)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         [$moduleValue, $action] = $this->parse($attribute);
@@ -66,9 +82,7 @@ class AureumVoter extends Voter
         return false;
     }
 
-    /**
-     * @return array{0: string, 1: string} [module value, action]
-     */
+    /** @return array{0: string, 1: string} [module value, action] */
     private function parse(string $attribute): array
     {
         $rest = substr($attribute, strlen(self::MODULE_PREFIX));

@@ -1,17 +1,29 @@
 {% extends '@Forumify/admin/crud/list.html.twig' %}
 
-{% block title %}
-    {% if hotel is defined %}
+{% block title_page %}
+    {% if hotel is defined and hotel is not null %}
         {{ hotel.name }} Employees
     {% else %}
         {{ parent() }}
     {% endif %}
 {% endblock %}
 
-{% block table_container %}
-    {% if hotelId is defined %}
-        {{ component(EmployeeTable, { hotelId: hotelId }) }}
-    {% else %}
-        {{ component(EmployeeTable) }}
-    {% endif %}
+{% block body %}
+    <h2>
+        {% if hotel is defined and hotel is not null %}
+            {{ hotel.name }} Employees
+        {% else %}
+            {{ title }}
+        {% endif %}
+        {% if capabilities.create %}
+            <a
+                class="btn-primary btn-small btn-icon"
+                aria-label="{{ 'admin.crud.create'|trans({ single: (translationPrefix ~ 'single')|trans }) }}"
+                href="{{ hotelId is defined ? path('aureum_admin_employees_create_for_hotel', { hotelId: hotelId }) : path(route ~ '_create') }}"
+            >
+                <i class="ph ph-plus"></i>
+            </a>
+        {% endif %}
+    </h2>
+    {{ component(table, hotelId is defined ? { hotelId: hotelId } : {}) }}
 {% endblock %}

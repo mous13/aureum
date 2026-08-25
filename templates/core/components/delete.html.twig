@@ -1,26 +1,21 @@
 {% extends '@CitadelAureum/core/base.html.twig' %}
-{% set transSingle = (translationPrefix ~ 'single')|trans %}
-{% block title_page %}
-    Delete {{ transSingle|title }}
-{% endblock %}
+{% set title = (translationPrefix ~ 'single')|trans|title %}
+{% block title_page %}{{ title }}{% endblock %}
 {% block body %}
-    <div class="card">
-        <div class="card-title luxury flex items-center gap-2">
-            <i class="ph ph-warning"></i> {{ 'warning'|trans }}
+    <div class="box">
+        <h2 class="text-subtitle flex justify-center items-center mb-4">
+            <i class="ph ph-warning"></i> {{ 'warning'|trans }}!
+        </h2>
+        <div class="alert-warning mb-4">
+            <p class="mb-2">{{ 'admin.crud.delete_warning'|trans({ single: (translationPrefix ~ 'single')|trans|lower }) }}</p>
+            <p>{{ 'warning_continue'|trans }}</p>
         </div>
-        <div class="card-body">
-            <div class="alert-warning mb-4">
-                <p class="mb-2">{{ 'admin.crud.delete_warning'|trans({ single: transSingle|lower }) }}</p>
-                <p>{{ 'warning_continue'|trans }}</p>
-            </div>
-            <div class="flex justify-center items-center gap-2">
-                <a href="{{ path(route ~ '_delete', app.current_route_parameters|merge({ confirmed: 1 })) }}" class="btn btn-primary luxury-light square">
-                    {{ 'confirm'|trans }}
-                </a>
-                <a href="{{ path(route ~ '_list') }}" class="btn btn-link">
-                    {{ 'cancel'|trans }}
-                </a>
-            </div>
+        <div class="flex justify-center items-center gap-2">
+            <form method="post" action="{{ path(route ~ '_destroy', app.current_route_parameters) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('aureum_crud_delete_' ~ app.current_route_parameters.identifier) }}">
+                <button type="submit" class="btn-primary">{{ 'confirm'|trans }}</button>
+            </form>
+            <a href="{{ path(route ~ '_list') }}" class="btn-outlined">{{ 'cancel'|trans }}</a>
         </div>
     </div>
 {% endblock %}

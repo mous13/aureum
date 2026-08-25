@@ -80,21 +80,35 @@ class RestaurantsController extends AbstractController
         return $this->redirectToRoute('aureum_restaurants_list');
     }
 
-    #[Route('/{id}/upvote', 'upvote', methods: ['GET'])]
+    #[Route('/{id}/upvote', 'upvote', methods: ['POST'])]
     public function upvote(Request $request, Restaurant $restaurant): Response
     {
-        $employee = $this->aureumService->getEmployee();
-        $this->votingService->vote($restaurant, $employee, 'up', $this->restaurantRepository);
-
-        return $this->redirect($request->headers->get('referer'));
+        return $this->handleVote($request, $restaurant, 'up');
     }
 
-    #[Route('/{id}/downvote', 'downvote', methods: ['GET'])]
+    #[Route('/{id}/downvote', 'downvote', methods: ['POST'])]
     public function downvote(Request $request, Restaurant $restaurant): Response
     {
-        $employee = $this->aureumService->getEmployee();
-        $this->votingService->vote($restaurant, $employee, 'down', $this->restaurantRepository);
+        return $this->handleVote($request, $restaurant, 'down');
+    }
 
-        return $this->redirect($request->headers->get('referer'));
+    private function handleVote(Request $request, Restaurant $restaurant, string $direction): Response
+    {
+        $token = (string)$request->request->get('_token');
+        if (!$this->isCsrfTokenValid('aureum_restaurant_vote', $token)) {
+            throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+
+        $employee = $this->aureumService->getEmployee();
+        $this->votingService->vote($restaurant, $employee, $direction, $this->restaurantRepository);
+
+        $referer = (string)$request->headers->get('referer');
+        if (str_starts_with($referer, $request->getSchemeAndHttpHost() . '/')
+            || preg_match('#^/(?![/\\\\])#', $referer) === 1
+        ) {
+            return $this->redirect($referer);
+        }
+
+        return $this->redirectToRoute('aureum_restaurants_list');
     }
 }

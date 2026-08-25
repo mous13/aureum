@@ -23,18 +23,14 @@ use Twig\Environment;
 #[IsGranted('aureum.module.bookings.view')]
 class BookingTable extends AbstractDoctrineTable
 {
-    /**
-     * @var array<string, "ASC"|"DESC"|null>
-     */
+    /** @var array<string, "ASC"|"DESC"|null> */
     #[LiveProp]
     public array $sort = ['date' => self::SORT_DESC];
 
     #[LiveProp]
     public int $hotelId;
 
-    /**
-     * @var array<string>
-     */
+    /** @var array<string> */
     #[LiveProp]
     public array $statuses = [];
 
@@ -168,9 +164,7 @@ class BookingTable extends AbstractDoctrineTable
             ]);
     }
 
-    /**
-     * @return array<BookingType>
-     */
+    /** @return array<BookingType> */
     private function matchTypes(string $term): array
     {
         $term = mb_strtolower($term);
@@ -263,7 +257,7 @@ class BookingTable extends AbstractDoctrineTable
 
         $editForm = $this->formFactory->create(BookingEditType::class, $booking, [
             'action' => $this->urlGenerator->generate('aureum_bookings_edit', ['id' => $id]),
-            'userTimezone' => $this->aureumService->getEmployee()->getUser()->getTimezone(),
+            'userTimezone' => $this->aureumService->getEmployee()?->getUser()?->getTimezone() ?? 'UTC',
             'hotel' => $booking->getHotel(),
         ]);
 

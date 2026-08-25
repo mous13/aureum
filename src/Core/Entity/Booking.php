@@ -7,6 +7,8 @@ namespace Citadel\Aureum\Core\Entity;
 use Citadel\Aureum\Core\Entity\Enum\BookingField;
 use Citadel\Aureum\Core\Entity\Enum\BookingStatus;
 use Citadel\Aureum\Core\Entity\Enum\BookingType;
+use Citadel\Aureum\Core\Entity\Enum\Module;
+use Citadel\Aureum\Core\Entity\Trait\AnonymisableEntityTrait;
 use Citadel\Aureum\Core\Repository\BookingRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,9 +18,31 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 #[ORM\Table(name: 'aureum_bookings')]
 #[ORM\Index(name: 'idx_booking_hotel_date', columns: ['hotel_id', 'date'])]
 #[ORM\Index(name: 'idx_booking_hotel_type', columns: ['hotel_id', 'type'])]
-class Booking
+#[ORM\Index(name: 'IDX_aureum_bookings_anonymised_at', columns: ['anonymised_at'])]
+class Booking implements HotelOwnedInterface, AnonymisableInterface
 {
     use IdentifiableEntityTrait;
+    use AnonymisableEntityTrait;
+
+    public static function getModule(): Module
+    {
+        return Module::BOOKINGS;
+    }
+
+    public function getRetentionAnchor(): ?\DateTimeInterface
+    {
+        return $this->hasDate() ? $this->date : null;
+    }
+
+    public function anonymise(): void
+    {
+        $this->guest = null;
+        $this->number = null;
+        $this->email = null;
+        $this->notes = null;
+        $this->details = [];
+        $this->markAnonymised();
+    }
 
     #[ORM\Column(type: 'string', length: 255, enumType: BookingType::class)]
     private BookingType $type = BookingType::PRIVATE_TRANSFER;
@@ -50,9 +74,7 @@ class Booking
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $notes = null;
 
-    /**
-     * @var array<string, string>
-     */
+    /** @var array<string, string> */
     #[ORM\Column(type: 'json')]
     private array $details = [];
 
@@ -174,17 +196,13 @@ class Booking
         $this->notes = $notes;
     }
 
-    /**
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     public function getDetails(): array
     {
         return $this->details;
     }
 
-    /**
-     * @param array<string, string|null> $details
-     */
+    /** @param array<string, string|null> $details */
     public function setDetails(array $details): void
     {
         $this->details = $this->filterDetails($details);
@@ -195,9 +213,7 @@ class Booking
         return $this->details[$field->value] ?? null;
     }
 
-    /**
-     * @return array<array{label: string, value: string}>
-     */
+    /** @return array<array{label: string, value: string}> */
     public function getSummary(): array
     {
         $summary = [];
