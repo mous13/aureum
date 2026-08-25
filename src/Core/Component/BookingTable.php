@@ -192,7 +192,18 @@ class BookingTable extends AbstractDoctrineTable
 
     private function renderDate(?\DateTimeInterface $date): string
     {
-        return $date === null ? '' : $date->format('d/m/y H:i');
+        if ($date === null) {
+            return '';
+        }
+
+        return \DateTimeImmutable::createFromInterface($date)
+            ->setTimezone(new \DateTimeZone($this->getUserTimezone()))
+            ->format('d/m/y H:i');
+    }
+
+    private function getUserTimezone(): string
+    {
+        return $this->aureumService->getEmployee()?->getUser()?->getTimezone() ?? 'UTC';
     }
 
     private function renderGuest(mixed $guest, Booking $booking): string
@@ -249,6 +260,7 @@ class BookingTable extends AbstractDoctrineTable
         $actions = $this->twig->render('@CitadelAureum/core/bookings/blocks/booking_notes.html.twig', [
             'booking' => $booking,
             'logs' => $this->bookingLogRepository->findByBooking($booking),
+            'userTimezone' => $this->getUserTimezone(),
         ]);
 
         if (!$this->security->isGranted('aureum.module.bookings.manage')) {
