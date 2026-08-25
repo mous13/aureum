@@ -20,7 +20,7 @@
                             </tr>
                             <tr>
                                 <td class="text-bold">Date</td>
-                                <td>{{ booking.date|date('d/m/Y H:i') }}</td>
+                                <td>{{ booking.date|date('d/m/Y H:i', userTimezone|default('UTC')) }}</td>
                             </tr>
                             <tr>
                                 <td class="text-bold">{{ booking.type.vendorLabel }}</td>
@@ -61,7 +61,7 @@
                                 <tbody>
                                 {% for log in logs %}
                                     <tr>
-                                        <td>{{ log.createdAt|date('d/m/Y H:i') }}</td>
+                                        <td>{{ log.createdAt|date('d/m/Y H:i', userTimezone|default('UTC')) }}</td>
                                         <td><span>{{ log.action.label }}</span></td>
                                         <td>{{ log.performedBy.name }}</td>
                                         <td>
