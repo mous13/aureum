@@ -137,7 +137,9 @@ class EventComponent extends AbstractController
             $day = $this->createDay !== null
                 ? \DateTimeImmutable::createFromFormat('!Y-m-d', $this->createDay)
                 : false;
-            $event->setStart(($day ?: $this->getWeekStart())->setTime(18, 0));
+            $start = ($day ?: $this->getWeekStart())->setTime(18, 0);
+            $event->setStart($start);
+            $event->setEnd($start->modify('+2 hours'));
         }
 
         return $this->createForm(EventFormType::class, $event, [
