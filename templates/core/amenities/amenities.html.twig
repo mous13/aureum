@@ -1,0 +1,75 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title %}Amenities - Aureum{% endblock %}
+{% block body %}
+    {{ component('Aureum\\Announcements', { module: 'amenities' }) }}
+
+    {% set canManage = is_granted('aureum.module.amenities.manage') %}
+
+    <div class="card">
+        <div class="card-title luxury items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="icon ph ph-gift"></i>
+                Amenities
+                {% if board %}
+                    <span class="amenity-header__date">{{ board.date|date('l j F Y') }}</span>
+                {% endif %}
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="{{ path('aureum_amenities_history') }}" class="btn-link luxury-light square">
+                    <i class="ph ph-clock-counter-clockwise"></i> Previous boards
+                </a>
+                {% if canManage and turnoverDue %}
+                    <form method="post" action="{{ path('aureum_amenities_start') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('aureum_amenities_start') }}">
+                        <button type="submit" class="luxury-light square btn btn-primary">
+                            <i class="ph ph-plus"></i> Start new board
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if board is null %}
+            <div class="card-body amenity-empty">
+                <i class="ph ph-gift amenity-empty__icon"></i>
+                <p class="text-bold">No amenities board yet</p>
+                {% if canManage %}
+                    <p class="amenity-empty__hint">Start the first board to begin today's amenity round.</p>
+                {% else %}
+                    <p class="amenity-empty__hint">Ask a manager to start today's board.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if board %}
+        {% if readOnly %}
+            <div class="alert-warning mt-4">
+                <p>You are viewing an archived board from {{ board.date|date('l j F Y') }}. It can no longer be changed.</p>
+            </div>
+        {% elseif turnoverDue %}
+            <div class="alert-warning mt-4">
+                <p>
+                    This board is from {{ board.date|date('l j F Y') }}.
+                    {% if canManage %}Start a new board when today's amenity list is ready.{% endif %}
+                </p>
+            </div>
+        {% endif %}
+
+        <div class="mt-4">
+            {{ component('Aureum\\AmenityBoard', { boardId: board.id }) }}
+        </div>
+
+        {% if canManage and not readOnly %}
+            <div class="flex justify-end mt-4">
+                <form method="post" action="{{ path('aureum_amenities_delete', { id: board.id }) }}"
+                      onsubmit="return confirm('Delete this board and all of its cards? This cannot be undone.');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('aureum_amenities_delete_' ~ board.id) }}">
+                    <button type="submit" class="btn btn-outlined">
+                        <i class="ph ph-trash"></i> Delete board
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}
