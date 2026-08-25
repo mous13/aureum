@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Tests\Unit\Entity;
 
+use Citadel\Aureum\Core\Entity\AmenityCard;
 use Citadel\Aureum\Core\Entity\AnonymisableInterface;
 use Citadel\Aureum\Core\Entity\Enum\Module;
 use Citadel\Aureum\Core\Entity\Fine;
@@ -93,6 +94,21 @@ class AnonymisationTest extends TestCase
         self::assertSame('small box', $package->getDescription());
     }
 
+    public function testAmenityCardLosesTheGuestButKeepsTheDelivery(): void
+    {
+        $card = new AmenityCard();
+        $card->setRoomNumber('412');
+        $card->setGuestLastName('Whitfield');
+        $card->setItems('2 beers, sweets');
+
+        $card->anonymise();
+
+        self::assertNull($card->getGuestLastName());
+        self::assertTrue($card->isAnonymised());
+        self::assertSame('412', $card->getRoomNumber());
+        self::assertSame('2 beers, sweets', $card->getItems());
+    }
+
     #[DataProvider('anonymisableProvider')]
     public function testNotAnonymisedUntilAnonymiseIsCalled(callable $factory): void
     {
@@ -130,6 +146,7 @@ class AnonymisationTest extends TestCase
             'fine' => [static fn (): Fine => new Fine()],
             'lost property' => [static fn (): LostProperty => new LostProperty()],
             'package' => [static fn (): Package => new Package()],
+            'amenity card' => [static fn (): AmenityCard => new AmenityCard()],
         ];
     }
 
@@ -140,6 +157,7 @@ class AnonymisationTest extends TestCase
             [Fine::class, Module::FINES],
             [LostProperty::class, Module::LOST_PROPERTY],
             [Package::class, Module::PACKAGES],
+            [AmenityCard::class, Module::AMENITIES],
         ];
     }
 }
