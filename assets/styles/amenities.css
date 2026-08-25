@@ -142,6 +142,16 @@
     overflow-wrap: anywhere;
 }
 
+.amenity-modal {
+    max-width: 34rem;
+    width: 100%;
+}
+
+.amenity-modal textarea {
+    min-height: 4rem;
+    max-height: 8rem;
+}
+
 .amenity-empty {
     text-align: center;
     padding: var(--au-space-2xl) var(--au-space-md);

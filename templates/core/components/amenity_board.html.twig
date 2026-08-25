@@ -63,7 +63,7 @@
 
     {% if this.createStatus is not null or this.editCardId is not null %}
         <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="{{ this.editCardId ? 'Edit card' : 'New card' }}">
-            <div class="card modal-overlay__card">
+            <div class="card modal-overlay__card amenity-modal">
                 <div class="card-title luxury items-center justify-between">
                     {% if this.editCardId %}
                         Edit Card - Room {{ this.editCard ? this.editCard.roomNumber : '' }}
