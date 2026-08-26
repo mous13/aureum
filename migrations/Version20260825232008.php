@@ -7,7 +7,7 @@ namespace AureumDoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20260826090000 extends AbstractMigration
+final class Version20260825232008 extends AbstractMigration
 {
     public function getDescription(): string
     {
