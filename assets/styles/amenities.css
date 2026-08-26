@@ -155,7 +155,6 @@
 }
 
 .amenity-card__summary-item--done {
-    text-decoration: line-through;
     color: var(--au-muted);
 }
 
