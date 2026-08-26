@@ -51,6 +51,12 @@ class DocsController extends AbstractController
             'section' => 'Modules',
             'permission' => 'aureum.module.events.view',
         ],
+        'sops' => [
+            'title' => 'SOPs',
+            'summary' => 'The SOP library: authoring, sign-offs, and recheck cycles.',
+            'section' => 'Modules',
+            'permission' => 'aureum.module.sops.view',
+        ],
         'amenities' => [
             'title' => 'Amenities',
             'summary' => 'The daily amenities board, from the manager\'s list to delivered.',
