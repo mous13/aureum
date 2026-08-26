@@ -7,7 +7,6 @@ namespace Citadel\Aureum\Core\Form;
 use Citadel\Aureum\Core\Entity\AmenityCard;
 use Citadel\Aureum\Core\Entity\Enum\AmenityCardStatus;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -44,11 +43,6 @@ class AmenityCardType extends AbstractType
             ->add('status', EnumType::class, [
                 'class' => AmenityCardStatus::class,
                 'choice_label' => static fn (AmenityCardStatus $status) => $status->getLabel(),
-            ])
-            ->add('priority', CheckboxType::class, [
-                'label' => 'Priority',
-                'required' => false,
-                'help' => 'Highlight this room so it gets delivered first.',
             ]);
     }
 }

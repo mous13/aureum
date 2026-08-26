@@ -114,6 +114,11 @@
     font-weight: 600;
 }
 
+.amenity-detail__priority-toggle--on {
+    color: oklch(50% 0.17 25);
+    border-color: oklch(50% 0.17 25);
+}
+
 .amenity-board .amenity-card--completed {
     opacity: 0.7;
 }

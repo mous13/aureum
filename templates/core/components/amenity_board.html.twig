@@ -116,7 +116,14 @@
                         {% endfor %}
                     </ul>
                     {% if this.canManage %}
-                        <div class="flex justify-end mt-4">
+                        <div class="flex gap-2 justify-end mt-4">
+                            <button type="button" class="btn btn-outlined amenity-detail__priority-toggle {{ card.priority ? 'amenity-detail__priority-toggle--on' }}"
+                                    data-action="live#action"
+                                    data-live-action-param="togglePriority"
+                                    data-live-card-id-param="{{ card.id }}">
+                                <i class="ph {{ card.priority ? 'ph-fill' }} ph-flag"></i>
+                                {{ card.priority ? 'Remove priority' : 'Mark priority' }}
+                            </button>
                             <button type="button" class="luxury-light square btn btn-primary"
                                     data-action="live#action"
                                     data-live-action-param="openEdit"
@@ -153,7 +160,6 @@
                     <div class="mb-2">
                         {{ form_row(form.items) }}
                         {{ form_row(form.status) }}
-                        {{ form_row(form.priority) }}
                     </div>
                     <div class="flex gap-2 justify-end">
                         <button type="submit" class="luxury-light square btn btn-primary">
