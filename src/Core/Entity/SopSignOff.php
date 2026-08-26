@@ -11,7 +11,7 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 
 #[ORM\Entity(repositoryClass: SopSignOffRepository::class)]
 #[ORM\Table(name: 'aureum_sop_sign_offs')]
-#[ORM\UniqueConstraint(name: 'uniq_sop_sign_off', columns: ['sop_id', 'employee_id', 'version'])]
+#[ORM\Index(name: 'idx_sop_sign_off_lookup', columns: ['sop_id', 'employee_id', 'version'])]
 class SopSignOff implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
@@ -87,5 +87,19 @@ class SopSignOff implements HotelOwnedInterface
     public function setSignedAt(DateTime $signedAt): void
     {
         $this->signedAt = $signedAt;
+    }
+
+    public function getRecheckDueAt(): ?DateTime
+    {
+        $months = $this->sop->getRecheckMonths();
+        if ($months === null) {
+            return null;
+        }
+
+        $day = (int)$this->signedAt->format('j');
+        $due = (clone $this->signedAt)->modify('first day of this month')->modify("+{$months} months");
+        $due->setDate((int)$due->format('Y'), (int)$due->format('n'), min($day, (int)$due->format('t')));
+
+        return $due;
     }
 }

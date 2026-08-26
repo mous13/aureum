@@ -32,7 +32,7 @@
                 </div>
             {% endif %}
             <div class="flex gap-2 justify-end">
-                {% if isPublished %}
+                {% if isPublished or isArchived %}
                     <button type="submit" class="luxury-light square btn btn-primary">Save changes</button>
                 {% else %}
                     <input type="hidden" name="publish" value="">

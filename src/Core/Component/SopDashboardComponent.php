@@ -40,6 +40,9 @@ class SopDashboardComponent extends AbstractController
     /** @var array<array{sop: Sop, standing: SopStanding}>|null */
     private ?array $rows = null;
 
+    /** @var array<array{sop: Sop, standing: SopStanding}>|null */
+    private ?array $publishedRows = null;
+
     public function __construct(
         private readonly AureumService $aureumService,
         private readonly SopRepository $sopRepository,
@@ -68,46 +71,28 @@ class SopDashboardComponent extends AbstractController
             return $this->rows;
         }
 
-        $employee = $this->aureumService->getEmployee();
+        if (!$this->hasFilters() && !$this->canManage()) {
+            return $this->rows = $this->getPublishedRows();
+        }
+
         $sops = $this->sopRepository->searchForHotel(
-            $employee->getHotel(),
+            $this->aureumService->getHotel(),
             trim($this->search),
             $this->categoryId,
             $this->canManage(),
             $this->canManage() && $this->showArchived,
         );
 
-        $signOffs = $this->signOffRepository->findCurrentVersionSignOffs($employee, $sops);
-        $now = new DateTimeImmutable();
-
-        $rows = [];
-        foreach ($sops as $sop) {
-            $rows[] = [
-                'sop' => $sop,
-                'standing' => $this->standingService->standingFor($sop, $employee, $now, $signOffs[$sop->getId()] ?? null),
-            ];
-        }
-
-        return $this->rows = $rows;
+        return $this->rows = $this->buildRows($sops);
     }
 
     /** @return array<array{sop: Sop, standing: SopStanding}> */
     public function getAttention(): array
     {
-        $employee = $this->aureumService->getEmployee();
-        $sops = $this->sopRepository->searchForHotel($employee->getHotel(), '', null, false, false);
-        $signOffs = $this->signOffRepository->findCurrentVersionSignOffs($employee, $sops);
-        $now = new DateTimeImmutable();
-
-        $attention = [];
-        foreach ($sops as $sop) {
-            $standing = $this->standingService->standingFor($sop, $employee, $now, $signOffs[$sop->getId()] ?? null);
-            if ($standing->needsAction()) {
-                $attention[] = ['sop' => $sop, 'standing' => $standing];
-            }
-        }
-
-        return $attention;
+        return array_values(array_filter(
+            $this->getPublishedRows(),
+            static fn (array $row) => $row['standing']->needsAction(),
+        ));
     }
 
     /** @return array<\Citadel\Aureum\Core\Entity\SopCategory> */
@@ -127,19 +112,14 @@ class SopDashboardComponent extends AbstractController
         }
 
         $hotel = $this->aureumService->getHotel();
-        $employees = $this->employeeRepository->findBy(['hotel' => $hotel, 'archivedAt' => null]);
         $sops = array_map(static fn (array $row) => $row['sop'], $this->getRows());
-        $sops = array_filter($sops, static fn (Sop $sop) => $sop->getStatus() !== SopStatus::DRAFT);
+        $sops = array_filter($sops, static fn (Sop $sop) => $sop->getStatus() === SopStatus::PUBLISHED);
         if ($sops === []) {
             return [];
         }
 
-        $signOffsBySopAndEmployee = [];
-        foreach ($this->signOffRepository->findBy(['sop' => $sops]) as $signOff) {
-            if ($signOff->getVersion() === $signOff->getSop()->getVersion()) {
-                $signOffsBySopAndEmployee[$signOff->getSop()->getId()][$signOff->getEmployee()->getId()] = $signOff;
-            }
-        }
+        $employees = $this->employeeRepository->findByHotel($hotel);
+        $signOffs = $this->signOffRepository->findCurrentVersionSignOffsForSops($sops);
 
         $now = new DateTimeImmutable();
         $counts = [];
@@ -152,7 +132,7 @@ class SopDashboardComponent extends AbstractController
                 }
 
                 $expected++;
-                $signOff = $signOffsBySopAndEmployee[$sop->getId()][$employee->getId()] ?? null;
+                $signOff = $signOffs[$sop->getId()][$employee->getId()] ?? null;
                 if ($this->standingService->standingFor($sop, $employee, $now, $signOff) === SopStanding::CURRENT) {
                     $signed++;
                 }
@@ -162,5 +142,48 @@ class SopDashboardComponent extends AbstractController
         }
 
         return $counts;
+    }
+
+    public function getUserTimezone(): string
+    {
+        return $this->aureumService->getEmployee()?->getUser()?->getTimezone() ?? 'UTC';
+    }
+
+    private function hasFilters(): bool
+    {
+        return trim($this->search) !== '' || $this->categoryId !== null;
+    }
+
+    /** @return array<array{sop: Sop, standing: SopStanding}> */
+    private function getPublishedRows(): array
+    {
+        if ($this->publishedRows !== null) {
+            return $this->publishedRows;
+        }
+
+        $sops = $this->sopRepository->searchForHotel($this->aureumService->getHotel(), '', null, false, false);
+
+        return $this->publishedRows = $this->buildRows($sops);
+    }
+
+    /**
+     * @param array<Sop> $sops
+     * @return array<array{sop: Sop, standing: SopStanding}>
+     */
+    private function buildRows(array $sops): array
+    {
+        $employee = $this->aureumService->getEmployee();
+        $signOffs = $this->signOffRepository->findCurrentVersionSignOffs($employee, $sops);
+        $now = new DateTimeImmutable();
+
+        $rows = [];
+        foreach ($sops as $sop) {
+            $rows[] = [
+                'sop' => $sop,
+                'standing' => $this->standingService->standingFor($sop, $employee, $now, $signOffs[$sop->getId()] ?? null),
+            ];
+        }
+
+        return $rows;
     }
 }

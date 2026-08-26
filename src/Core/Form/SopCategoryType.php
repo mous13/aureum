@@ -16,7 +16,6 @@ class SopCategoryType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SopCategory::class,
-            'hotel' => null,
         ]);
     }
 

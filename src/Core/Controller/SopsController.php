@@ -16,7 +16,6 @@ use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\SopStandingService;
 use DateTime;
 use DateTimeImmutable;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,7 +45,7 @@ class SopsController extends AbstractController
     public function view(int $id): Response
     {
         $sop = $this->findSop($id);
-        if ($sop->getStatus() === SopStatus::DRAFT) {
+        if ($sop->getStatus() !== SopStatus::PUBLISHED) {
             $this->denyAccessUnlessGranted('aureum.module.sops.manage');
         }
 
@@ -57,6 +56,7 @@ class SopsController extends AbstractController
             'sop' => $sop,
             'signOff' => $signOff,
             'standing' => $this->standingService->standingFor($sop, $employee, new DateTimeImmutable(), $signOff),
+            'userTimezone' => $this->userTimezone(),
         ]);
     }
 
@@ -73,22 +73,19 @@ class SopsController extends AbstractController
             throw $this->createAccessDeniedException('Invalid CSRF token.');
         }
 
-        $employee = $this->aureumService->getEmployee();
-        $signOff = $this->signOffRepository->findForCurrentVersion($sop, $employee);
-        if ($signOff !== null) {
-            $signOff->setSignedAt(new DateTime());
-        } else {
-            $signOff = new SopSignOff();
-            $signOff->setSop($sop);
-            $signOff->setEmployee($employee);
-            $signOff->setHotel($sop->getHotel());
-            $signOff->setVersion($sop->getVersion());
+        if ($request->request->getInt('version') !== $sop->getVersion()) {
+            $this->addFlash('error', 'This procedure was updated while you were reading it. Please review the current version before signing.');
+
+            return $this->redirectToRoute('aureum_sops_view', ['id' => $sop->getId()]);
         }
 
-        try {
-            $this->signOffRepository->save($signOff);
-        } catch (UniqueConstraintViolationException) {
-        }
+        $employee = $this->aureumService->getEmployee();
+        $signOff = new SopSignOff();
+        $signOff->setSop($sop);
+        $signOff->setEmployee($employee);
+        $signOff->setHotel($sop->getHotel());
+        $signOff->setVersion($sop->getVersion());
+        $this->signOffRepository->save($signOff);
 
         $this->addFlash('success', 'Sign-off recorded. Thank you.');
 
@@ -134,13 +131,13 @@ class SopsController extends AbstractController
 
         $rows = [];
         $counts = [SopStanding::CURRENT->value => 0, SopStanding::SIGN_OFF_NEEDED->value => 0, SopStanding::RECHECK_DUE->value => 0];
-        $employees = $this->employeeRepository->findBy(['hotel' => $sop->getHotel(), 'archivedAt' => null], ['name' => 'ASC']);
-        foreach ($employees as $employee) {
+        $signOffs = $this->signOffRepository->findCurrentVersionSignOffsForSop($sop);
+        foreach ($this->employeeRepository->findByHotel($sop->getHotel()) as $employee) {
             if (!$this->standingService->inAudience($sop, $employee)) {
                 continue;
             }
 
-            $signOff = $this->signOffRepository->findForCurrentVersion($sop, $employee);
+            $signOff = $signOffs[$employee->getId()] ?? null;
             $standing = $this->standingService->standingFor($sop, $employee, $now, $signOff);
             $rows[] = ['employee' => $employee, 'standing' => $standing, 'signOff' => $signOff];
             if (isset($counts[$standing->value])) {
@@ -153,17 +150,18 @@ class SopsController extends AbstractController
             'rows' => $rows,
             'counts' => $counts,
             'history' => $this->signOffRepository->findForSop($sop),
+            'userTimezone' => $this->userTimezone(),
         ]);
     }
 
     private function handleForm(Request $request, Sop $sop, bool $isNew): Response
     {
         $employee = $this->aureumService->getEmployee();
-        $wasPublished = !$isNew && $sop->getStatus() === SopStatus::PUBLISHED;
+        $status = $isNew ? SopStatus::DRAFT : $sop->getStatus();
 
         $form = $this->createForm(SopType::class, $sop, [
             'hotel' => $employee->getHotel(),
-            'is_published' => $wasPublished,
+            'is_published' => $status === SopStatus::PUBLISHED,
         ]);
         $form->handleRequest($request);
 
@@ -175,13 +173,15 @@ class SopsController extends AbstractController
             $sop->setUpdatedBy($employee);
             $sop->setUpdatedAt(new DateTime());
 
-            if ($wasPublished) {
+            if ($status === SopStatus::PUBLISHED) {
                 if ($form->get('changeKind')->getData() === 'new_version') {
                     $sop->bumpVersion();
                     $this->addFlash('success', "Published as version {$sop->getVersion()}. Everyone must sign off again.");
                 } else {
                     $this->addFlash('success', 'Changes saved. Existing sign-offs stand.');
                 }
+            } elseif ($status === SopStatus::ARCHIVED) {
+                $this->addFlash('success', 'Changes saved. The SOP remains archived.');
             } elseif ($request->request->get('publish') === '1') {
                 $sop->publish();
                 $this->addFlash('success', 'SOP published.');
@@ -197,7 +197,8 @@ class SopsController extends AbstractController
         return $this->render('@CitadelAureum/core/sops/form.html.twig', [
             'form' => $form,
             'sop' => $isNew ? null : $sop,
-            'isPublished' => $wasPublished,
+            'isPublished' => $status === SopStatus::PUBLISHED,
+            'isArchived' => $status === SopStatus::ARCHIVED,
         ]);
     }
 
@@ -219,6 +220,11 @@ class SopsController extends AbstractController
         $this->addFlash('success', $message);
 
         return $this->redirectToRoute('aureum_sops_view', ['id' => $sop->getId()]);
+    }
+
+    private function userTimezone(): string
+    {
+        return $this->aureumService->getEmployee()?->getUser()?->getTimezone() ?? 'UTC';
     }
 
     private function findSop(int $id): Sop

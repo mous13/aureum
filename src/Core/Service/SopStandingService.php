@@ -9,6 +9,7 @@ use Citadel\Aureum\Core\Entity\Enum\SopStanding;
 use Citadel\Aureum\Core\Entity\HotelRole;
 use Citadel\Aureum\Core\Entity\Sop;
 use Citadel\Aureum\Core\Entity\SopSignOff;
+use DateTime;
 use DateTimeImmutable;
 
 class SopStandingService
@@ -27,13 +28,9 @@ class SopStandingService
             return SopStanding::SIGN_OFF_NEEDED;
         }
 
-        $recheckMonths = $sop->getRecheckMonths();
-        if ($recheckMonths !== null) {
-            $dueAt = DateTimeImmutable::createFromInterface($signOff->getSignedAt())
-                ->modify("+{$recheckMonths} months");
-            if ($dueAt <= $now) {
-                return SopStanding::RECHECK_DUE;
-            }
+        $dueAt = $signOff->getRecheckDueAt();
+        if ($dueAt !== null && $dueAt <= DateTime::createFromImmutable($now)) {
+            return SopStanding::RECHECK_DUE;
         }
 
         return SopStanding::CURRENT;

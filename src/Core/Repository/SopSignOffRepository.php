@@ -36,8 +36,10 @@ class SopSignOffRepository extends AbstractRepository
         }
 
         $signOffs = $this->createQueryBuilder('so')
+            ->join('so.sop', 's')
             ->where('so.employee = :employee')
             ->andWhere('so.sop IN (:sops)')
+            ->andWhere('so.version = s.version')
             ->setParameter('employee', $employee)
             ->setParameter('sops', $sops)
             ->getQuery()
@@ -45,9 +47,49 @@ class SopSignOffRepository extends AbstractRepository
 
         $result = [];
         foreach ($signOffs as $signOff) {
-            if ($signOff->getVersion() === $signOff->getSop()->getVersion()) {
-                $result[$signOff->getSop()->getId()] = $signOff;
-            }
+            $result[$signOff->getSop()->getId()] = $signOff;
+        }
+
+        return $result;
+    }
+
+    /** @return array<int, SopSignOff> keyed by employee id, sign-offs for the sop's current version */
+    public function findCurrentVersionSignOffsForSop(Sop $sop): array
+    {
+        $signOffs = $this->createQueryBuilder('so')
+            ->join('so.sop', 's')
+            ->where('so.sop = :sop')
+            ->andWhere('so.version = s.version')
+            ->setParameter('sop', $sop)
+            ->getQuery()
+            ->getResult();
+
+        $result = [];
+        foreach ($signOffs as $signOff) {
+            $result[$signOff->getEmployee()->getId()] = $signOff;
+        }
+
+        return $result;
+    }
+
+    /** @return array<int, array<int, SopSignOff>> keyed by sop id then employee id, current-version sign-offs */
+    public function findCurrentVersionSignOffsForSops(array $sops): array
+    {
+        if ($sops === []) {
+            return [];
+        }
+
+        $signOffs = $this->createQueryBuilder('so')
+            ->join('so.sop', 's')
+            ->where('so.sop IN (:sops)')
+            ->andWhere('so.version = s.version')
+            ->setParameter('sops', $sops)
+            ->getQuery()
+            ->getResult();
+
+        $result = [];
+        foreach ($signOffs as $signOff) {
+            $result[$signOff->getSop()->getId()][$signOff->getEmployee()->getId()] = $signOff;
         }
 
         return $result;

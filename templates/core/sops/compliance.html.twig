@@ -35,16 +35,13 @@
                         <tr>
                             <td>{{ row.employee.name }}</td>
                             <td>
-                                {% if row.standing.value == 'current' %}
-                                    <span class="sop-chip sop-chip--current">Current</span>
-                                {% elseif row.standing.value == 'recheck_due' %}
-                                    <span class="sop-chip sop-chip--recheck">Recheck due</span>
-                                {% else %}
-                                    <span class="sop-chip sop-chip--sign">Awaiting sign-off</span>
-                                {% endif %}
+                                {% include '@CitadelAureum/core/sops/blocks/standing_chip.html.twig' with {
+                                    standing: row.standing,
+                                    label: row.standing.value == 'sign_off_needed' ? 'Awaiting sign-off' : null,
+                                } only %}
                             </td>
                             <td>{{ row.signOff ? 'v' ~ row.signOff.version : '-' }}</td>
-                            <td>{{ row.signOff ? row.signOff.signedAt|date('j M Y H:i') : '-' }}</td>
+                            <td>{{ row.signOff ? row.signOff.signedAt|date('j M Y H:i', userTimezone) : '-' }}</td>
                         </tr>
                     {% else %}
                         <tr><td colspan="4">No employees are in this SOP's audience.</td></tr>
@@ -53,7 +50,7 @@
             </table>
 
             {% if history is not empty %}
-                <p class="mock-label mt-4" style="text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--au-muted);">Full sign-off history</p>
+                <p class="sop-section-label mt-4">Full sign-off history</p>
                 <table class="table w-100">
                     <thead>
                         <tr><th>Employee</th><th>Version</th><th>Signed at</th></tr>
@@ -63,7 +60,7 @@
                             <tr>
                                 <td>{{ signOff.employee.name }}</td>
                                 <td>v{{ signOff.version }}</td>
-                                <td>{{ signOff.signedAt|date('j M Y H:i') }}</td>
+                                <td>{{ signOff.signedAt|date('j M Y H:i', userTimezone) }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

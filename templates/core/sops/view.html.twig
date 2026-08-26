@@ -28,7 +28,7 @@
             <p class="sop-doc__meta">
                 {{ sop.category ? sop.category.name : 'Uncategorised' }}
                 &middot; Version {{ sop.version }}
-                &middot; Updated {{ sop.updatedAt|date('j F Y') }}{% if sop.updatedBy %} by {{ sop.updatedBy.name }}{% endif %}
+                &middot; Updated {{ sop.updatedAt|date('j F Y', userTimezone) }}{% if sop.updatedBy %} by {{ sop.updatedBy.name }}{% endif %}
                 {% if sop.recheckMonths %}
                     &middot; Recheck every {{ sop.recheckMonths }} month{{ sop.recheckMonths > 1 ? 's' }}
                 {% endif %}
@@ -36,12 +36,11 @@
                     &middot; <span class="sop-chip sop-chip--draft">Draft</span>
                 {% elseif sop.status.value == 'archived' %}
                     &middot; <span class="sop-chip sop-chip--draft">Archived</span>
-                {% elseif standing.value == 'current' %}
-                    &middot; <span class="sop-chip sop-chip--current">You are current</span>
-                {% elseif standing.value == 'recheck_due' %}
-                    &middot; <span class="sop-chip sop-chip--recheck">Recheck due</span>
-                {% elseif standing.value == 'sign_off_needed' %}
-                    &middot; <span class="sop-chip sop-chip--sign">Sign-off needed</span>
+                {% else %}
+                    &middot; {% include '@CitadelAureum/core/sops/blocks/standing_chip.html.twig' with {
+                        standing: standing,
+                        label: standing.value == 'current' ? 'You are current' : null,
+                    } only %}
                 {% endif %}
             </p>
 
@@ -51,9 +50,9 @@
                 <div class="sop-signoff">
                     <span class="sop-signoff__note">
                         {% if signOff %}
-                            You signed version {{ signOff.version }} on {{ signOff.signedAt|date('j F Y') }}.
-                            {% if sop.recheckMonths %}
-                                Your next recheck is due {{ signOff.signedAt|date_modify('+' ~ sop.recheckMonths ~ ' months')|date('j F Y') }}.
+                            You signed version {{ signOff.version }} on {{ signOff.signedAt|date('j F Y', userTimezone) }}.
+                            {% if signOff.recheckDueAt %}
+                                Your next recheck is due {{ signOff.recheckDueAt|date('j F Y', userTimezone) }}.
                             {% endif %}
                         {% elseif standing.value == 'sign_off_needed' %}
                             {% if sop.version > 1 %}
@@ -65,9 +64,10 @@
                             You are not required to sign this procedure, but you may confirm you have read it.
                         {% endif %}
                     </span>
-                    {% if standing.value != 'current' or signOff is null %}
+                    {% if signOff is null or standing.value == 'recheck_due' %}
                         <form method="post" action="{{ path('aureum_sops_sign', { id: sop.id }) }}">
                             <input type="hidden" name="_token" value="{{ csrf_token('aureum_sop_sign_' ~ sop.id) }}">
+                            <input type="hidden" name="version" value="{{ sop.version }}">
                             <button type="submit" class="luxury-light square btn btn-primary">
                                 <i class="ph ph-check"></i>
                                 {{ standing.value == 'recheck_due' ? 'Confirm again' : 'I have read and understood' }}

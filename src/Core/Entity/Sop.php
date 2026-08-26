@@ -120,7 +120,7 @@ class Sop implements HotelOwnedInterface
         $this->body = $body ?? '';
         $text = html_entity_decode(strip_tags(str_replace('<', ' <', $this->body)), ENT_QUOTES | ENT_HTML5);
 
-        $this->bodyText = trim((string)preg_replace('/\s+/u', ' ', $text));
+        $this->bodyText = trim(preg_replace('/\s+/u', ' ', $text) ?? $text);
     }
 
     public function getBodyText(): string

@@ -81,7 +81,7 @@ class SopStandingServiceTest extends TestCase
 
         self::assertSame(
             SopStanding::CURRENT,
-            $this->service->standingFor($sop, $this->employee(), $this->now, $this->signOff('2026-08-20')),
+            $this->service->standingFor($sop, $this->employee(), $this->now, $this->signOff($sop, '2026-08-20')),
         );
     }
 
@@ -91,11 +91,11 @@ class SopStandingServiceTest extends TestCase
 
         self::assertSame(
             SopStanding::RECHECK_DUE,
-            $this->service->standingFor($sop, $this->employee(), $this->now, $this->signOff('2026-02-25')),
+            $this->service->standingFor($sop, $this->employee(), $this->now, $this->signOff($sop, '2026-02-25')),
         );
         self::assertSame(
             SopStanding::CURRENT,
-            $this->service->standingFor($sop, $this->employee(), $this->now, $this->signOff('2026-02-27')),
+            $this->service->standingFor($sop, $this->employee(), $this->now, $this->signOff($sop, '2026-02-27')),
         );
     }
 
@@ -105,7 +105,7 @@ class SopStandingServiceTest extends TestCase
 
         self::assertSame(
             SopStanding::RECHECK_DUE,
-            $this->service->standingFor($sop, $this->employee(), $this->now, $this->signOff('2026-02-26 12:00:00')),
+            $this->service->standingFor($sop, $this->employee(), $this->now, $this->signOff($sop, '2026-02-26 12:00:00')),
         );
     }
 
@@ -115,7 +115,7 @@ class SopStandingServiceTest extends TestCase
 
         self::assertSame(
             SopStanding::CURRENT,
-            $this->service->standingFor($sop, $this->employee(), $this->now, $this->signOff('2020-01-01')),
+            $this->service->standingFor($sop, $this->employee(), $this->now, $this->signOff($sop, '2020-01-01')),
         );
     }
 
@@ -161,9 +161,10 @@ class SopStandingServiceTest extends TestCase
         return $role;
     }
 
-    private function signOff(string $signedAt): SopSignOff
+    private function signOff(Sop $sop, string $signedAt): SopSignOff
     {
         $signOff = new SopSignOff();
+        $signOff->setSop($sop);
         $signOff->setSignedAt(new DateTime($signedAt));
         $signOff->setVersion(1);
 
