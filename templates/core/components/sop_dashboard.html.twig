@@ -90,6 +90,8 @@
                                title="{{ cc.expected - cc.signed }} not current - open compliance">
                                 {{ cc.signed }}/{{ cc.expected }} current
                             </a>
+                        {% elseif this.canManage %}
+                            <span class="sop-row__compliance sop-row__compliance--empty"></span>
                         {% endif %}
                     </div>
                 {% else %}
