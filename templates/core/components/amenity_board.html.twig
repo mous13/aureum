@@ -25,13 +25,16 @@
                      data-amenity-board-target="column"
                      data-status="{{ column.status.value }}">
                     {% for card in column.cards %}
-                        <div class="card amenity-card {{ card.status.value == 'completed' ? 'amenity-card--completed' }}"
+                        <div class="card amenity-card {{ card.status.value == 'completed' ? 'amenity-card--completed' }} {{ card.priority ? 'amenity-card--priority' }}"
                              data-action="click->live#action"
                              data-live-action-param="openCard"
                              data-live-card-id-param="{{ card.id }}"
                              {% if not this.readOnly %}draggable="true" data-amenity-board-target="card" data-card-id="{{ card.id }}"{% endif %}>
                             <div class="card-title amenity-card__title">
-                                <span class="amenity-card__name">Room {{ card.roomNumber }} - {{ card.guestLastName ?? '[removed]' }}</span>
+                                <span class="amenity-card__name">
+                                    {%- if card.priority %}<i class="ph ph-fill ph-flag amenity-card__flag"></i> {% endif -%}
+                                    Room {{ card.roomNumber }} - {{ card.guestLastName ?? '[removed]' }}
+                                </span>
                                 <span class="amenity-card__actions">
                                     {% if not this.readOnly and card.status.next is not null %}
                                         <button type="button" class="btn-icon btn-link" title="Move to {{ card.status.next.label }}"
@@ -74,7 +77,10 @@
         <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Room {{ card.roomNumber }}">
             <div class="card modal-overlay__card amenity-modal">
                 <div class="card-title luxury items-center justify-between">
-                    Room {{ card.roomNumber }} - {{ card.guestLastName ?? '[removed]' }}
+                    <span>
+                        {%- if card.priority %}<i class="ph ph-fill ph-flag amenity-card__flag"></i> {% endif -%}
+                        Room {{ card.roomNumber }} - {{ card.guestLastName ?? '[removed]' }}
+                    </span>
                     <button type="button" class="btn-icon btn-link" title="Close"
                             data-action="live#action" data-live-action-param="closeModal">
                         <i class="ph ph-x"></i>
@@ -83,6 +89,9 @@
                 <div class="card-body">
                     <p class="amenity-detail__status">
                         {{ card.status.label }}
+                        {% if card.priority %}
+                            &middot; <span class="amenity-detail__priority">Priority</span>
+                        {% endif %}
                         {% if card.items|length > 0 %}
                             &middot; {{ card.doneCount }}/{{ card.items|length }} collected
                         {% endif %}
@@ -144,6 +153,7 @@
                     <div class="mb-2">
                         {{ form_row(form.items) }}
                         {{ form_row(form.status) }}
+                        {{ form_row(form.priority) }}
                     </div>
                     <div class="flex gap-2 justify-end">
                         <button type="submit" class="luxury-light square btn btn-primary">

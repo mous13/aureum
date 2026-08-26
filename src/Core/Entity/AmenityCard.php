@@ -67,6 +67,9 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
     #[ORM\Column(type: 'integer')]
     private int $position = 0;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $priority = false;
+
     #[ORM\Column(type: 'datetime')]
     private DateTime $createdAt;
 
@@ -209,6 +212,16 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
     public function setPosition(int $position): void
     {
         $this->position = $position;
+    }
+
+    public function isPriority(): bool
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(bool $priority): void
+    {
+        $this->priority = $priority;
     }
 
     public function getCreatedAt(): DateTime
