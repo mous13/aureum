@@ -1,0 +1,46 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title %}{{ sop ? 'Edit SOP' : 'New SOP' }} - Aureum{% endblock %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="icon ph ph-book-open-text"></i>
+                {{ sop ? 'Edit SOP - ' ~ sop.title : 'New SOP' }}
+            </div>
+            <form method="get" action="{{ sop ? path('aureum_sops_view', { id: sop.id }) : path('aureum_sops_index') }}">
+                <button type="submit" class="luxury-light square btn btn-primary">
+                    <i class="ph ph-arrow-left"></i> Back
+                </button>
+            </form>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            <div class="flex gap-2 mb-2">
+                <div class="flex-grow">{{ form_row(form.title) }}</div>
+                {{ form_row(form.category) }}
+            </div>
+            <div class="mb-2">
+                {{ form_row(form.body) }}
+            </div>
+            <div class="flex gap-4 mb-2 sop-form__settings">
+                {{ form_row(form.recheckMonths) }}
+                {{ form_row(form.audience) }}
+            </div>
+            {% if isPublished %}
+                <div class="mb-2 sop-form__change-kind">
+                    {{ form_row(form.changeKind) }}
+                </div>
+            {% endif %}
+            <div class="flex gap-2 justify-end">
+                {% if isPublished %}
+                    <button type="submit" class="luxury-light square btn btn-primary">Save changes</button>
+                {% else %}
+                    <input type="hidden" name="publish" value="">
+                    <button type="submit" class="btn btn-outlined">Save draft</button>
+                    <button type="submit" onclick="this.form.publish.value='1'" class="luxury-light square btn btn-primary">Publish</button>
+                {% endif %}
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

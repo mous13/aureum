@@ -170,6 +170,18 @@ class Sop implements HotelOwnedInterface
         return $this->audience;
     }
 
+    public function addAudience(HotelRole $role): void
+    {
+        if (!$this->audience->contains($role)) {
+            $this->audience->add($role);
+        }
+    }
+
+    public function removeAudience(HotelRole $role): void
+    {
+        $this->audience->removeElement($role);
+    }
+
     public function getCreatedBy(): Employee
     {
         return $this->createdBy;

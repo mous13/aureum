@@ -1,0 +1,101 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title %}{{ sop.title }} - Aureum{% endblock %}
+{% block body %}
+    {% set canManage = is_granted('aureum.module.sops.manage') %}
+
+    <div class="card">
+        <div class="card-title luxury items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="icon ph ph-book-open-text"></i>
+                {{ sop.title }}
+            </div>
+            <div class="flex items-center gap-2">
+                <form method="get" action="{{ path('aureum_sops_index') }}">
+                    <button type="submit" class="luxury-light square btn btn-primary">
+                        <i class="ph ph-arrow-left"></i> All SOPs
+                    </button>
+                </form>
+                {% if canManage %}
+                    <form method="get" action="{{ path('aureum_sops_edit', { id: sop.id }) }}">
+                        <button type="submit" class="luxury-light square btn btn-primary">
+                            <i class="ph ph-pencil-simple"></i> Edit
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body sop-doc">
+            <p class="sop-doc__meta">
+                {{ sop.category ? sop.category.name : 'Uncategorised' }}
+                &middot; Version {{ sop.version }}
+                &middot; Updated {{ sop.updatedAt|date('j F Y') }}{% if sop.updatedBy %} by {{ sop.updatedBy.name }}{% endif %}
+                {% if sop.recheckMonths %}
+                    &middot; Recheck every {{ sop.recheckMonths }} month{{ sop.recheckMonths > 1 ? 's' }}
+                {% endif %}
+                {% if sop.status.value == 'draft' %}
+                    &middot; <span class="sop-chip sop-chip--draft">Draft</span>
+                {% elseif sop.status.value == 'archived' %}
+                    &middot; <span class="sop-chip sop-chip--draft">Archived</span>
+                {% elseif standing.value == 'current' %}
+                    &middot; <span class="sop-chip sop-chip--current">You are current</span>
+                {% elseif standing.value == 'recheck_due' %}
+                    &middot; <span class="sop-chip sop-chip--recheck">Recheck due</span>
+                {% elseif standing.value == 'sign_off_needed' %}
+                    &middot; <span class="sop-chip sop-chip--sign">Sign-off needed</span>
+                {% endif %}
+            </p>
+
+            {{ sop.body|rich }}
+
+            {% if sop.status.value == 'published' %}
+                <div class="sop-signoff">
+                    <span class="sop-signoff__note">
+                        {% if signOff %}
+                            You signed version {{ signOff.version }} on {{ signOff.signedAt|date('j F Y') }}.
+                            {% if sop.recheckMonths %}
+                                Your next recheck is due {{ signOff.signedAt|date_modify('+' ~ sop.recheckMonths ~ ' months')|date('j F Y') }}.
+                            {% endif %}
+                        {% elseif standing.value == 'sign_off_needed' %}
+                            {% if sop.version > 1 %}
+                                Version {{ sop.version }} needs your sign-off.
+                            {% else %}
+                                This procedure needs your sign-off.
+                            {% endif %}
+                        {% else %}
+                            You are not required to sign this procedure, but you may confirm you have read it.
+                        {% endif %}
+                    </span>
+                    {% if standing.value != 'current' or signOff is null %}
+                        <form method="post" action="{{ path('aureum_sops_sign', { id: sop.id }) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('aureum_sop_sign_' ~ sop.id) }}">
+                            <button type="submit" class="luxury-light square btn btn-primary">
+                                <i class="ph ph-check"></i>
+                                {{ standing.value == 'recheck_due' ? 'Confirm again' : 'I have read and understood' }}
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if canManage %}
+                <div class="flex gap-2 justify-end mt-4">
+                    <a href="{{ path('aureum_sops_compliance', { id: sop.id }) }}" class="btn btn-outlined">
+                        <i class="ph ph-list-checks"></i> Compliance
+                    </a>
+                    {% if sop.status.value == 'published' %}
+                        <form method="post" action="{{ path('aureum_sops_archive', { id: sop.id }) }}"
+                              onsubmit="return confirm('Archive this SOP? It will stop appearing in the library and no further sign-offs will be requested.');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('aureum_sop_status_' ~ sop.id) }}">
+                            <button type="submit" class="btn btn-outlined"><i class="ph ph-archive"></i> Archive</button>
+                        </form>
+                    {% elseif sop.status.value == 'archived' %}
+                        <form method="post" action="{{ path('aureum_sops_unarchive', { id: sop.id }) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('aureum_sop_status_' ~ sop.id) }}">
+                            <button type="submit" class="btn btn-outlined"><i class="ph ph-arrow-counter-clockwise"></i> Restore</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

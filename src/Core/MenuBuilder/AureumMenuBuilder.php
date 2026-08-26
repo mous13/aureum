@@ -40,6 +40,10 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
                 'icon' => 'ph ph-gift',
                 'permission' => 'aureum.module.amenities.view',
             ]),
+            new MenuItem('SOPs', $url('aureum_sops_index'), [
+                'icon' => 'ph ph-books',
+                'permission' => 'aureum.module.sops.view',
+            ]),
         ]);
 
         $menu->addItem($general);
@@ -69,6 +73,10 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
             new MenuItem('Room Types', $url('aureum_room_types_list'), [
                 'icon' => 'ph ph-bed',
                 'permission' => 'aureum.module.rooms.manage',
+            ]),
+            new MenuItem('SOP Categories', $url('aureum_sop_categories_list'), [
+                'icon' => 'ph ph-bookmarks',
+                'permission' => 'aureum.module.sops.manage',
             ]),
             new MenuItem('Roles', $url('aureum_roles_list'), [
                 'icon' => 'ph ph-users-three',
