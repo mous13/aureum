@@ -6,6 +6,7 @@
         <span class="amenity-progress__hint" data-loading="show">Saving...</span>
     </div>
 
+    {% set commentCounts = this.commentCounts %}
     <div class="amenity-board" {% if not this.readOnly %}data-controller="amenity-board"{% endif %}>
         {% for column in this.columns %}
             <div class="amenity-column amenity-column--{{ column.status.value }}">
@@ -53,9 +54,14 @@
                                         {{- not loop.last ? ', ' -}}
                                     {%- endfor -%}
                                 </p>
-                                {% if card.items|length > 0 %}
-                                    <p class="amenity-card__progress {{ card.doneCount == card.items|length ? 'amenity-card__progress--full' }}">
-                                        <i class="ph ph-check-square"></i> {{ card.doneCount }}/{{ card.items|length }}
+                                {% if card.items|length > 0 or commentCounts[card.id] is defined %}
+                                    <p class="amenity-card__progress {{ card.doneCount == card.items|length and card.items|length > 0 ? 'amenity-card__progress--full' }}">
+                                        {% if card.items|length > 0 %}
+                                            <i class="ph ph-check-square"></i> {{ card.doneCount }}/{{ card.items|length }}
+                                        {% endif %}
+                                        {% if commentCounts[card.id] is defined %}
+                                            <span class="amenity-card__notes"><i class="ph ph-chat-circle"></i> {{ commentCounts[card.id] }}</span>
+                                        {% endif %}
                                     </p>
                                 {% endif %}
                             </div>
@@ -117,6 +123,43 @@
                             </li>
                         {% endfor %}
                     </ul>
+
+                    <div class="amenity-comments">
+                        <p class="amenity-comments__label">Notes</p>
+                        {% for comment in card.comments %}
+                            <div class="amenity-comment">
+                                <div class="amenity-comment__head">
+                                    <span class="amenity-comment__author">{{ comment.author.name }}</span>
+                                    <span class="amenity-comment__time">{{ comment.createdAt|date('j M H:i', this.userTimezone) }}</span>
+                                    {% if not this.readOnly and this.canModifyComment(comment) %}
+                                        <button type="button" class="btn-icon btn-link amenity-comment__delete" title="Delete note"
+                                                data-action="live#action"
+                                                data-live-action-param="deleteComment"
+                                                data-live-comment-id-param="{{ comment.id }}"
+                                                data-live-confirm-param="Delete this note?">
+                                            <i class="ph ph-x"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                                <p class="amenity-comment__body">{{ comment.body|nl2br }}</p>
+                            </div>
+                        {% else %}
+                            <p class="amenity-comments__empty">No notes yet.</p>
+                        {% endfor %}
+                        {% if not this.readOnly %}
+                            <div class="amenity-comments__add">
+                                <textarea data-model="norender|commentBody" rows="2"
+                                          placeholder="Add a note for the team, e.g. guest out until 6pm..."></textarea>
+                                <button type="button" class="luxury-light square btn btn-primary"
+                                        data-action="live#action"
+                                        data-live-action-param="addComment"
+                                        data-live-card-id-param="{{ card.id }}">
+                                    <i class="ph ph-chat-circle"></i> Add note
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+
                     {% if this.canManage %}
                         <div class="flex gap-2 justify-end mt-4">
                             <button type="button" class="btn btn-outlined amenity-detail__priority-toggle {{ card.priority ? 'amenity-detail__priority-toggle--on' }}"

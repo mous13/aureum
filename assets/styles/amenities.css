@@ -223,6 +223,82 @@
     color: oklch(48% 0.09 155);
 }
 
+.amenity-card__notes {
+    color: var(--au-neutral);
+    margin-left: var(--au-space-xs);
+}
+
+.amenity-comments {
+    margin-top: var(--au-space-md);
+    border-top: 1px solid var(--au-rule);
+    padding-top: var(--au-space-sm);
+}
+
+.amenity-comments__label {
+    font-size: var(--au-text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--au-muted);
+    margin-bottom: var(--au-space-xs);
+}
+
+.amenity-comment {
+    background: var(--au-paper-2);
+    border-radius: var(--au-radius);
+    padding: var(--au-space-xs) var(--au-space-sm);
+    margin-bottom: var(--au-space-xs);
+}
+
+.amenity-comment__head {
+    display: flex;
+    align-items: center;
+    gap: var(--au-space-xs);
+}
+
+.amenity-comment__author {
+    font-size: var(--au-text-sm);
+    font-weight: 600;
+    color: var(--au-ink);
+}
+
+.amenity-comment__time {
+    font-size: var(--au-text-xs);
+    color: var(--au-muted);
+    flex-grow: 1;
+}
+
+.amenity-comment__delete {
+    flex-shrink: 0;
+}
+
+.amenity-comment__body {
+    font-size: var(--au-text-sm);
+    color: var(--au-ink);
+    overflow-wrap: anywhere;
+}
+
+.amenity-comments__empty {
+    font-size: var(--au-text-sm);
+    color: var(--au-muted);
+}
+
+.amenity-comments__add {
+    display: flex;
+    gap: var(--au-space-xs);
+    align-items: flex-end;
+    margin-top: var(--au-space-sm);
+}
+
+.amenity-comments__add textarea {
+    flex: 1;
+    border: 1px solid var(--au-rule);
+    border-radius: var(--au-radius);
+    padding: var(--au-space-xs) var(--au-space-sm);
+    font-size: var(--au-text-sm);
+    font-family: inherit;
+    resize: vertical;
+}
+
 .amenity-modal {
     max-width: 34rem;
     width: 100%;

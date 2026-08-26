@@ -10,6 +10,8 @@ use Citadel\Aureum\Core\Entity\Trait\AnonymisableEntityTrait;
 use Citadel\Aureum\Core\Repository\AmenityCardRepository;
 use DateTime;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -36,6 +38,7 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
     public function anonymise(): void
     {
         $this->guestLastName = null;
+        $this->comments->clear();
         $this->markAnonymised();
     }
 
@@ -76,8 +79,14 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
     #[ORM\Column(type: 'datetime')]
     private DateTime $updatedAt;
 
+    /** @var Collection<int, AmenityCardComment> */
+    #[ORM\OneToMany(mappedBy: 'card', targetEntity: AmenityCardComment::class, orphanRemoval: true)]
+    #[ORM\OrderBy(['createdAt' => 'ASC'])]
+    private Collection $comments;
+
     public function __construct()
     {
+        $this->comments = new ArrayCollection();
         $this->createdAt = new DateTime();
         $this->updatedAt = new DateTime();
     }
@@ -173,6 +182,20 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
     public function getDoneCount(): int
     {
         return count(array_filter(array_column($this->items, 'done')));
+    }
+
+    /** @return Collection<int, AmenityCardComment> */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(AmenityCardComment $comment): void
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setCard($this);
+        }
     }
 
     /**

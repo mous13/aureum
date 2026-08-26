@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Tests\Unit\Entity;
 
 use Citadel\Aureum\Core\Entity\AmenityCard;
+use Citadel\Aureum\Core\Entity\AmenityCardComment;
 use Citadel\Aureum\Core\Entity\AnonymisableInterface;
 use Citadel\Aureum\Core\Entity\Enum\Module;
 use Citadel\Aureum\Core\Entity\Fine;
@@ -100,10 +101,14 @@ class AnonymisationTest extends TestCase
         $card->setRoomNumber('412');
         $card->setGuestLastName('Whitfield');
         $card->setItemsText("2x Beer\n1x Sweets");
+        $comment = new AmenityCardComment();
+        $comment->setBody('guest prefers still water');
+        $card->addComment($comment);
 
         $card->anonymise();
 
         self::assertNull($card->getGuestLastName());
+        self::assertCount(0, $card->getComments());
         self::assertTrue($card->isAnonymised());
         self::assertSame('412', $card->getRoomNumber());
         self::assertSame([
