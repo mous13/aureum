@@ -37,6 +37,13 @@
         "fetch": "eager",
         "enabled": true,
         "autoimport": {}
+      },
+      "amenity-comments": {
+        "main": "dist/amenity_comments_controller.js",
+        "name": "amenity-comments",
+        "fetch": "eager",
+        "enabled": true,
+        "autoimport": {}
       }
     },
     "importmap": {

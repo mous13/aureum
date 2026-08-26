@@ -54,16 +54,15 @@
                                         {{- not loop.last ? ', ' -}}
                                     {%- endfor -%}
                                 </p>
-                                {% if card.items|length > 0 or commentCounts[card.id] is defined %}
-                                    <p class="amenity-card__progress {{ card.doneCount == card.items|length and card.items|length > 0 ? 'amenity-card__progress--full' }}">
-                                        {% if card.items|length > 0 %}
-                                            <i class="ph ph-check-square"></i> {{ card.doneCount }}/{{ card.items|length }}
-                                        {% endif %}
-                                        {% if commentCounts[card.id] is defined %}
-                                            <span class="amenity-card__notes"><i class="ph ph-chat-circle"></i> {{ commentCounts[card.id] }}</span>
-                                        {% endif %}
-                                    </p>
-                                {% endif %}
+                                <p class="amenity-card__progress {{ card.doneCount == card.items|length and card.items|length > 0 ? 'amenity-card__progress--full' }}">
+                                    {% if card.items|length > 0 %}
+                                        <i class="ph ph-check-square"></i> {{ card.doneCount }}/{{ card.items|length }}
+                                    {% endif %}
+                                    <span class="amenity-card__notes" data-card-comment-badge="{{ card.id }}"
+                                          {{ commentCounts[card.id] is not defined ? 'hidden' }}>
+                                        <i class="ph ph-chat-circle-dots"></i> <span data-comment-count-text>{{ commentCounts[card.id] ?? '' }}</span>
+                                    </span>
+                                </p>
                             </div>
                         </div>
                     {% else %}
@@ -124,40 +123,42 @@
                         {% endfor %}
                     </ul>
 
-                    <div class="amenity-comments">
-                        <p class="amenity-comments__label">Notes</p>
-                        {% for comment in card.comments %}
-                            <div class="amenity-comment">
-                                <div class="amenity-comment__head">
-                                    <span class="amenity-comment__author">{{ comment.author.name }}</span>
-                                    <span class="amenity-comment__time">{{ comment.createdAt|date('j M H:i', this.userTimezone) }}</span>
-                                    {% if not this.readOnly and this.canModifyComment(comment) %}
-                                        <button type="button" class="btn-icon btn-link amenity-comment__delete" title="Delete note"
-                                                data-action="live#action"
-                                                data-live-action-param="deleteComment"
-                                                data-live-comment-id-param="{{ comment.id }}"
-                                                data-live-confirm-param="Delete this note?">
-                                            <i class="ph ph-x"></i>
-                                        </button>
-                                    {% endif %}
-                                </div>
-                                <p class="amenity-comment__body">{{ comment.body|nl2br }}</p>
-                            </div>
-                        {% else %}
-                            <p class="amenity-comments__empty">No notes yet.</p>
-                        {% endfor %}
+                    <div class="room-modal-comments" data-live-ignore
+                         data-controller="amenity-comments"
+                         data-amenity-comments-url-value="{{ path('aureum_amenity_comments_list', { id: card.id }) }}"
+                         data-amenity-comments-card-id-value="{{ card.id }}"
+                         data-amenity-comments-csrf-token-value="{{ csrf_token(constant('Citadel\\Aureum\\Core\\Controller\\AmenityCardCommentController::CSRF_TOKEN_ID')) }}"
+                         data-amenity-comments-max-length-value="{{ constant('Citadel\\Aureum\\Core\\Service\\AmenityCardCommentService::MAX_LENGTH') }}"
+                         data-amenity-comments-read-only-value="{{ this.readOnly ? 'true' : 'false' }}">
+                        <h5>
+                            Comments
+                            <span class="comment-count" data-amenity-comments-target="count"></span>
+                        </h5>
+
+                        <ul class="comment-thread" data-amenity-comments-target="thread"></ul>
+
+                        <p class="comment-empty text-small" data-amenity-comments-target="empty" hidden>
+                            No comments yet — add the first one.
+                        </p>
+
                         {% if not this.readOnly %}
-                            <div class="amenity-comments__add">
-                                <textarea data-model="norender|commentBody" rows="2"
-                                          placeholder="Add a note for the team, e.g. guest out until 6pm..."></textarea>
-                                <button type="button" class="luxury-light square btn btn-primary"
-                                        data-action="live#action"
-                                        data-live-action-param="addComment"
-                                        data-live-card-id-param="{{ card.id }}">
-                                    <i class="ph ph-chat-circle"></i> Add note
-                                </button>
-                            </div>
+                            <form class="comment-composer" data-action="submit->amenity-comments#submit">
+                                <textarea
+                                        rows="2"
+                                        maxlength="{{ constant('Citadel\\Aureum\\Core\\Service\\AmenityCardCommentService::MAX_LENGTH') }}"
+                                        placeholder="Write a comment…"
+                                        aria-label="Write a comment"
+                                        data-amenity-comments-target="input"
+                                        data-action="keydown->amenity-comments#composerKeydown"
+                                ></textarea>
+                                <div class="comment-composer-actions">
+                                    <span class="text-small">Ctrl + Enter to post</span>
+                                    <button type="submit" class="btn btn-primary luxury-light square btn-small">Comment</button>
+                                </div>
+                            </form>
                         {% endif %}
+
+                        <p class="comment-error" data-amenity-comments-target="error" hidden></p>
                     </div>
 
                     {% if this.canManage %}

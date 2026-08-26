@@ -7,6 +7,7 @@ namespace Citadel\Aureum\Core\Service;
 use Citadel\Aureum\Core\Entity\AmenityCard;
 use Citadel\Aureum\Core\Entity\AmenityCardComment;
 use Citadel\Aureum\Core\Repository\AmenityCardCommentRepository;
+use DateTime;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -36,6 +37,24 @@ class AmenityCardCommentService
         $this->commentRepository->save($comment);
 
         return $comment;
+    }
+
+    /** @return array<AmenityCardComment> */
+    public function getComments(AmenityCard $card): array
+    {
+        return $this->commentRepository->findBy(['card' => $card], ['createdAt' => 'ASC']);
+    }
+
+    public function update(AmenityCardComment $comment, string $body): void
+    {
+        if (!$this->canModify($comment)) {
+            throw new AccessDeniedException('You cannot change this comment.');
+        }
+
+        $comment->setBody($body);
+        $comment->setEditedAt(new DateTime());
+
+        $this->commentRepository->save($comment);
     }
 
     public function delete(AmenityCardComment $comment): void

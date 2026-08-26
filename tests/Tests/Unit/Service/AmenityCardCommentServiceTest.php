@@ -66,6 +66,26 @@ class AmenityCardCommentServiceTest extends TestCase
         $service->delete($comment);
     }
 
+    public function testTheAuthorCanUpdateAndTheEditIsMarked(): void
+    {
+        $employee = $this->employee(1);
+        $comment = $this->comment($employee);
+        $comment->setBody('original');
+
+        $this->service($employee)->update($comment, 'corrected note');
+
+        self::assertSame('corrected note', $comment->getBody());
+        self::assertTrue($comment->isEdited());
+    }
+
+    public function testOthersCannotUpdate(): void
+    {
+        $comment = $this->comment($this->employee(1));
+
+        $this->expectException(AccessDeniedException::class);
+        $this->service($this->employee(2))->update($comment, 'hijacked');
+    }
+
     private function service(Employee $employee, bool $manager = false): AmenityCardCommentService
     {
         $aureumService = $this->createStub(AureumService::class);

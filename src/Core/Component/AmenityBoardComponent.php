@@ -6,14 +6,12 @@ namespace Citadel\Aureum\Core\Component;
 
 use Citadel\Aureum\Core\Entity\AmenityBoard;
 use Citadel\Aureum\Core\Entity\AmenityCard;
-use Citadel\Aureum\Core\Entity\AmenityCardComment;
 use Citadel\Aureum\Core\Entity\Enum\AmenityCardStatus;
 use Citadel\Aureum\Core\Form\AmenityCardType;
 use Citadel\Aureum\Core\Repository\AmenityBoardRepository;
 use Citadel\Aureum\Core\Repository\AmenityCardCommentRepository;
 use Citadel\Aureum\Core\Repository\AmenityCardRepository;
 use Citadel\Aureum\Core\Service\AmenityBoardService;
-use Citadel\Aureum\Core\Service\AmenityCardCommentService;
 use Citadel\Aureum\Core\Service\AureumService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,9 +45,6 @@ class AmenityBoardComponent extends AbstractController
     #[LiveProp]
     public ?int $viewCardId = null;
 
-    #[LiveProp(writable: true)]
-    public string $commentBody = '';
-
     private ?AmenityBoard $board = null;
 
     public function __construct(
@@ -57,7 +52,6 @@ class AmenityBoardComponent extends AbstractController
         private readonly AmenityBoardService $boardService,
         private readonly AmenityBoardRepository $boardRepository,
         private readonly AmenityCardRepository $cardRepository,
-        private readonly AmenityCardCommentService $commentService,
         private readonly AmenityCardCommentRepository $commentRepository,
     ) {
     }
@@ -97,48 +91,13 @@ class AmenityBoardComponent extends AbstractController
 
         $this->editCardId = null;
         $this->createStatus = null;
-        $this->commentBody = '';
         $this->viewCardId = $cardId;
-    }
-
-    #[LiveAction]
-    public function addComment(#[LiveArg] int $cardId): void
-    {
-        $this->denyUnlessActive();
-        $card = $this->findCard($cardId);
-        if ($card === null) {
-            return;
-        }
-
-        $this->commentService->add($card, $this->commentBody);
-        $this->commentBody = '';
-    }
-
-    #[LiveAction]
-    public function deleteComment(#[LiveArg] int $commentId): void
-    {
-        $comment = $this->commentRepository->find($commentId);
-        if ($comment === null || $comment->getCard()->getBoard()->getId() !== $this->getBoard()->getId()) {
-            return;
-        }
-
-        $this->commentService->delete($comment);
-    }
-
-    public function canModifyComment(AmenityCardComment $comment): bool
-    {
-        return $this->commentService->canModify($comment);
     }
 
     /** @return array<int, int> */
     public function getCommentCounts(): array
     {
         return $this->commentRepository->countByBoard($this->getBoard());
-    }
-
-    public function getUserTimezone(): string
-    {
-        return $this->aureumService->getEmployee()?->getUser()?->getTimezone() ?? 'UTC';
     }
 
     #[LiveAction]
@@ -194,7 +153,6 @@ class AmenityBoardComponent extends AbstractController
         $this->createStatus = null;
         $this->editCardId = null;
         $this->viewCardId = null;
-        $this->commentBody = '';
         $this->isValidated = false;
         $this->validatedFields = [];
         $this->resetForm();
