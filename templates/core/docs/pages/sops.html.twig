@@ -1,0 +1,28 @@
+{% extends '@CitadelAureum/core/docs/layout.html.twig' %}
+
+{% block article %}
+    <p>
+        SOPs brings every Standard Operating Procedure into one searchable
+        library, replacing scattered folders and paper binders. Each procedure
+        is written in the rich-text editor, belongs to a category, and carries
+        a version number, an audience, and an optional recheck cycle.
+    </p>
+
+    <h2>Common tasks</h2>
+    <ol class="au-docs-steps">
+        <li>Managers create a procedure with <strong>New SOP</strong>, pick which roles it applies to (leave empty for everyone), and either save it as a draft or publish it.</li>
+        <li>Everyone in the audience sees it under <strong>Needs your attention</strong> until they press <strong>I have read and understood</strong>. The sign-off records the version and time.</li>
+        <li>If a recheck period is set, sign-offs lapse after that many months and the procedure resurfaces on each person's dashboard.</li>
+        <li>When editing a published SOP you choose whether it is a <strong>minor correction</strong> (sign-offs stand) or a <strong>new version</strong> (everyone signs again).</li>
+        <li>The <strong>Compliance</strong> view on each SOP shows who is current, who is awaiting sign-off, and who is due a recheck, with the full sign-off history underneath.</li>
+        <li><strong>Export PDF</strong> produces the procedure as a document with the employee sign-off record always on the last page, ready for an auditor or a paper binder.</li>
+    </ol>
+
+    <div class="au-docs-note">
+        <i class="ph ph-info"></i>
+        <p>
+            Sign-off records are never edited or deleted. They are your
+            evidence that staff have read the procedures that apply to them.
+        </p>
+    </div>
+{% endblock %}
