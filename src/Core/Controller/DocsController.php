@@ -51,6 +51,12 @@ class DocsController extends AbstractController
             'section' => 'Modules',
             'permission' => 'aureum.module.events.view',
         ],
+        'amenities' => [
+            'title' => 'Amenities',
+            'summary' => 'The daily amenities board, from the manager\'s list to delivered.',
+            'section' => 'Modules',
+            'permission' => 'aureum.module.amenities.view',
+        ],
         'packages' => [
             'title' => 'Packages',
             'summary' => 'Log guest deliveries and hand them over.',

@@ -30,6 +30,20 @@
         "fetch": "eager",
         "enabled": true,
         "autoimport": {}
+      },
+      "amenity-board": {
+        "main": "dist/amenity_board_controller.js",
+        "name": "amenity-board",
+        "fetch": "eager",
+        "enabled": true,
+        "autoimport": {}
+      },
+      "amenity-comments": {
+        "main": "dist/amenity_comments_controller.js",
+        "name": "amenity-comments",
+        "fetch": "eager",
+        "enabled": true,
+        "autoimport": {}
       }
     },
     "importmap": {

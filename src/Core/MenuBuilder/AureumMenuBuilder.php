@@ -36,6 +36,10 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
                 'icon' => 'ph ph-article',
                 'permission' => 'aureum.module.fines.view',
             ]),
+            new MenuItem('Amenities', $url('aureum_amenities_index'), [
+                'icon' => 'ph ph-gift',
+                'permission' => 'aureum.module.amenities.view',
+            ]),
         ]);
 
         $menu->addItem($general);

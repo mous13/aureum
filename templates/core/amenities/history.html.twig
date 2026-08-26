@@ -1,0 +1,48 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title %}Previous amenity boards - Aureum{% endblock %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="icon ph ph-clock-counter-clockwise"></i>
+                Previous amenity boards
+            </div>
+            <a href="{{ path('aureum_amenities_index') }}" class="btn-link luxury-light square">
+                <i class="ph ph-arrow-left"></i> Back to board
+            </a>
+        </div>
+        <div class="card-body">
+            {% if boards is empty %}
+                <p>No boards have been started yet.</p>
+            {% else %}
+                <table class="table w-100">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Rooms</th>
+                            <th>Completed</th>
+                            <th>Started by</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for board in boards %}
+                            {% set completed = board.cards|filter(c => c.status.value == 'completed')|length %}
+                            <tr>
+                                <td>{{ board.date|date('D j M Y') }}</td>
+                                <td>{{ board.cards|length }}</td>
+                                <td>{{ completed }} of {{ board.cards|length }}</td>
+                                <td>{{ board.createdBy.name }}</td>
+                                <td class="text-right">
+                                    <a href="{{ path('aureum_amenities_board', { id: board.id }) }}" class="btn-link luxury-light square">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
