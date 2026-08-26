@@ -19,10 +19,12 @@ final class AccessLogSubscriber
         'aureum_bookings' => Module::BOOKINGS,
         'aureum_packages' => Module::PACKAGES,
         'aureum_fines' => Module::FINES,
+        'aureum_amenities' => Module::AMENITIES,
     ];
 
     private const COMPONENT_MODULES = [
         'Aureum\\BookingTable' => Module::BOOKINGS,
+        'Aureum\\AmenityBoard' => Module::AMENITIES,
     ];
 
     public function __construct(
