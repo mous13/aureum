@@ -7,6 +7,7 @@ import "../styles/form-panel.css";
 import "../styles/bookings.css";
 import "../styles/docs.css";
 import "../styles/amenities.css";
+import "../styles/sops.css";
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {

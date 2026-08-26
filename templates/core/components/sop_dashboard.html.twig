@@ -1,0 +1,115 @@
+<div {{ attributes }}>
+    <div class="card">
+        <div class="card-title luxury items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="icon ph ph-books"></i>
+                Standard Operating Procedures
+            </div>
+            {% if this.canManage %}
+                <div class="flex items-center gap-2">
+                    <form method="get" action="{{ path('aureum_sop_categories_list') }}">
+                        <button type="submit" class="luxury-light square btn btn-primary">
+                            <i class="ph ph-bookmarks"></i> Categories
+                        </button>
+                    </form>
+                    <form method="get" action="{{ path('aureum_sops_new') }}">
+                        <button type="submit" class="luxury-light square btn btn-primary">
+                            <i class="ph ph-plus"></i> New SOP
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            {% set attention = this.attention %}
+            {% if attention is not empty %}
+                <p class="sop-section-label">Needs your attention ({{ attention|length }})</p>
+                <div class="sop-attention">
+                    {% for item in attention %}
+                        <a class="sop-attention__item" href="{{ path('aureum_sops_view', { id: item.sop.id }) }}">
+                            <span>
+                                <span class="sop-attention__title">{{ item.sop.title }}</span>
+                                <span class="sop-attention__meta">
+                                    {% if item.standing.value == 'sign_off_needed' %}
+                                        Version {{ item.sop.version }} published {{ item.sop.updatedAt|date('j M') }}
+                                    {% else %}
+                                        Rechecked every {{ item.sop.recheckMonths }} month{{ item.sop.recheckMonths > 1 ? 's' }}
+                                    {% endif %}
+                                    {% if item.sop.category %} &middot; {{ item.sop.category.name }}{% endif %}
+                                </span>
+                            </span>
+                            {% if item.standing.value == 'sign_off_needed' %}
+                                <span class="sop-chip sop-chip--sign">{{ item.sop.version > 1 ? 'New version - sign off' : 'Sign off' }}</span>
+                            {% else %}
+                                <span class="sop-chip sop-chip--recheck">Recheck due</span>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="sop-toolbar">
+                <input type="search" data-model="debounce(300)|search"
+                       placeholder="Search procedures, e.g. 'refund', 'fire', 'VIP arrival'..." value="{{ this.search }}">
+                <div class="sop-cat">
+                    <button type="button" class="{{ this.categoryId is null ? 'active' }}"
+                            data-action="live#action" data-live-action-param="setCategory">All</button>
+                    {% for category in this.categories %}
+                        <button type="button" class="{{ this.categoryId == category.id ? 'active' }}"
+                                data-action="live#action" data-live-action-param="setCategory"
+                                data-live-category-id-param="{{ category.id }}">{{ category.name }}</button>
+                    {% endfor %}
+                </div>
+                {% if this.canManage %}
+                    <label class="sop-toolbar__archived">
+                        <input type="checkbox" data-model="showArchived"> Archived
+                    </label>
+                {% endif %}
+            </div>
+
+            <div class="sop-list" data-loading="addClass(sop-list--loading)">
+                {% set complianceCounts = this.canManage ? this.complianceCounts : {} %}
+                {% for row in this.rows %}
+                    <div class="sop-row">
+                        <a class="sop-row__main" href="{{ path('aureum_sops_view', { id: row.sop.id }) }}">
+                            <span class="sop-row__title">{{ row.sop.title }}</span>
+                            <span class="sop-row__cat">{{ row.sop.category ? row.sop.category.name : 'Uncategorised' }}</span>
+                            <span class="sop-row__ver">v{{ row.sop.version }} &middot; {{ row.sop.updatedAt|date('j M') }}</span>
+                            {% if row.sop.status.value == 'draft' %}
+                                <span class="sop-chip sop-chip--draft">Draft</span>
+                            {% elseif row.sop.status.value == 'archived' %}
+                                <span class="sop-chip sop-chip--draft">Archived</span>
+                            {% elseif row.standing.value == 'sign_off_needed' %}
+                                <span class="sop-chip sop-chip--sign">Sign off</span>
+                            {% elseif row.standing.value == 'recheck_due' %}
+                                <span class="sop-chip sop-chip--recheck">Recheck due</span>
+                            {% elseif row.standing.value == 'current' %}
+                                <span class="sop-chip sop-chip--current">Current</span>
+                            {% else %}
+                                <span class="sop-chip sop-chip--draft">Reference</span>
+                            {% endif %}
+                        </a>
+                        {% if complianceCounts[row.sop.id] is defined %}
+                            {% set cc = complianceCounts[row.sop.id] %}
+                            <a class="sop-row__compliance {{ cc.signed < cc.expected ? 'sop-row__compliance--missing' }}"
+                               href="{{ path('aureum_sops_compliance', { id: row.sop.id }) }}"
+                               title="{{ cc.expected - cc.signed }} missing - open compliance">
+                                {{ cc.signed }}/{{ cc.expected }} signed
+                            </a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="sop-list__empty">
+                        {% if this.search != '' or this.categoryId is not null %}
+                            Nothing matches your search.
+                        {% elseif this.canManage %}
+                            No SOPs yet. Create the first one with the New SOP button.
+                        {% else %}
+                            No SOPs have been published yet.
+                        {% endif %}
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
