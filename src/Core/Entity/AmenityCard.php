@@ -119,13 +119,13 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
         $this->guestLastName = $guestLastName;
     }
 
-    /** @return array<array{label: string, done: bool, priority: bool}> */
+    /** @return array<array{label: string, done: bool}> */
     public function getItems(): array
     {
         return $this->normaliseItems($this->items);
     }
 
-    /** @param array<array{label?: mixed, done?: mixed, priority?: mixed}> $items */
+    /** @param array<array{label?: mixed, done?: mixed}> $items */
     public function setItems(array $items): void
     {
         $this->items = $this->normaliseItems($items);
@@ -133,12 +133,7 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
 
     public function getItemsText(): string
     {
-        $lines = [];
-        foreach ($this->getItems() as $item) {
-            $lines[] = ($item['priority'] ? '!' : '') . $item['label'];
-        }
-
-        return implode("\n", $lines);
+        return implode("\n", array_column($this->getItems(), 'label'));
     }
 
     public function setItemsText(?string $text): void
@@ -150,14 +145,12 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
 
         $items = [];
         foreach (preg_split('/\R/', $text ?? '') ?: [] as $line) {
-            $line = trim($line);
-            $priority = str_starts_with($line, '!');
-            $label = trim($priority ? substr($line, 1) : $line);
+            $label = trim($line);
             if ($label === '') {
                 continue;
             }
 
-            $items[] = ['label' => $label, 'done' => $doneByLabel[$label] ?? false, 'priority' => $priority];
+            $items[] = ['label' => $label, 'done' => $doneByLabel[$label] ?? false];
         }
 
         $this->items = $items;
@@ -174,25 +167,14 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
         $this->items = $items;
     }
 
-    public function togglePriority(int $index): void
-    {
-        $items = $this->getItems();
-        if (!isset($items[$index])) {
-            return;
-        }
-
-        $items[$index]['priority'] = !$items[$index]['priority'];
-        $this->items = $items;
-    }
-
     public function getDoneCount(): int
     {
         return count(array_filter(array_column($this->items, 'done')));
     }
 
     /**
-     * @param array<array{label?: mixed, done?: mixed, priority?: mixed}> $items
-     * @return array<array{label: string, done: bool, priority: bool}>
+     * @param array<array{label?: mixed, done?: mixed}> $items
+     * @return array<array{label: string, done: bool}>
      */
     private function normaliseItems(array $items): array
     {
@@ -203,11 +185,7 @@ class AmenityCard implements HotelOwnedInterface, AnonymisableInterface
                 continue;
             }
 
-            $normalised[] = [
-                'label' => $label,
-                'done' => (bool)($item['done'] ?? false),
-                'priority' => (bool)($item['priority'] ?? false),
-            ];
+            $normalised[] = ['label' => $label, 'done' => (bool)($item['done'] ?? false)];
         }
 
         return $normalised;

@@ -46,9 +46,7 @@
                             <div class="card-body amenity-card__body">
                                 <p class="amenity-card__summary">
                                     {%- for item in card.items -%}
-                                        <span class="{{ item.done ? 'amenity-card__summary-item--done' }} {{ item.priority ? 'amenity-card__summary-item--priority' }}">
-                                            {{- item.priority ? '! ' -}}{{- item.label -}}
-                                        </span>
+                                        <span class="{{ item.done ? 'amenity-card__summary-item--done' }}">{{- item.label -}}</span>
                                         {{- not loop.last ? ', ' -}}
                                     {%- endfor -%}
                                 </p>
@@ -105,19 +103,6 @@
                                            {% endif %}>
                                     <span>{{ item.label }}</span>
                                 </label>
-                                {% if this.canManage %}
-                                    <button type="button"
-                                            class="btn-icon btn-link amenity-checklist__flag {{ item.priority ? 'amenity-checklist__flag--on' }}"
-                                            title="{{ item.priority ? 'Remove priority' : 'Mark as priority' }}"
-                                            data-action="live#action"
-                                            data-live-action-param="togglePriority"
-                                            data-live-card-id-param="{{ card.id }}"
-                                            data-live-index-param="{{ loop.index0 }}">
-                                        <i class="ph {{ item.priority ? 'ph-fill' }} ph-flag"></i>
-                                    </button>
-                                {% elseif item.priority %}
-                                    <i class="ph ph-fill ph-flag amenity-checklist__flag amenity-checklist__flag--on"></i>
-                                {% endif %}
                             </li>
                         {% endfor %}
                     </ul>

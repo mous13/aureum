@@ -144,11 +144,6 @@
     color: var(--au-muted);
 }
 
-.amenity-card__summary-item--priority {
-    color: var(--au-accent-deep);
-    font-weight: 600;
-}
-
 .amenity-detail__status {
     font-size: var(--au-text-sm);
     color: var(--au-muted);
@@ -179,15 +174,6 @@
     cursor: pointer;
     overflow-wrap: anywhere;
     flex-grow: 1;
-}
-
-.amenity-checklist__flag {
-    color: var(--au-muted);
-    flex-shrink: 0;
-}
-
-.amenity-checklist__flag--on {
-    color: var(--au-accent-deep);
 }
 
 .amenity-checklist__item input[type="checkbox"] {
