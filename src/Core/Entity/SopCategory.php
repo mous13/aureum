@@ -24,9 +24,9 @@ class SopCategory implements HotelOwnedInterface
     #[Assert\Length(max: 100)]
     private string $name = '';
 
-    public function getHotel(): Hotel
+    public function getHotel(): ?Hotel
     {
-        return $this->hotel;
+        return $this->hotel ?? null;
     }
 
     public function setHotel(Hotel $hotel): void
