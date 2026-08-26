@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+    body { font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; color: #222; margin: 0; }
+    h1 { font-size: 18pt; margin: 0 0 4pt; }
+    h2 { font-size: 12pt; margin: 14pt 0 4pt; }
+    p, li { line-height: 1.5; }
+    .meta { color: #666; font-size: 9pt; border-bottom: 1pt solid #ccc; padding-bottom: 8pt; margin-bottom: 12pt; }
+    .signoff-page { page-break-before: always; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8pt; }
+    th { text-align: left; font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.5pt; color: #666; border-bottom: 1pt solid #999; padding: 4pt 6pt; }
+    td { border-bottom: 0.5pt solid #ddd; padding: 4pt 6pt; font-size: 9.5pt; }
+    .chip { font-size: 8.5pt; font-weight: bold; }
+    .chip--current { color: #1d7a46; }
+    .chip--sign { color: #b3261e; }
+    .chip--recheck { color: #9a6b00; }
+    .footer { margin-top: 16pt; color: #888; font-size: 8pt; border-top: 0.5pt solid #ccc; padding-top: 6pt; }
+</style>
+</head>
+<body>
+    <h1>{{ sop.title }}</h1>
+    <p class="meta">
+        {{ sop.category ? sop.category.name : 'Uncategorised' }}
+        &middot; Version {{ sop.version }}
+        &middot; {{ sop.status.label }}
+        &middot; Updated {{ sop.updatedAt|date('j F Y', userTimezone) }}{% if sop.updatedBy %} by {{ sop.updatedBy.name }}{% endif %}
+        {% if sop.recheckMonths %}
+            &middot; Recheck every {{ sop.recheckMonths }} month{{ sop.recheckMonths > 1 ? 's' }}
+        {% endif %}
+    </p>
+
+    {{ body|raw }}
+
+    <div class="signoff-page">
+        <h1>Employee sign-off record</h1>
+        <p class="meta">
+            {{ sop.title }} &middot; Version {{ sop.version }}
+            &middot; {{ counts['current'] }} current
+            &middot; {{ counts['sign_off_needed'] }} awaiting sign-off
+            &middot; {{ counts['recheck_due'] }} recheck due
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Standing</th>
+                    <th>Signed version</th>
+                    <th>Signed at</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>{{ row.employee.name }}</td>
+                        <td>
+                            {% if row.standing.value == 'current' %}
+                                <span class="chip chip--current">Current</span>
+                            {% elseif row.standing.value == 'recheck_due' %}
+                                <span class="chip chip--recheck">Recheck due</span>
+                            {% elseif row.standing.value == 'sign_off_needed' %}
+                                <span class="chip chip--sign">Awaiting sign-off</span>
+                            {% else %}
+                                <span class="chip">Not required</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ row.signOff ? 'v' ~ row.signOff.version : '-' }}</td>
+                        <td>{{ row.signOff ? row.signOff.signedAt|date('j M Y H:i', userTimezone) : '-' }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="4">No employees are in this SOP's audience.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if history is not empty %}
+            <h2>Full sign-off history</h2>
+            <table>
+                <thead>
+                    <tr><th>Employee</th><th>Version</th><th>Signed at</th></tr>
+                </thead>
+                <tbody>
+                    {% for signOff in history %}
+                        <tr>
+                            <td>{{ signOff.employee.name }}</td>
+                            <td>v{{ signOff.version }}</td>
+                            <td>{{ signOff.signedAt|date('j M Y H:i', userTimezone) }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        <p class="footer">
+            Exported {{ exportedAt|date('j F Y H:i', userTimezone) }} by {{ exportedBy }}.
+            Sign-off records are recorded digitally in Aureum and are never edited or deleted.
+        </p>
+    </div>
+</body>
+</html>

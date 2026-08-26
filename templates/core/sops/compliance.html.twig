@@ -1,0 +1,78 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title %}Compliance - {{ sop.title }} - Aureum{% endblock %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="icon ph ph-list-checks"></i>
+                Compliance - {{ sop.title }}
+            </div>
+            <div class="flex items-center gap-2">
+                <form method="get" action="{{ path('aureum_sops_export', { id: sop.id }) }}">
+                    <button type="submit" class="luxury-light square btn btn-primary">
+                        <i class="ph ph-file-pdf"></i> Export PDF
+                    </button>
+                </form>
+                <form method="get" action="{{ path('aureum_sops_view', { id: sop.id }) }}">
+                    <button type="submit" class="luxury-light square btn btn-primary">
+                        <i class="ph ph-arrow-left"></i> Back to SOP
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="sop-doc__meta">
+                Version {{ sop.version }} &middot; {{ sop.status.label }}
+                &middot; <span class="sop-chip sop-chip--current">{{ counts['current'] }} current</span>
+                <span class="sop-chip sop-chip--sign">{{ counts['sign_off_needed'] }} awaiting sign-off</span>
+                <span class="sop-chip sop-chip--recheck">{{ counts['recheck_due'] }} recheck due</span>
+            </p>
+
+            <table class="table w-100">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Standing</th>
+                        <th>Signed version</th>
+                        <th>Signed at</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            <td>{{ row.employee.name }}</td>
+                            <td>
+                                {% include '@CitadelAureum/core/sops/blocks/standing_chip.html.twig' with {
+                                    standing: row.standing,
+                                    label: row.standing.value == 'sign_off_needed' ? 'Awaiting sign-off' : null,
+                                } only %}
+                            </td>
+                            <td>{{ row.signOff ? 'v' ~ row.signOff.version : '-' }}</td>
+                            <td>{{ row.signOff ? row.signOff.signedAt|date('j M Y H:i', userTimezone) : '-' }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="4">No employees are in this SOP's audience.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if history is not empty %}
+                <p class="sop-section-label mt-4">Full sign-off history</p>
+                <table class="table w-100">
+                    <thead>
+                        <tr><th>Employee</th><th>Version</th><th>Signed at</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for signOff in history %}
+                            <tr>
+                                <td>{{ signOff.employee.name }}</td>
+                                <td>v{{ signOff.version }}</td>
+                                <td>{{ signOff.signedAt|date('j M Y H:i', userTimezone) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

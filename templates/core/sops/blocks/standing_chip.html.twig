@@ -1,0 +1,7 @@
+{% set chipClasses = {
+    'sign_off_needed': 'sop-chip--sign',
+    'recheck_due': 'sop-chip--recheck',
+    'current': 'sop-chip--current',
+    'not_applicable': 'sop-chip--draft',
+} %}
+<span class="sop-chip {{ chipClasses[standing.value] }}">{{ label ?? standing.label }}</span>

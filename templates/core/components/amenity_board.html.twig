@@ -1,0 +1,232 @@
+<div {{ attributes }}>
+    <div class="flex items-center justify-between mb-2">
+        <p class="amenity-progress">
+            {{ this.completedCount }} of {{ this.totalCount }} completed
+        </p>
+        <span class="amenity-progress__hint" data-loading="show">Saving...</span>
+    </div>
+
+    {% set commentCounts = this.commentCounts %}
+    <div class="amenity-board" {% if not this.readOnly %}data-controller="amenity-board"{% endif %}>
+        {% for column in this.columns %}
+            <div class="amenity-column amenity-column--{{ column.status.value }}">
+                <div class="amenity-column__header">
+                    <span class="amenity-column__title">{{ column.status.label }}</span>
+                    <span class="amenity-column__count">{{ column.cards|length }}</span>
+                    {% if this.canManage %}
+                        <button type="button" class="btn-icon btn-link" title="Add room"
+                                data-action="live#action"
+                                data-live-action-param="openCreate"
+                                data-live-status-param="{{ column.status.value }}">
+                            <i class="ph ph-plus"></i>
+                        </button>
+                    {% endif %}
+                </div>
+                <div class="amenity-column__cards"
+                     data-amenity-board-target="column"
+                     data-status="{{ column.status.value }}">
+                    {% for card in column.cards %}
+                        <div class="card amenity-card {{ card.status.value == 'completed' ? 'amenity-card--completed' }} {{ card.priority ? 'amenity-card--priority' }}"
+                             data-action="click->live#action"
+                             data-live-action-param="openCard"
+                             data-live-card-id-param="{{ card.id }}"
+                             {% if not this.readOnly %}draggable="true" data-amenity-board-target="card" data-card-id="{{ card.id }}"{% endif %}>
+                            <div class="card-title amenity-card__title">
+                                <span class="amenity-card__name">
+                                    {%- if card.priority %}<i class="ph ph-fill ph-flag amenity-card__flag"></i> {% endif -%}
+                                    Room {{ card.roomNumber }} - {{ card.guestLastName ?? '[removed]' }}
+                                </span>
+                                <span class="amenity-card__actions">
+                                    {% if not this.readOnly and card.status.next is not null %}
+                                        <button type="button" class="btn-icon btn-link" title="Move to {{ card.status.next.label }}"
+                                                data-action="live#action:stop"
+                                                data-live-action-param="advanceCard"
+                                                data-live-card-id-param="{{ card.id }}">
+                                            <i class="ph ph-arrow-right"></i>
+                                        </button>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="card-body amenity-card__body">
+                                <p class="amenity-card__summary">
+                                    {%- for item in card.items -%}
+                                        <span class="{{ item.done ? 'amenity-card__summary-item--done' }}">{{- item.label -}}</span>
+                                        {{- not loop.last ? ', ' -}}
+                                    {%- endfor -%}
+                                </p>
+                                <p class="amenity-card__progress {{ card.doneCount == card.items|length and card.items|length > 0 ? 'amenity-card__progress--full' }}">
+                                    {% if card.items|length > 0 %}
+                                        <i class="ph ph-check-square"></i> {{ card.doneCount }}/{{ card.items|length }}
+                                    {% endif %}
+                                    <span class="amenity-card__notes" data-card-comment-badge="{{ card.id }}"
+                                          {{ commentCounts[card.id] is not defined ? 'hidden' }}>
+                                        <i class="ph ph-chat-circle-dots"></i> <span data-comment-count-text>{{ commentCounts[card.id] ?? '' }}</span>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    {% else %}
+                        {% if column.status.value == 'not_started' and this.totalCount == 0 %}
+                            <p class="amenity-column__empty">
+                                {{ this.canManage ? 'Add the first room with the + button above.' : 'Nothing on the board yet.' }}
+                            </p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if this.viewCardId is not null and this.viewCard is not null %}
+        {% set card = this.viewCard %}
+        <div class="modal open" role="dialog" aria-modal="true" aria-label="Room {{ card.roomNumber }}"
+             data-action="click->live#action:self" data-live-action-param="closeModal">
+            <div class="modal-body">
+                <div class="card amenity-modal">
+                <div class="card-title luxury items-center justify-between">
+                    <span>
+                        {%- if card.priority %}<i class="ph ph-fill ph-flag amenity-card__flag"></i> {% endif -%}
+                        Room {{ card.roomNumber }} - {{ card.guestLastName ?? '[removed]' }}
+                    </span>
+                    <button type="button" class="btn-icon btn-link" title="Close"
+                            data-action="live#action" data-live-action-param="closeModal">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <p class="amenity-detail__status">
+                        {{ card.status.label }}
+                        {% if card.priority %}
+                            &middot; <span class="amenity-detail__priority">Priority</span>
+                        {% endif %}
+                        {% if card.items|length > 0 %}
+                            &middot; {{ card.doneCount }}/{{ card.items|length }} collected
+                        {% endif %}
+                    </p>
+                    <ul class="amenity-checklist">
+                        {% for item in card.items %}
+                            <li class="amenity-checklist__item {{ item.done ? 'amenity-checklist__item--done' }}">
+                                <label>
+                                    <input type="checkbox"
+                                           {{ item.done ? 'checked' }}
+                                           {% if this.readOnly %}
+                                               disabled
+                                           {% else %}
+                                               data-action="change->live#action"
+                                               data-live-action-param="toggleItem"
+                                               data-live-card-id-param="{{ card.id }}"
+                                               data-live-index-param="{{ loop.index0 }}"
+                                           {% endif %}>
+                                    <span>{{ item.label }}</span>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div class="room-modal-comments" data-live-ignore
+                         data-controller="amenity-comments"
+                         data-amenity-comments-url-value="{{ path('aureum_amenity_comments_list', { id: card.id }) }}"
+                         data-amenity-comments-card-id-value="{{ card.id }}"
+                         data-amenity-comments-csrf-token-value="{{ csrf_token(constant('Citadel\\Aureum\\Core\\Controller\\AmenityCardCommentController::CSRF_TOKEN_ID')) }}"
+                         data-amenity-comments-max-length-value="{{ constant('Citadel\\Aureum\\Core\\Service\\AmenityCardCommentService::MAX_LENGTH') }}"
+                         data-amenity-comments-read-only-value="{{ this.readOnly ? 'true' : 'false' }}">
+                        <h5>
+                            Comments
+                            <span class="comment-count" data-amenity-comments-target="count"></span>
+                        </h5>
+
+                        <ul class="comment-thread" data-amenity-comments-target="thread"></ul>
+
+                        <p class="comment-empty text-small" data-amenity-comments-target="empty" hidden>
+                            No comments yet — add the first one.
+                        </p>
+
+                        {% if not this.readOnly %}
+                            <form class="comment-composer" data-action="submit->amenity-comments#submit">
+                                <textarea
+                                        rows="2"
+                                        maxlength="{{ constant('Citadel\\Aureum\\Core\\Service\\AmenityCardCommentService::MAX_LENGTH') }}"
+                                        placeholder="Write a comment…"
+                                        aria-label="Write a comment"
+                                        data-amenity-comments-target="input"
+                                        data-action="keydown->amenity-comments#composerKeydown"
+                                ></textarea>
+                                <div class="comment-composer-actions">
+                                    <span class="text-small">Ctrl + Enter to post</span>
+                                    <button type="submit" class="btn btn-primary luxury-light square btn-small">Comment</button>
+                                </div>
+                            </form>
+                        {% endif %}
+
+                        <p class="comment-error" data-amenity-comments-target="error" hidden></p>
+                    </div>
+
+                    {% if this.canManage %}
+                        <div class="flex gap-2 justify-end mt-4">
+                            <button type="button" class="btn btn-outlined amenity-detail__priority-toggle {{ card.priority ? 'amenity-detail__priority-toggle--on' }}"
+                                    data-action="live#action"
+                                    data-live-action-param="togglePriority"
+                                    data-live-card-id-param="{{ card.id }}">
+                                <i class="ph {{ card.priority ? 'ph-fill' }} ph-flag"></i>
+                                {{ card.priority ? 'Remove priority' : 'Mark priority' }}
+                            </button>
+                            <button type="button" class="luxury-light square btn btn-primary"
+                                    data-action="live#action"
+                                    data-live-action-param="openEdit"
+                                    data-live-card-id-param="{{ card.id }}">
+                                <i class="ph ph-pencil-simple"></i> Edit
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if this.createStatus is not null or this.editCardId is not null %}
+        <div class="modal open" role="dialog" aria-modal="true" aria-label="{{ this.editCardId ? 'Edit card' : 'New card' }}"
+             data-action="click->live#action:self" data-live-action-param="closeModal">
+            <div class="modal-body">
+                <div class="card amenity-modal">
+                <div class="card-title luxury items-center justify-between">
+                    {% if this.editCardId %}
+                        Edit Card - Room {{ this.editCard ? this.editCard.roomNumber : '' }}
+                    {% else %}
+                        New Card
+                    {% endif %}
+                    <button type="button" class="btn-icon btn-link" title="Close"
+                            data-action="live#action" data-live-action-param="closeModal">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, { attr: { 'data-action': 'live#action:prevent', 'data-live-action-param': 'save' } }) }}
+                    <div class="flex gap-2 mb-2">
+                        {{ form_row(form.roomNumber) }}
+                        {{ form_row(form.guestLastName) }}
+                    </div>
+                    <div class="mb-2">
+                        {{ form_row(form.items) }}
+                        {{ form_row(form.status) }}
+                    </div>
+                    <div class="flex gap-2 justify-end">
+                        <button type="submit" class="luxury-light square btn btn-primary">
+                            {{ this.editCardId ? 'Save changes' : 'Add card' }}
+                        </button>
+                        {% if this.editCardId %}
+                            <button type="button" class="btn btn-outlined"
+                                    data-action="live#action"
+                                    data-live-action-param="delete"
+                                    data-live-confirm-param="Delete this card? This cannot be undone.">
+                                <i class="ph ph-trash"></i> Delete
+                            </button>
+                        {% endif %}
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>

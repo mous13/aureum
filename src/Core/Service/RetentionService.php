@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Service;
 
+use Citadel\Aureum\Core\Entity\AmenityCard;
 use Citadel\Aureum\Core\Entity\AnonymisableInterface;
 use Citadel\Aureum\Core\Entity\Enum\Module;
 use Citadel\Aureum\Core\Entity\Fine;
@@ -25,6 +26,7 @@ class RetentionService
         Module::PACKAGES->value => [Package::class, 'createdAt'],
         Module::LOST_PROPERTY->value => [LostProperty::class, 'createdAt'],
         Module::BOOKINGS->value => [Booking::class, 'date'],
+        Module::AMENITIES->value => [AmenityCard::class, 'createdAt'],
     ];
 
     private const LOG_TABLES = [

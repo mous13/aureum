@@ -7,6 +7,7 @@
   "license": "proprietary",
   "require": {
     "php": ">=8.4",
+    "dompdf/dompdf": "^3.1",
     "forumify/forumify-platform": "^1.2"
   },
   "require-dev": {

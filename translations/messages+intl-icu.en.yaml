@@ -14,6 +14,12 @@ aureum:
         crud:
           single: 'cuisine'
           plural: 'cuisines'
+  sop_category:
+    admin:
+      sop_category:
+        crud:
+          single: 'SOP category'
+          plural: 'SOP categories'
   tag:
     admin:
       tag:

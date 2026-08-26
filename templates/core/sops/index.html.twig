@@ -1,0 +1,6 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title %}SOPs - Aureum{% endblock %}
+{% block body %}
+    {{ component('Aureum\\Announcements', { module: 'sops' }) }}
+    {{ component('Aureum\\SopDashboard') }}
+{% endblock %}
