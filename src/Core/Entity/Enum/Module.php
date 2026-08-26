@@ -14,6 +14,7 @@ enum Module: string
     case ROOMS = 'rooms';
     case EVENTS = 'events';
     case AMENITIES = 'amenities';
+    case SOPS = 'sops';
 
     public function getLabel(): string
     {
@@ -26,6 +27,7 @@ enum Module: string
             self::ROOMS => 'Rooms Directory',
             self::EVENTS => 'Events',
             self::AMENITIES => 'Amenities',
+            self::SOPS => 'SOPs',
         };
     }
 
