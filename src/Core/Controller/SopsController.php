@@ -16,6 +16,9 @@ use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\SopStandingService;
 use DateTime;
 use DateTimeImmutable;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Forumify\Core\Service\HTMLSanitizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +35,7 @@ class SopsController extends AbstractController
         private readonly SopSignOffRepository $signOffRepository,
         private readonly SopStandingService $standingService,
         private readonly EmployeeRepository $employeeRepository,
+        private readonly HTMLSanitizer $sanitizer,
     ) {
     }
 
@@ -127,6 +131,47 @@ class SopsController extends AbstractController
     public function compliance(int $id): Response
     {
         $sop = $this->findSop($id);
+
+        return $this->render('@CitadelAureum/core/sops/compliance.html.twig', [
+            'sop' => $sop,
+            'userTimezone' => $this->userTimezone(),
+        ] + $this->complianceData($sop));
+    }
+
+    #[Route('/sop/{id}/export', name: 'export', requirements: ['id' => '\d+'])]
+    #[IsGranted('aureum.module.sops.manage')]
+    public function export(int $id): Response
+    {
+        $sop = $this->findSop($id);
+
+        $html = $this->renderView('@CitadelAureum/core/sops/pdf.html.twig', [
+            'sop' => $sop,
+            'body' => $this->sanitizer->sanitize($sop->getBody()),
+            'userTimezone' => $this->userTimezone(),
+            'exportedBy' => $this->aureumService->getEmployee()->getName(),
+            'exportedAt' => new DateTimeImmutable(),
+        ] + $this->complianceData($sop));
+
+        $dompdf = new Dompdf(new Options([
+            'isRemoteEnabled' => false,
+            'isPhpEnabled' => false,
+            'defaultFont' => 'DejaVu Sans',
+        ]));
+        $dompdf->loadHtml($html, 'UTF-8');
+        $dompdf->setPaper('A4');
+        $dompdf->render();
+
+        $slug = strtolower(trim((string)preg_replace('/[^A-Za-z0-9]+/', '-', $sop->getTitle()), '-'));
+
+        return new Response((string)$dompdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => "attachment; filename=\"sop-{$slug}-v{$sop->getVersion()}.pdf\"",
+        ]);
+    }
+
+    /** @return array{rows: array<array{employee: \Citadel\Aureum\Core\Entity\Employee, standing: SopStanding, signOff: ?SopSignOff}>, counts: array<string, int>, history: array<SopSignOff>} */
+    private function complianceData(Sop $sop): array
+    {
         $now = new DateTimeImmutable();
 
         $rows = [];
@@ -145,13 +190,11 @@ class SopsController extends AbstractController
             }
         }
 
-        return $this->render('@CitadelAureum/core/sops/compliance.html.twig', [
-            'sop' => $sop,
+        return [
             'rows' => $rows,
             'counts' => $counts,
             'history' => $this->signOffRepository->findForSop($sop),
-            'userTimezone' => $this->userTimezone(),
-        ]);
+        ];
     }
 
     private function handleForm(Request $request, Sop $sop, bool $isNew): Response

@@ -79,6 +79,9 @@
 
             {% if canManage %}
                 <div class="flex gap-2 justify-end mt-4">
+                    <a href="{{ path('aureum_sops_export', { id: sop.id }) }}" class="btn btn-outlined">
+                        <i class="ph ph-file-pdf"></i> Export PDF
+                    </a>
                     <a href="{{ path('aureum_sops_compliance', { id: sop.id }) }}" class="btn btn-outlined">
                         <i class="ph ph-list-checks"></i> Compliance
                     </a>

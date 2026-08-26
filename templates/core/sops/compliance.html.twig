@@ -7,11 +7,18 @@
                 <i class="icon ph ph-list-checks"></i>
                 Compliance - {{ sop.title }}
             </div>
-            <form method="get" action="{{ path('aureum_sops_view', { id: sop.id }) }}">
-                <button type="submit" class="luxury-light square btn btn-primary">
-                    <i class="ph ph-arrow-left"></i> Back to SOP
-                </button>
-            </form>
+            <div class="flex items-center gap-2">
+                <form method="get" action="{{ path('aureum_sops_export', { id: sop.id }) }}">
+                    <button type="submit" class="luxury-light square btn btn-primary">
+                        <i class="ph ph-file-pdf"></i> Export PDF
+                    </button>
+                </form>
+                <form method="get" action="{{ path('aureum_sops_view', { id: sop.id }) }}">
+                    <button type="submit" class="luxury-light square btn btn-primary">
+                        <i class="ph ph-arrow-left"></i> Back to SOP
+                    </button>
+                </form>
+            </div>
         </div>
         <div class="card-body">
             <p class="sop-doc__meta">
