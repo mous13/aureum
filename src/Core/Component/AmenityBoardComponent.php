@@ -41,6 +41,9 @@ class AmenityBoardComponent extends AbstractController
     #[LiveProp]
     public ?int $editCardId = null;
 
+    #[LiveProp]
+    public ?int $viewCardId = null;
+
     private ?AmenityBoard $board = null;
 
     public function __construct(
@@ -77,6 +80,33 @@ class AmenityBoardComponent extends AbstractController
     }
 
     #[LiveAction]
+    public function openCard(#[LiveArg] int $cardId): void
+    {
+        $card = $this->findCard($cardId);
+        if ($card === null) {
+            return;
+        }
+
+        $this->editCardId = null;
+        $this->createStatus = null;
+        $this->viewCardId = $cardId;
+    }
+
+    #[LiveAction]
+    public function togglePriority(#[LiveArg] int $cardId, #[LiveArg] int $index): void
+    {
+        $this->denyUnlessCanManage();
+        $card = $this->findCard($cardId);
+        if ($card === null) {
+            return;
+        }
+
+        $card->togglePriority($index);
+        $card->setUpdatedAt(new DateTime());
+        $this->cardRepository->save($card);
+    }
+
+    #[LiveAction]
     public function toggleItem(#[LiveArg] int $cardId, #[LiveArg] int $index): void
     {
         $this->denyUnlessActive();
@@ -104,6 +134,7 @@ class AmenityBoardComponent extends AbstractController
     {
         $this->denyUnlessCanManage();
         $this->createStatus = null;
+        $this->viewCardId = null;
         $this->editCardId = $cardId;
         $this->resetForm();
     }
@@ -113,6 +144,7 @@ class AmenityBoardComponent extends AbstractController
     {
         $this->createStatus = null;
         $this->editCardId = null;
+        $this->viewCardId = null;
         $this->isValidated = false;
         $this->validatedFields = [];
         $this->resetForm();
@@ -215,6 +247,11 @@ class AmenityBoardComponent extends AbstractController
     public function getEditCard(): ?AmenityCard
     {
         return $this->findCard($this->editCardId ?? 0);
+    }
+
+    public function getViewCard(): ?AmenityCard
+    {
+        return $this->findCard($this->viewCardId ?? 0);
     }
 
     protected function instantiateForm(): FormInterface

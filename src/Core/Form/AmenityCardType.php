@@ -38,7 +38,8 @@ class AmenityCardType extends AbstractType
                 'label' => 'Items (one per line)',
                 'property_path' => 'itemsText',
                 'constraints' => [new NotBlank()],
-                'attr' => ['rows' => 4, 'placeholder' => "e.g.\n2x Beer\n1x Card"],
+                'help' => 'Start a line with ! to mark that item as priority.',
+                'attr' => ['rows' => 4, 'placeholder' => "e.g.\n!1x Champagne\n2x Beer\n1x Card"],
             ])
             ->add('status', EnumType::class, [
                 'class' => AmenityCardStatus::class,

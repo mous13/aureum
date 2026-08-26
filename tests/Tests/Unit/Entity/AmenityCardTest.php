@@ -15,38 +15,66 @@ class AmenityCardTest extends TestCase
         $card->setItemsText("2x Beer\n1x Card\n\n  \n1x Fruit Basket  ");
 
         self::assertSame([
-            ['label' => '2x Beer', 'done' => false],
-            ['label' => '1x Card', 'done' => false],
-            ['label' => '1x Fruit Basket', 'done' => false],
+            ['label' => '2x Beer', 'done' => false, 'priority' => false],
+            ['label' => '1x Card', 'done' => false, 'priority' => false],
+            ['label' => '1x Fruit Basket', 'done' => false, 'priority' => false],
         ], $card->getItems());
     }
 
-    public function testItemsTextJoinsLabels(): void
+    public function testALeadingBangMarksAnItemAsPriority(): void
+    {
+        $card = new AmenityCard();
+        $card->setItemsText("!1x Champagne\n! 2x Beer\n1x Card");
+
+        self::assertSame([
+            ['label' => '1x Champagne', 'done' => false, 'priority' => true],
+            ['label' => '2x Beer', 'done' => false, 'priority' => true],
+            ['label' => '1x Card', 'done' => false, 'priority' => false],
+        ], $card->getItems());
+    }
+
+    public function testItemsTextJoinsLabelsAndKeepsPriorityBangs(): void
     {
         $card = new AmenityCard();
         $card->setItems([
-            ['label' => '2x Beer', 'done' => true],
-            ['label' => '1x Card', 'done' => false],
+            ['label' => '1x Champagne', 'done' => false, 'priority' => true],
+            ['label' => '1x Card', 'done' => true, 'priority' => false],
         ]);
 
-        self::assertSame("2x Beer\n1x Card", $card->getItemsText());
+        self::assertSame("!1x Champagne\n1x Card", $card->getItemsText());
     }
 
     public function testEditingItemsKeepsTheTicksOfSurvivingLabels(): void
     {
         $card = new AmenityCard();
         $card->setItems([
-            ['label' => '2x Beer', 'done' => true],
-            ['label' => '1x Card', 'done' => false],
+            ['label' => '2x Beer', 'done' => true, 'priority' => false],
+            ['label' => '1x Card', 'done' => false, 'priority' => false],
         ]);
 
-        $card->setItemsText("1x Card\n2x Beer\n1x Sweets");
+        $card->setItemsText("1x Card\n!2x Beer\n1x Sweets");
 
         self::assertSame([
-            ['label' => '1x Card', 'done' => false],
-            ['label' => '2x Beer', 'done' => true],
-            ['label' => '1x Sweets', 'done' => false],
+            ['label' => '1x Card', 'done' => false, 'priority' => false],
+            ['label' => '2x Beer', 'done' => true, 'priority' => true],
+            ['label' => '1x Sweets', 'done' => false, 'priority' => false],
         ], $card->getItems());
+    }
+
+    public function testTogglePriorityFlipsOnlyThatItem(): void
+    {
+        $card = new AmenityCard();
+        $card->setItemsText("2x Beer\n1x Card");
+
+        $card->togglePriority(0);
+
+        self::assertTrue($card->getItems()[0]['priority']);
+        self::assertFalse($card->getItems()[1]['priority']);
+
+        $card->togglePriority(0);
+        $card->togglePriority(9);
+
+        self::assertFalse($card->getItems()[0]['priority']);
     }
 
     public function testToggleItemFlipsOnlyThatItem(): void
@@ -72,7 +100,7 @@ class AmenityCardTest extends TestCase
         $card->toggleItem(5);
         $card->toggleItem(-1);
 
-        self::assertSame([['label' => '2x Beer', 'done' => false]], $card->getItems());
+        self::assertSame([['label' => '2x Beer', 'done' => false, 'priority' => false]], $card->getItems());
     }
 
     public function testDoneCountCountsTickedItems(): void
@@ -94,8 +122,8 @@ class AmenityCardTest extends TestCase
         ]);
 
         self::assertSame([
-            ['label' => '2x Beer', 'done' => true],
-            ['label' => 'sweets', 'done' => false],
+            ['label' => '2x Beer', 'done' => true, 'priority' => false],
+            ['label' => 'sweets', 'done' => false, 'priority' => false],
         ], $card->getItems());
     }
 }

@@ -107,8 +107,8 @@ class AnonymisationTest extends TestCase
         self::assertTrue($card->isAnonymised());
         self::assertSame('412', $card->getRoomNumber());
         self::assertSame([
-            ['label' => '2x Beer', 'done' => false],
-            ['label' => '1x Sweets', 'done' => false],
+            ['label' => '2x Beer', 'done' => false, 'priority' => false],
+            ['label' => '1x Sweets', 'done' => false, 'priority' => false],
         ], $card->getItems());
     }
 
