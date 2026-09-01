@@ -12,6 +12,7 @@ use Citadel\Aureum\Core\Form\RestaurantType;
 use Citadel\Aureum\Core\Repository\EventRepository;
 use Citadel\Aureum\Core\Repository\RestaurantLogRepository;
 use Citadel\Aureum\Core\Repository\RestaurantRepository;
+use Citadel\Aureum\Core\Service\OpeningTimesStatus;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -39,6 +40,7 @@ class RestaurantTable extends AbstractDoctrineTable
         private readonly EventRepository $eventRepository,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
         private readonly GooglePlacesKeyManager $keyManager,
+        private readonly OpeningTimesStatus $openingTimesStatus,
     ) {
     }
 
@@ -98,6 +100,13 @@ class RestaurantTable extends AbstractDoctrineTable
     protected function buildTable(): void
     {
         $this
+            ->addColumn('open', [
+                'field' => 'id',
+                'label' => '',
+                'sortable' => false,
+                'searchable' => false,
+                'renderer' => fn($id, Restaurant $restaurant) => $this->renderOpeningTimes($restaurant),
+            ])
             ->addColumn('name', [
                 'field' => 'name',
                 'sortable' => false,
@@ -243,6 +252,24 @@ class RestaurantTable extends AbstractDoctrineTable
             $name,
             htmlspecialchars($conciergeNames)
         );
+    }
+
+    private function renderOpeningTimes(Restaurant $restaurant): string
+    {
+        $hotel = $restaurant->getHotel();
+        $timezone = $hotel->getTimezone();
+        $isOpen = $this->openingTimesStatus->isOpenNow($restaurant->getOpeningTimes(), $timezone);
+
+        $todayKey = null;
+        if ($timezone !== null && in_array($timezone, \DateTimeZone::listIdentifiers(), true)) {
+            $todayKey = strtolower((new \DateTimeImmutable('now', new \DateTimeZone($timezone)))->format('D'));
+        }
+
+        return $this->twig->render('@CitadelAureum/core/restaurants/blocks/opening_times_modal.html.twig', [
+            'restaurant' => $restaurant,
+            'isOpen' => $isOpen,
+            'todayKey' => $todayKey,
+        ]);
     }
 
     private function renderLogsModal(Restaurant $restaurant): string

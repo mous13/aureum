@@ -1,0 +1,48 @@
+{% embed '@Forumify/components/modal.html.twig' %}
+    {% block modalOpenButton %}
+        <button type="button" class="btn-link btn-small" {{ stimulus_action('forumify/modal', 'open') }}>
+            {% if isOpen is same as(true) %}
+                <span class="text-small" style="color:#28a745;font-weight:600;">OPEN</span>
+            {% elseif isOpen is same as(false) %}
+                <span class="text-small" style="color:#c0392b;font-weight:600;">CLOSED</span>
+            {% else %}
+                <span class="text-small" style="color:#999;">—</span>
+            {% endif %}
+        </button>
+    {% endblock %}
+    {% block modalContent %}
+        <div class="card">
+            <div class="card-title luxury">
+                {{ restaurant.name }} — Opening Times
+            </div>
+            <div class="card-body">
+                {% if restaurant.openingTimes is null %}
+                    <p>No opening times recorded.</p>
+                {% else %}
+                    <table class="w-100">
+                        <tbody>
+                        {% for key, label in {mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday', sun: 'Sunday'} %}
+                            {% set day = restaurant.openingTimes[key] ?? null %}
+                            <tr {% if key == todayKey %}style="font-weight:600;"{% endif %}>
+                                <td>{{ label }}</td>
+                                <td>
+                                    {% if day is null or day.closed %}
+                                        Closed
+                                    {% else %}
+                                        {% for range in day.ranges %}
+                                            {{ range[0] }}–{{ range[1] }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if restaurant.openingTimesSyncedAt %}
+                        <p class="text-small mt-2">Last synced from Google {{ restaurant.openingTimesSyncedAt|date('d/m/Y') }}</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    {% endblock %}
+{% endembed %}
