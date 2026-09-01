@@ -47,7 +47,7 @@ class GoogleOpeningHoursTranslator
             ];
         }
 
-        foreach ($week as $day => $schedule) {
+        foreach (array_keys($week) as $day) {
             usort(
                 $week[$day]['ranges'],
                 static fn(array $a, array $b) => strcmp($a[0], $b[0]),

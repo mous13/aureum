@@ -6,7 +6,6 @@ namespace Citadel\Aureum\Core\Command;
 
 use Citadel\Aureum\Admin\Service\GooglePlacesKeyManager;
 use Citadel\Aureum\Core\Entity\Restaurant;
-use Citadel\Aureum\Core\Exception\GooglePlacesException;
 use Citadel\Aureum\Core\Repository\HotelRepository;
 use Citadel\Aureum\Core\Service\RestaurantGoogleService;
 use Symfony\Component\Console\Attribute\AsCommand;
