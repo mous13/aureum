@@ -44,8 +44,8 @@ class RestaurantGoogleController extends AbstractController
     {
         $this->assertGoogleAvailable($request, $restaurant);
 
-        $placeId = (string)($request->toArray()['placeId'] ?? '');
-        if ($placeId === '' || strlen($placeId) > 255) {
+        $placeId = (string)($this->decodeBody($request)['placeId'] ?? '');
+        if ($placeId === '' || strlen($placeId) > 255 || preg_match('/^[A-Za-z0-9_-]+$/', $placeId) !== 1) {
             return new JsonResponse(['error' => 'Invalid place.'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -87,9 +87,18 @@ class RestaurantGoogleController extends AbstractController
 
     private function assertCsrf(Request $request): void
     {
-        $token = (string)($request->toArray()['_token'] ?? '');
+        $token = (string)($this->decodeBody($request)['_token'] ?? '');
         if (!$this->isCsrfTokenValid('aureum_restaurant_google', $token)) {
             throw $this->createAccessDeniedException('Invalid CSRF token.');
+        }
+    }
+
+    private function decodeBody(Request $request): array
+    {
+        try {
+            return $request->toArray();
+        } catch (\JsonException) {
+            return [];
         }
     }
 }

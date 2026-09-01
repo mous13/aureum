@@ -26,16 +26,20 @@ export default class extends Controller {
     {
         this.times = this.parseInitial();
         this.renderGrid();
-        this.serialize();
+        if (this.hasInitial) this.serialize();
         this.renderGoogleStatus();
     }
 
     parseInitial() {
         try {
             const parsed = JSON.parse(this.initialValue || 'null');
-            if (parsed && typeof parsed === 'object') return parsed;
+            if (parsed && typeof parsed === 'object') {
+                this.hasInitial = true;
+                return parsed;
+            }
         } catch (e) {
         }
+        this.hasInitial = false;
         const empty = {};
         DAYS.forEach(([key]) => empty[key] = { closed: true, ranges: [] });
         return empty;
