@@ -108,7 +108,7 @@ class RestaurantTable extends AbstractDoctrineTable
         $qb
             ->andWhere('e.hotel = :hotel')
             ->setParameter('hotel', $this->hotelId)
-            ->orderBy('e.score', 'DESC');
+            ->orderBy('e.name', 'ASC');
 
         foreach (self::SEARCHABLE_JOINS as $field => $config) {
             if (!empty($specialSearches[$field])) {
@@ -191,18 +191,6 @@ class RestaurantTable extends AbstractDoctrineTable
                     $tags->map(fn($tag) => $tag->getName())->toArray()
                 ),
             ])
-            ->addColumn('rating', [
-                'field' => 'score',
-                'sortable' => false,
-                'searchable' => false,
-            ])
-            ->addColumn('voting', [
-                'field' => 'id',
-                'label' => '',
-                'sortable' => false,
-                'searchable' => false,
-                'renderer' => fn($id, Restaurant $restaurant) => $this->renderVoting($id, $restaurant),
-            ])
             ->addColumn('actions', [
                 'field' => 'id',
                 'label' => '',
@@ -231,37 +219,6 @@ class RestaurantTable extends AbstractDoctrineTable
         ));
 
         return '<div class="grid-3 gap-2">' . $boxes . '</div>';
-    }
-
-    private function renderVoting(int $id, Restaurant $restaurant): string
-    {
-        $upUrl = $this->urlGenerator->generate('aureum_restaurants_upvote', ['id' => $id]);
-        $downUrl = $this->urlGenerator->generate('aureum_restaurants_downvote', ['id' => $id]);
-        $token = htmlspecialchars(
-            $this->csrfTokenManager->getToken('aureum_restaurant_vote')->getValue(),
-            ENT_QUOTES,
-        );
-
-        return sprintf(
-            '<div class="flex items-center justify-center">
-            <form method="post" action="%s">
-                <input type="hidden" name="_token" value="%s">
-                <button type="submit" class="btn-link btn-icon btn-small" title="+2">
-                    <i class="ph ph-thumbs-up"></i>
-                </button>
-            </form>
-            <form method="post" action="%s">
-                <input type="hidden" name="_token" value="%s">
-                <button type="submit" class="btn-link btn-icon btn-small" title="-1">
-                    <i class="ph ph-thumbs-down"></i>
-                </button>
-            </form>
-        </div>',
-            $upUrl,
-            $token,
-            $downUrl,
-            $token
-        );
     }
 
     private function renderName(string $name, Restaurant $restaurant): string

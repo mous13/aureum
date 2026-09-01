@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Entity;
 
-use Citadel\Aureum\Core\Entity\Trait\ScorableTrait;
 use Citadel\Aureum\Core\Repository\RestaurantRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,7 +18,6 @@ class Restaurant implements HotelOwnedInterface
 {
     use IdentifiableEntityTrait;
     use TimestampableEntityTrait;
-    use ScorableTrait;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
@@ -51,9 +49,6 @@ class Restaurant implements HotelOwnedInterface
 
     #[ORM\Column(type: 'json')]
     private array $dietaryRequirements = [];
-
-    #[ORM\Column(type: 'integer', options: ['default' => 0])]
-    private int $score = 0;
 
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $openingTimes = null;
@@ -149,16 +144,6 @@ class Restaurant implements HotelOwnedInterface
     public function setDietaryRequirements(array $dietaryRequirements): void
     {
         $this->dietaryRequirements = $dietaryRequirements;
-    }
-
-    public function getScore(): int
-    {
-        return $this->score;
-    }
-
-    public function setScore(int $score): void
-    {
-        $this->score = $score;
     }
 
     public function getStreet(): string
