@@ -13,9 +13,11 @@ use Citadel\Aureum\Core\Entity\Tag;
 use Citadel\Aureum\Core\Repository\CuisineRepository;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
 use Citadel\Aureum\Core\Repository\TagRepository;
+use Citadel\Aureum\Core\Validator\ValidOpeningTimes;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -124,10 +126,28 @@ class RestaurantType extends AbstractType
                 ],
                 'required' => false,
             ])
+            ->add('openingTimes', HiddenType::class, [
+                'label' => false,
+                'required' => false,
+                'constraints' => [new ValidOpeningTimes()],
+            ])
         ;
 
         $this->addEnumTransformer($builder, 'mealPeriods', MealPeriods::class);
         $this->addEnumTransformer($builder, 'dietaryRequirements', DietaryRequirements::class);
+
+        $builder->get('openingTimes')->addModelTransformer(new CallbackTransformer(
+            fn(?array $value) => $value === null ? '' : json_encode($value),
+            function (?string $value) {
+                if ($value === null || trim($value) === '') {
+                    return null;
+                }
+
+                $decoded = json_decode($value, true);
+
+                return is_array($decoded) ? $decoded : null;
+            },
+        ));
     }
 
     private function addEnumTransformer(FormBuilderInterface $builder, string $field, string $enumClass): void

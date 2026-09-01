@@ -42,6 +42,10 @@
                         {{ form_row(form.connections) }}
                     </div>
 
+                    {% include '@CitadelAureum/core/restaurants/blocks/opening_times_editor.html.twig' with {
+                        form: form,
+                    } only %}
+
                     <div class="flex gap-2 justify-end">
                         <button type="submit" class="luxury-light square btn btn-primary">Submit Restaurant</button>
                         {% embed '@Forumify/components/menu.html.twig' with {
