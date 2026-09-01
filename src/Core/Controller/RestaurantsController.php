@@ -6,12 +6,9 @@ namespace Citadel\Aureum\Core\Controller;
 
 use Citadel\Aureum\Core\Entity\Restaurant;
 use Citadel\Aureum\Core\Form\RestaurantType;
-use Citadel\Aureum\Core\Repository\HotelRepository;
-use Citadel\Aureum\Core\Repository\RestaurantLogRepository;
 use Citadel\Aureum\Core\Repository\RestaurantRepository;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\RestaurantLogService;
-use Citadel\Aureum\Core\Service\VotingService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,10 +22,7 @@ class RestaurantsController extends AbstractController
     public function __construct(
         private readonly AureumService $aureumService,
         private readonly RestaurantRepository $restaurantRepository,
-        private readonly HotelRepository $hotelRepository,
-        private readonly VotingService $votingService,
         private readonly RestaurantLogService $logService,
-        private readonly RestaurantLogRepository $restaurantLogRepository,
     ) {
     }
 
@@ -77,38 +71,6 @@ class RestaurantsController extends AbstractController
 
             $this->addFlash('success', 'Restaurant Updated');
         }
-        return $this->redirectToRoute('aureum_restaurants_list');
-    }
-
-    #[Route('/{id}/upvote', 'upvote', methods: ['POST'])]
-    public function upvote(Request $request, Restaurant $restaurant): Response
-    {
-        return $this->handleVote($request, $restaurant, 'up');
-    }
-
-    #[Route('/{id}/downvote', 'downvote', methods: ['POST'])]
-    public function downvote(Request $request, Restaurant $restaurant): Response
-    {
-        return $this->handleVote($request, $restaurant, 'down');
-    }
-
-    private function handleVote(Request $request, Restaurant $restaurant, string $direction): Response
-    {
-        $token = (string)$request->request->get('_token');
-        if (!$this->isCsrfTokenValid('aureum_restaurant_vote', $token)) {
-            throw $this->createAccessDeniedException('Invalid CSRF token.');
-        }
-
-        $employee = $this->aureumService->getEmployee();
-        $this->votingService->vote($restaurant, $employee, $direction, $this->restaurantRepository);
-
-        $referer = (string)$request->headers->get('referer');
-        if (str_starts_with($referer, $request->getSchemeAndHttpHost() . '/')
-            || preg_match('#^/(?![/\\\\])#', $referer) === 1
-        ) {
-            return $this->redirect($referer);
-        }
-
         return $this->redirectToRoute('aureum_restaurants_list');
     }
 }

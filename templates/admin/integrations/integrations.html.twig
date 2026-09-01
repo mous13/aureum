@@ -1,0 +1,28 @@
+{% extends '@Forumify/admin/base.html.twig' %}
+{% block title_page %}Integrations{% endblock %}
+{% block body %}
+    <h1>Integrations</h1>
+    <div class="card">
+        <div class="card-title luxury">Google Places</div>
+        <div class="card-body">
+            <p class="text-small">
+                The key is stored encrypted and is never displayed again after saving.
+                In the Google Cloud console, restrict it to the Places API (New) and to this server's IP address.
+            </p>
+            {% if hasKey %}
+                <p>
+                    Key configured{% if keySetAt %} on {{ keySetAt|date('d/m/Y H:i') }}{% endif %}.
+                </p>
+                <form method="post" action="{{ path('aureum_admin_integrations_remove_key') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('aureum_remove_google_key') }}">
+                    <button type="submit" class="btn-outlined">Remove key</button>
+                </form>
+                <p class="text-small mt-2">To replace the key, enter a new one below.</p>
+            {% endif %}
+            {{ form_start(form) }}
+            {{ form_row(form.apiKey) }}
+            <button type="submit" class="btn-primary">{{ hasKey ? 'Replace key' : 'Save key' }}</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

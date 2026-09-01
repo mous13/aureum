@@ -34,6 +34,9 @@ class CitadelAureum extends AbstractForumifyPlugin
                 'employees' => [
                     'manage',
                 ],
+                'settings' => [
+                    'manage',
+                ],
             ],
             'core' => [
                 'concierge' => [

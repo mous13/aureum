@@ -46,6 +46,16 @@
                             {{ form_row(editForm.connections) }}
                         </div>
 
+                        {% include '@CitadelAureum/core/restaurants/blocks/opening_times_editor.html.twig' with {
+                            form: editForm,
+                            restaurant: restaurant,
+                            googleEnabled: googleEnabled ?? false,
+                            searchUrl: googleSearchUrl ?? '',
+                            linkUrl: googleLinkUrl ?? '',
+                            unlinkUrl: googleUnlinkUrl ?? '',
+                            googleCsrfToken: googleCsrfToken ?? '',
+                        } only %}
+
                         <div class="flex justify-end">
                             <button type="submit" class="btn btn-primary luxury-light square">Save Changes</button>
                         </div>

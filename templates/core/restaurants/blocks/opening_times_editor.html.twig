@@ -1,0 +1,17 @@
+<div class="form-section"
+    data-controller="opening-times"
+    data-opening-times-initial-value="{{ restaurant is defined and restaurant.openingTimes is not null ? restaurant.openingTimes|json_encode : '' }}"
+    data-opening-times-google-enabled-value="{{ googleEnabled is defined and googleEnabled ? 'true' : 'false' }}"
+    data-opening-times-place-id-value="{{ restaurant is defined and restaurant.googlePlaceId is not null ? restaurant.googlePlaceId : '' }}"
+    data-opening-times-search-url-value="{{ searchUrl ?? '' }}"
+    data-opening-times-link-url-value="{{ linkUrl ?? '' }}"
+    data-opening-times-unlink-url-value="{{ unlinkUrl ?? '' }}"
+    data-opening-times-csrf-token-value="{{ googleCsrfToken ?? '' }}"
+>
+    <span class="form-label">Opening Times</span>
+    <div data-opening-times-target="googleStatus"></div>
+    <div data-opening-times-target="candidates"></div>
+    <div data-opening-times-target="error" class="text-small" style="color:#c0392b;"></div>
+    <div data-opening-times-target="grid"></div>
+    {{ form_row(form.openingTimes, { attr: { 'data-opening-times-target': 'input' } }) }}
+</div>

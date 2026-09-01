@@ -7,8 +7,10 @@ namespace Citadel\Aureum\Admin\Form;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -56,6 +58,16 @@ class HotelType extends AbstractType
                         maxSize: '1M',
                     ),
                 ],
+            ])
+            ->add('timezone', TimezoneType::class, [
+                'required' => false,
+                'placeholder' => 'Select a timezone',
+                'help' => 'Used to show whether restaurants are currently open.',
+            ])
+            ->add('googlePlacesEnabled', CheckboxType::class, [
+                'required' => false,
+                'label' => 'Google Places sync',
+                'help' => 'Allow this hotel to link restaurants to Google and sync opening times.',
             ]);
     }
 }

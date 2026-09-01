@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Component;
 
+use Citadel\Aureum\Admin\Service\GooglePlacesKeyManager;
 use Citadel\Aureum\Core\Entity\Enum\DietaryRequirements;
 use Citadel\Aureum\Core\Entity\Enum\MealPeriods;
 use Citadel\Aureum\Core\Entity\Restaurant;
 use Citadel\Aureum\Core\Form\RestaurantType;
 use Citadel\Aureum\Core\Repository\EventRepository;
 use Citadel\Aureum\Core\Repository\RestaurantLogRepository;
-use Citadel\Aureum\Core\Repository\RestaurantRepository;
+use Citadel\Aureum\Core\Service\OpeningTimesStatus;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -29,20 +30,56 @@ class RestaurantTable extends AbstractDoctrineTable
 
     private ?array $restaurantWithEvents = null;
 
+    private array $statusCache = [];
+
     public function __construct(
-        private readonly RestaurantRepository $restaurantRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RestaurantLogRepository $restaurantLogRepository,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
         private readonly EventRepository $eventRepository,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly GooglePlacesKeyManager $keyManager,
+        private readonly OpeningTimesStatus $openingTimesStatus,
     ) {
     }
 
     protected function getEntityClass(): string
     {
         return Restaurant::class;
+    }
+
+    protected function getData(): array
+    {
+        $direction = array_filter($this->sort)['open'] ?? null;
+        if ($direction === null) {
+            return parent::getData();
+        }
+
+        $restaurants = $this->getQuery(array_filter($this->search))->getQuery()->getResult();
+        usort($restaurants, fn(Restaurant $a, Restaurant $b) => $direction === self::SORT_DESC
+            ? $this->rankFor($b) <=> $this->rankFor($a)
+            : $this->rankFor($a) <=> $this->rankFor($b));
+
+        return array_slice($restaurants, ($this->page - 1) * $this->limit, $this->limit);
+    }
+
+    private function rankFor(Restaurant $restaurant): int
+    {
+        return $this->openingTimesStatus->rankFromStatus($this->statusFor($restaurant));
+    }
+
+    private function statusFor(Restaurant $restaurant): ?bool
+    {
+        $id = $restaurant->getId();
+        if (!array_key_exists($id, $this->statusCache)) {
+            $this->statusCache[$id] = $this->openingTimesStatus->isOpenNow(
+                $restaurant->getOpeningTimes(),
+                $restaurant->getHotel()->getTimezone(),
+            );
+        }
+
+        return $this->statusCache[$id];
     }
 
     private const SEARCHABLE_JOINS = [
@@ -71,7 +108,7 @@ class RestaurantTable extends AbstractDoctrineTable
         $qb
             ->andWhere('e.hotel = :hotel')
             ->setParameter('hotel', $this->hotelId)
-            ->orderBy('e.score', 'DESC');
+            ->orderBy('e.name', 'ASC');
 
         foreach (self::SEARCHABLE_JOINS as $field => $config) {
             if (!empty($specialSearches[$field])) {
@@ -96,6 +133,13 @@ class RestaurantTable extends AbstractDoctrineTable
     protected function buildTable(): void
     {
         $this
+            ->addColumn('open', [
+                'field' => 'id',
+                'label' => '',
+                'sortable' => true,
+                'searchable' => false,
+                'renderer' => fn($id, Restaurant $restaurant) => $this->renderOpeningTimes($restaurant),
+            ])
             ->addColumn('name', [
                 'field' => 'name',
                 'sortable' => false,
@@ -147,18 +191,6 @@ class RestaurantTable extends AbstractDoctrineTable
                     $tags->map(fn($tag) => $tag->getName())->toArray()
                 ),
             ])
-            ->addColumn('rating', [
-                'field' => 'score',
-                'sortable' => false,
-                'searchable' => false,
-            ])
-            ->addColumn('voting', [
-                'field' => 'id',
-                'label' => '',
-                'sortable' => false,
-                'searchable' => false,
-                'renderer' => fn($id, Restaurant $restaurant) => $this->renderVoting($id, $restaurant),
-            ])
             ->addColumn('actions', [
                 'field' => 'id',
                 'label' => '',
@@ -189,37 +221,6 @@ class RestaurantTable extends AbstractDoctrineTable
         return '<div class="grid-3 gap-2">' . $boxes . '</div>';
     }
 
-    private function renderVoting(int $id, Restaurant $restaurant): string
-    {
-        $upUrl = $this->urlGenerator->generate('aureum_restaurants_upvote', ['id' => $id]);
-        $downUrl = $this->urlGenerator->generate('aureum_restaurants_downvote', ['id' => $id]);
-        $token = htmlspecialchars(
-            $this->csrfTokenManager->getToken('aureum_restaurant_vote')->getValue(),
-            ENT_QUOTES,
-        );
-
-        return sprintf(
-            '<div class="flex items-center justify-center">
-            <form method="post" action="%s">
-                <input type="hidden" name="_token" value="%s">
-                <button type="submit" class="btn-link btn-icon btn-small" title="+2">
-                    <i class="ph ph-thumbs-up"></i>
-                </button>
-            </form>
-            <form method="post" action="%s">
-                <input type="hidden" name="_token" value="%s">
-                <button type="submit" class="btn-link btn-icon btn-small" title="-1">
-                    <i class="ph ph-thumbs-down"></i>
-                </button>
-            </form>
-        </div>',
-            $upUrl,
-            $token,
-            $downUrl,
-            $token
-        );
-    }
-
     private function renderName(string $name, Restaurant $restaurant): string
     {
         $name = htmlspecialchars($name, ENT_QUOTES);
@@ -243,6 +244,23 @@ class RestaurantTable extends AbstractDoctrineTable
         );
     }
 
+    private function renderOpeningTimes(Restaurant $restaurant): string
+    {
+        $timezone = $restaurant->getHotel()->getTimezone();
+        $isOpen = $this->statusFor($restaurant);
+
+        $todayKey = null;
+        if ($timezone !== null && in_array($timezone, \DateTimeZone::listIdentifiers(), true)) {
+            $todayKey = strtolower((new \DateTimeImmutable('now', new \DateTimeZone($timezone)))->format('D'));
+        }
+
+        return $this->twig->render('@CitadelAureum/core/restaurants/blocks/opening_times_modal.html.twig', [
+            'restaurant' => $restaurant,
+            'isOpen' => $isOpen,
+            'todayKey' => $todayKey,
+        ]);
+    }
+
     private function renderLogsModal(Restaurant $restaurant): string
     {
         $logs = $this->restaurantLogRepository->findByRestaurant($restaurant);
@@ -262,9 +280,16 @@ class RestaurantTable extends AbstractDoctrineTable
             'action' => $this->urlGenerator->generate('aureum_restaurants_edit', ['id' => $id]),
         ]);
 
+        $googleEnabled = $hotel->isGooglePlacesEnabled() && $this->keyManager->hasKey();
+
         return $this->twig->render('@CitadelAureum/core/restaurants/blocks/edit_modal.html.twig', [
             'restaurant' => $restaurant,
             'editForm' => $editForm->createView(),
+            'googleEnabled' => $googleEnabled,
+            'googleSearchUrl' => $this->urlGenerator->generate('aureum_restaurants_google_search', ['id' => $id]),
+            'googleLinkUrl' => $this->urlGenerator->generate('aureum_restaurants_google_link', ['id' => $id]),
+            'googleUnlinkUrl' => $this->urlGenerator->generate('aureum_restaurants_google_unlink', ['id' => $id]),
+            'googleCsrfToken' => $this->csrfTokenManager->getToken('aureum_restaurant_google')->getValue(),
         ]);
     }
 

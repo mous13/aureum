@@ -42,6 +42,10 @@
                         {{ form_row(form.connections) }}
                     </div>
 
+                    {% include '@CitadelAureum/core/restaurants/blocks/opening_times_editor.html.twig' with {
+                        form: form,
+                    } only %}
+
                     <div class="flex gap-2 justify-end">
                         <button type="submit" class="luxury-light square btn btn-primary">Submit Restaurant</button>
                         {% embed '@Forumify/components/menu.html.twig' with {
@@ -64,8 +68,6 @@
     <div class="mt-5">
         {{ component('RestaurantTable', { hotelId: hotelId }) }}
         <div class="mt-2">
-            <div><i class="ph ph-thumbs-up text-luxury-light"></i><span class="text-italic text-small">- Upvoting a restaurant will add +2 to it's score.</span></div>
-            <div><i class="ph ph-thumbs-down text-luxury-light"></i><span class="text-italic text-small">- Downvoting will add -1 to it's score.</span></div>
             <div><i class="ph-fill ph-sparkle text-luxury-light"></i><span class="text-italic text-small">- Concierge has a connection, hover over the icon to see.</span></div>
             <div><i class="ph-fill ph-tag text-luxury-light-alternative"></i><span class="text-italic text-small">- Restaurant has an ongoing deal/event</span></div>
         </div>
