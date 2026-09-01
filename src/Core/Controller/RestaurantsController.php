@@ -10,6 +10,7 @@ use Citadel\Aureum\Core\Repository\RestaurantRepository;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\RestaurantLogService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -23,6 +24,7 @@ class RestaurantsController extends AbstractController
         private readonly AureumService $aureumService,
         private readonly RestaurantRepository $restaurantRepository,
         private readonly RestaurantLogService $logService,
+        private readonly FormFactoryInterface $formFactory,
     ) {
     }
 
@@ -60,7 +62,12 @@ class RestaurantsController extends AbstractController
         $employee = $this->aureumService->getEmployee();
         $hotel = $employee->getHotel();
 
-        $form = $this->createForm(RestaurantType::class, $restaurant, ['hotel' => $hotel]);
+        $form = $this->formFactory->createNamed(
+            'restaurant_' . $restaurant->getId(),
+            RestaurantType::class,
+            $restaurant,
+            ['hotel' => $hotel],
+        );
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

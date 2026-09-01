@@ -275,7 +275,7 @@ class RestaurantTable extends AbstractDoctrineTable
     {
         $hotel = $restaurant->getHotel();
 
-        $editForm = $this->formFactory->create(RestaurantType::class, $restaurant, [
+        $editForm = $this->formFactory->createNamed('restaurant_' . $id, RestaurantType::class, $restaurant, [
             'hotel' => $hotel,
             'action' => $this->urlGenerator->generate('aureum_restaurants_edit', ['id' => $id]),
         ]);
