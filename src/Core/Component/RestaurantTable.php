@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Component;
 
+use Citadel\Aureum\Admin\Service\GooglePlacesKeyManager;
 use Citadel\Aureum\Core\Entity\Enum\DietaryRequirements;
 use Citadel\Aureum\Core\Entity\Enum\MealPeriods;
 use Citadel\Aureum\Core\Entity\Restaurant;
@@ -37,6 +38,7 @@ class RestaurantTable extends AbstractDoctrineTable
         private readonly FormFactoryInterface $formFactory,
         private readonly EventRepository $eventRepository,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly GooglePlacesKeyManager $keyManager,
     ) {
     }
 
@@ -262,9 +264,16 @@ class RestaurantTable extends AbstractDoctrineTable
             'action' => $this->urlGenerator->generate('aureum_restaurants_edit', ['id' => $id]),
         ]);
 
+        $googleEnabled = $hotel->isGooglePlacesEnabled() && $this->keyManager->hasKey();
+
         return $this->twig->render('@CitadelAureum/core/restaurants/blocks/edit_modal.html.twig', [
             'restaurant' => $restaurant,
             'editForm' => $editForm->createView(),
+            'googleEnabled' => $googleEnabled,
+            'googleSearchUrl' => $this->urlGenerator->generate('aureum_restaurants_google_search', ['id' => $id]),
+            'googleLinkUrl' => $this->urlGenerator->generate('aureum_restaurants_google_link', ['id' => $id]),
+            'googleUnlinkUrl' => $this->urlGenerator->generate('aureum_restaurants_google_unlink', ['id' => $id]),
+            'googleCsrfToken' => $this->csrfTokenManager->getToken('aureum_restaurant_google')->getValue(),
         ]);
     }
 
