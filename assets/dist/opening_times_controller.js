@@ -78,7 +78,10 @@ export default class extends Controller {
                 add.type = 'button';
                 add.className = 'btn-link btn-small';
                 add.textContent = '+ hours';
-                add.addEventListener('click', () => this.addRange(key));
+                add.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.addRange(key);
+                });
                 ranges.appendChild(add);
             }
             row.appendChild(ranges);
@@ -109,7 +112,10 @@ export default class extends Controller {
         remove.type = 'button';
         remove.className = 'btn-link btn-icon btn-small';
         remove.innerHTML = '<i class="ph ph-x"></i>';
-        remove.addEventListener('click', () => this.removeRange(dayKey, index));
+        remove.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.removeRange(dayKey, index);
+        });
         wrap.appendChild(remove);
 
         return wrap;
@@ -163,7 +169,10 @@ export default class extends Controller {
             button.type = 'button';
             button.className = 'btn-link btn-small flex gap-2';
             button.textContent = `${place.name} — ${place.address}`;
-            button.addEventListener('click', () => this.link(place.id));
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.link(place.id);
+            });
             this.candidatesTarget.appendChild(button);
         });
     }
@@ -206,14 +215,20 @@ export default class extends Controller {
             unlink.type = 'button';
             unlink.className = 'btn-link btn-small';
             unlink.textContent = 'Unlink';
-            unlink.addEventListener('click', () => this.unlink());
+            unlink.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.unlink();
+            });
             this.googleStatusTarget.appendChild(unlink);
         } else if (this.searchUrlValue) {
             const find = document.createElement('button');
             find.type = 'button';
             find.className = 'btn btn-primary luxury-light square btn-small';
             find.textContent = 'Find on Google';
-            find.addEventListener('click', () => this.findOnGoogle());
+            find.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.findOnGoogle();
+            });
             this.googleStatusTarget.appendChild(find);
         }
     }
