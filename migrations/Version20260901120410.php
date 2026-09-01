@@ -16,7 +16,7 @@ final class Version20260901120410 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE aureum_hotels ADD timezone VARCHAR(64) DEFAULT NULL, ADD google_places_enabled TINYINT DEFAULT 0 NOT NULL');
+        $this->addSql('ALTER TABLE aureum_hotels ADD timezone VARCHAR(64) DEFAULT NULL, ADD google_places_enabled TINYINT(1) DEFAULT 0 NOT NULL');
         $this->addSql('ALTER TABLE aureum_restaurants ADD opening_times JSON DEFAULT NULL, ADD google_place_id VARCHAR(255) DEFAULT NULL, ADD opening_times_synced_at DATETIME DEFAULT NULL');
     }
 
