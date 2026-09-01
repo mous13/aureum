@@ -10,6 +10,7 @@ use Citadel\Aureum\Core\Exception\GooglePlacesException;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\RestaurantGoogleService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -97,7 +98,7 @@ class RestaurantGoogleController extends AbstractController
     {
         try {
             return $request->toArray();
-        } catch (\JsonException) {
+        } catch (JsonException) {
             return [];
         }
     }

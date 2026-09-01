@@ -11,7 +11,6 @@ use Citadel\Aureum\Core\Entity\Restaurant;
 use Citadel\Aureum\Core\Form\RestaurantType;
 use Citadel\Aureum\Core\Repository\EventRepository;
 use Citadel\Aureum\Core\Repository\RestaurantLogRepository;
-use Citadel\Aureum\Core\Repository\RestaurantRepository;
 use Citadel\Aureum\Core\Service\OpeningTimesStatus;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -32,7 +31,6 @@ class RestaurantTable extends AbstractDoctrineTable
     private ?array $restaurantWithEvents = null;
 
     public function __construct(
-        private readonly RestaurantRepository $restaurantRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RestaurantLogRepository $restaurantLogRepository,
         private readonly Environment $twig,
