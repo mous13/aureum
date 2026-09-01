@@ -30,6 +30,8 @@ class RestaurantTable extends AbstractDoctrineTable
 
     private ?array $restaurantWithEvents = null;
 
+    private array $statusCache = [];
+
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RestaurantLogRepository $restaurantLogRepository,
@@ -45,6 +47,39 @@ class RestaurantTable extends AbstractDoctrineTable
     protected function getEntityClass(): string
     {
         return Restaurant::class;
+    }
+
+    protected function getData(): array
+    {
+        $direction = array_filter($this->sort)['open'] ?? null;
+        if ($direction === null) {
+            return parent::getData();
+        }
+
+        $restaurants = $this->getQuery(array_filter($this->search))->getQuery()->getResult();
+        usort($restaurants, fn(Restaurant $a, Restaurant $b) => $direction === self::SORT_DESC
+            ? $this->rankFor($b) <=> $this->rankFor($a)
+            : $this->rankFor($a) <=> $this->rankFor($b));
+
+        return array_slice($restaurants, ($this->page - 1) * $this->limit, $this->limit);
+    }
+
+    private function rankFor(Restaurant $restaurant): int
+    {
+        return $this->openingTimesStatus->rankFromStatus($this->statusFor($restaurant));
+    }
+
+    private function statusFor(Restaurant $restaurant): ?bool
+    {
+        $id = $restaurant->getId();
+        if (!array_key_exists($id, $this->statusCache)) {
+            $this->statusCache[$id] = $this->openingTimesStatus->isOpenNow(
+                $restaurant->getOpeningTimes(),
+                $restaurant->getHotel()->getTimezone(),
+            );
+        }
+
+        return $this->statusCache[$id];
     }
 
     private const SEARCHABLE_JOINS = [
@@ -101,7 +136,7 @@ class RestaurantTable extends AbstractDoctrineTable
             ->addColumn('open', [
                 'field' => 'id',
                 'label' => '',
-                'sortable' => false,
+                'sortable' => true,
                 'searchable' => false,
                 'renderer' => fn($id, Restaurant $restaurant) => $this->renderOpeningTimes($restaurant),
             ])
@@ -254,9 +289,8 @@ class RestaurantTable extends AbstractDoctrineTable
 
     private function renderOpeningTimes(Restaurant $restaurant): string
     {
-        $hotel = $restaurant->getHotel();
-        $timezone = $hotel->getTimezone();
-        $isOpen = $this->openingTimesStatus->isOpenNow($restaurant->getOpeningTimes(), $timezone);
+        $timezone = $restaurant->getHotel()->getTimezone();
+        $isOpen = $this->statusFor($restaurant);
 
         $todayKey = null;
         if ($timezone !== null && in_array($timezone, \DateTimeZone::listIdentifiers(), true)) {

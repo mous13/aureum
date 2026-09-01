@@ -76,4 +76,14 @@ class OpeningTimesStatusTest extends TestCase
     {
         self::assertFalse($this->status->isOpenNow($this->week(), 'UTC', $this->at('2026-09-07 12:00')));
     }
+
+    public function testRankOrdersOpenClosedUnknown(): void
+    {
+        $open = $this->week(['mon' => ['closed' => false, 'ranges' => [['09:00', '17:00']]]]);
+
+        self::assertSame(0, $this->status->rank($open, 'UTC', $this->at('2026-09-07 12:00')));
+        self::assertSame(1, $this->status->rank($this->week(), 'UTC', $this->at('2026-09-07 12:00')));
+        self::assertSame(2, $this->status->rank(null, 'UTC', $this->at('2026-09-07 12:00')));
+        self::assertSame(2, $this->status->rank($open, null, $this->at('2026-09-07 12:00')));
+    }
 }

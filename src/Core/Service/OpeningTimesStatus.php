@@ -41,6 +41,20 @@ class OpeningTimesStatus
         return false;
     }
 
+    public function rank(?array $openingTimes, ?string $timezone, ?DateTimeImmutable $now = null): int
+    {
+        return $this->rankFromStatus($this->isOpenNow($openingTimes, $timezone, $now));
+    }
+
+    public function rankFromStatus(?bool $isOpen): int
+    {
+        return match ($isOpen) {
+            true => 0,
+            false => 1,
+            null => 2,
+        };
+    }
+
     private function intervalsFor(array $openingTimes, string $dayKey): array
     {
         $day = $openingTimes[$dayKey] ?? null;
