@@ -62,6 +62,12 @@ class Hotel
     #[ORM\Column(type: 'json')]
     private array $enabledModules = [];
 
+    #[ORM\Column(type: 'string', length: 64, nullable: true)]
+    private ?string $timezone = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $googlePlacesEnabled = false;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
@@ -240,5 +246,25 @@ class Hotel
     public function isModuleEnabled(Enum\Module $module): bool
     {
         return in_array($module->value, $this->enabledModules, true);
+    }
+
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(?string $timezone): void
+    {
+        $this->timezone = $timezone;
+    }
+
+    public function isGooglePlacesEnabled(): bool
+    {
+        return $this->googlePlacesEnabled;
+    }
+
+    public function setGooglePlacesEnabled(bool $googlePlacesEnabled): void
+    {
+        $this->googlePlacesEnabled = $googlePlacesEnabled;
     }
 }

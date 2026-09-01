@@ -6,6 +6,7 @@ namespace Citadel\Aureum\Core\Entity;
 
 use Citadel\Aureum\Core\Entity\Trait\ScorableTrait;
 use Citadel\Aureum\Core\Repository\RestaurantRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
@@ -53,6 +54,15 @@ class Restaurant implements HotelOwnedInterface
 
     #[ORM\Column(type: 'integer', options: ['default' => 0])]
     private int $score = 0;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $openingTimes = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $googlePlaceId = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?DateTime $openingTimesSyncedAt = null;
 
     public function __construct()
     {
@@ -159,5 +169,35 @@ class Restaurant implements HotelOwnedInterface
     public function setStreet(string $street): void
     {
         $this->street = $street;
+    }
+
+    public function getOpeningTimes(): ?array
+    {
+        return $this->openingTimes;
+    }
+
+    public function setOpeningTimes(?array $openingTimes): void
+    {
+        $this->openingTimes = $openingTimes;
+    }
+
+    public function getGooglePlaceId(): ?string
+    {
+        return $this->googlePlaceId;
+    }
+
+    public function setGooglePlaceId(?string $googlePlaceId): void
+    {
+        $this->googlePlaceId = $googlePlaceId;
+    }
+
+    public function getOpeningTimesSyncedAt(): ?DateTime
+    {
+        return $this->openingTimesSyncedAt;
+    }
+
+    public function setOpeningTimesSyncedAt(?DateTime $openingTimesSyncedAt): void
+    {
+        $this->openingTimesSyncedAt = $openingTimesSyncedAt;
     }
 }
