@@ -73,7 +73,7 @@ class SyncRestaurantOpeningTimesCommand extends Command
                         $skipped++;
                         $io->text("No hours returned for {$hotel->getName()} / {$restaurant->getName()}");
                     }
-                } catch (GooglePlacesException $e) {
+                } catch (\Throwable $e) {
                     $failed++;
                     $io->warning("Failed for {$hotel->getName()} / {$restaurant->getName()}: {$e->getMessage()}");
                 }

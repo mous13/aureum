@@ -116,4 +116,26 @@ class SyncRestaurantOpeningTimesCommandTest extends TestCase
 
         self::assertSame(Command::SUCCESS, $this->tester->execute(['--dry-run' => true]));
     }
+
+    public function testContinuesPastNonGoogleExceptionsAndExitsNonZero(): void
+    {
+        $this->keyManager->method('hasKey')->willReturn(true);
+        $first = $this->linkedRestaurant('ChIJfail');
+        $second = $this->linkedRestaurant('ChIJok');
+        $this->hotelRepository->method('findBy')->willReturn([$this->hotel($first, $second)]);
+        $this->googleService
+            ->method('sync')
+            ->willReturnCallback(static function (Restaurant $restaurant): bool {
+                if ($restaurant->getGooglePlaceId() === 'ChIJfail') {
+                    throw new \RuntimeException('database error');
+                }
+
+                return true;
+            });
+
+        self::assertSame(Command::FAILURE, $this->tester->execute([]));
+        $display = $this->tester->getDisplay();
+        self::assertStringContainsString('1 synced', $display);
+        self::assertStringContainsString('1 failed', $display);
+    }
 }
