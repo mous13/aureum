@@ -24,9 +24,34 @@ export default class extends Controller {
 
     connect()
     {
+        this.connected = true;
+        this.resync();
+        this.gridObserver = new MutationObserver(() => {
+            if (this.connected && this.gridTarget.childElementCount === 0) {
+                this.resync();
+            }
+        });
+        this.gridObserver.observe(this.gridTarget, { childList: true });
+    }
+
+    disconnect() {
+        this.connected = false;
+        if (this.gridObserver) this.gridObserver.disconnect();
+    }
+
+    initialValueChanged() {
+        if (this.connected) this.resync();
+    }
+
+    placeIdValueChanged() {
+        if (this.connected) this.renderGoogleStatus();
+    }
+
+    resync() {
         this.times = this.parseInitial();
         this.renderGrid();
         if (this.hasInitial) this.serialize();
+        else this.inputTarget.value = '';
         this.renderGoogleStatus();
     }
 

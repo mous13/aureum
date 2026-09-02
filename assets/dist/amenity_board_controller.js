@@ -3,6 +3,9 @@ import { getComponent } from '@symfony/ux-live-component';
 
 export default class extends Controller {
     static targets = ['column', 'card'];
+    static values = {
+        pollInterval: { type: Number, default: 5000 },
+    };
 
     async initialize()
     {
@@ -19,6 +22,8 @@ export default class extends Controller {
             column.addEventListener('drop', this.onDrop);
             column.addEventListener('dragleave', this.onDragLeave);
         });
+        this.pollTimer = setInterval(this.poll, this.pollIntervalValue);
+        document.addEventListener('visibilitychange', this.onVisibilityChange);
     }
 
     disconnect()
@@ -30,7 +35,26 @@ export default class extends Controller {
             column.removeEventListener('drop', this.onDrop);
             column.removeEventListener('dragleave', this.onDragLeave);
         });
+        clearInterval(this.pollTimer);
+        document.removeEventListener('visibilitychange', this.onVisibilityChange);
     }
+
+    poll = () => {
+        if (document.hidden || this.dragged || !this.component) {
+            return;
+        }
+        if (document.querySelector('.modal.open form[name="amenity_card"]')) {
+            return;
+        }
+
+        this.component.render();
+    };
+
+    onVisibilityChange = () => {
+        if (!document.hidden) {
+            this.poll();
+        }
+    };
 
     onDragStart = (event) => {
         const card = event.target.closest('[data-card-id]');
