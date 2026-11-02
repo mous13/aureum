@@ -12,6 +12,7 @@ use Citadel\Aureum\Core\Repository\BookingRepository;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\BookingLogService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,6 +25,7 @@ class BookingsController extends AbstractController
         private readonly BookingRepository $bookingRepository,
         private readonly BookingLogService $logService,
         private readonly AureumService $aureumService,
+        private readonly FormFactoryInterface $formFactory,
     ) {
     }
 
@@ -71,7 +73,7 @@ class BookingsController extends AbstractController
 
         $originalData = $this->logService->captureCurrentState($booking);
 
-        $form = $this->createForm(BookingEditType::class, $booking, [
+        $form = $this->formFactory->createNamed('booking_edit_' . $booking->getId(), BookingEditType::class, $booking, [
             'userTimezone' => $employee->getUser()?->getTimezone() ?? 'UTC',
             'hotel' => $booking->getHotel(),
         ]);

@@ -12,6 +12,7 @@ use Citadel\Aureum\Core\Repository\FineLogRepository;
 use Citadel\Aureum\Core\Repository\FineRepository;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\FineLogService;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -29,6 +30,7 @@ class FinesController extends AbstractController
         private readonly FineLogService $logService,
         private readonly FineLogRepository $fineLogRepository,
         private readonly AureumService $aureumService,
+        private readonly FormFactoryInterface $formFactory,
     ) {
     }
 
@@ -60,7 +62,7 @@ class FinesController extends AbstractController
 
         $editForms = [];
         foreach ($fines as $fne) {
-            $editForm = $this->createForm(FineEditType::class, $fne, [
+            $editForm = $this->formFactory->createNamed('fine_edit_' . $fne->getId(), FineEditType::class, $fne, [
                 'action' => $this->generateUrl('aureum_fines_edit', ['id' => $fne->getId()]),
             ]);
             $editForms[$fne->getId()] = $editForm->createView();
@@ -86,7 +88,7 @@ class FinesController extends AbstractController
         $originalData = $this->logService->captureCurrentState($fine);
         $employee = $this->aureumService->getEmployee();
 
-        $form = $this->createForm(FineEditType::class, $fine);
+        $form = $this->formFactory->createNamed('fine_edit_' . $fine->getId(), FineEditType::class, $fine);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
