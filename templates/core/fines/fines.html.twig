@@ -65,18 +65,22 @@
         {% endblock %}
         {% block tabpanels %}
             <div id="not_completed" class="card w-100">
-                {% include '@CitadelAureum/core/fines/blocks/not_completed.html.twig' with {
-                    'fines': fines,
-                    'logs': logs,
-                    'editForms': editForms
-                } %}
+                <div class="card-title" style="background-color:#13233A;color:#ececec;">Not Completed Fines</div>
+                <div class="card-body">
+                    {{ component('Aureum\\FineTable', {
+                        hotelId: hotelId,
+                        statuses: ['not_appealed', 'appeal_submitted']
+                    }) }}
+                </div>
             </div>
             <div id="completed" class="card w-100">
-                {% include '@CitadelAureum/core/fines/blocks/completed.html.twig' with {
-                    'fines': fines,
-                    'logs': logs,
-                    'editForms': editForms
-                } %}
+                <div class="card-title" style="background-color:#13233A;color:#ececec;">Completed Fines</div>
+                <div class="card-body">
+                    {{ component('Aureum\\FineTable', {
+                        hotelId: hotelId,
+                        statuses: ['appeal_completed']
+                    }) }}
+                </div>
             </div>
             <div id="help">
                 {% include '@CitadelAureum/core/fines/blocks/help.html.twig' %}

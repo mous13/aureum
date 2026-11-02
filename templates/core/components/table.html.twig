@@ -5,6 +5,12 @@
         </div>
     </div>
     {% block table_wrapper %}
+        {% if this.columns|filter(col => col.searchable)|length > 0 %}
+            <label class="au-filter-toggle">
+                <input type="checkbox" data-live-ignore{{ (this.search ?? [])|filter(term => term)|length > 0 ? ' checked' : '' }}>
+                <i class="ph ph-funnel"></i>Filters
+            </label>
+        {% endif %}
         <table class="au-table-cards">
             {% block table %}
                 <thead>

@@ -202,6 +202,14 @@ html.drawer-locked main {
     margin-bottom: 0;
 }
 
+.au-drawer .form-rail-inner > .form-row:has(> input[type="checkbox"]) {
+    display: flex;
+    align-items: center;
+    gap: var(--au-space-xs);
+    align-self: flex-end;
+    min-height: 2.5rem;
+}
+
 .au-drawer .type-toggle {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
@@ -267,6 +275,10 @@ html.drawer-locked main {
     }
 }
 
+.au-filter-toggle {
+    display: none;
+}
+
 .card-body:has(> .au-table-cards),
 .table-wrapper:has(> .au-table-cards) {
     overflow-x: auto;
@@ -284,9 +296,35 @@ html.drawer-locked main {
 
     .au-table-cards thead tr:has(input) {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
         gap: var(--au-space-xs);
         padding: var(--au-space-xs) var(--au-space-sm);
+    }
+
+    .au-table-cards thead input {
+        height: 2.25rem;
+        padding: 0 0.6em;
+    }
+
+    .au-filter-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--au-space-xs);
+        min-height: 2.75rem;
+        padding: 0 var(--au-space-sm);
+        font-weight: 600;
+        color: #1a3f5f;
+        cursor: pointer;
+    }
+
+    .au-filter-toggle input {
+        width: 1rem;
+        height: 1rem;
+        margin: 0;
+    }
+
+    .table-wrapper:has(> .au-filter-toggle input:not(:checked)) .au-table-cards thead tr:has(input) {
+        display: none;
     }
 
     .au-table-cards thead th:not(:has(input)) {

@@ -64,18 +64,22 @@
         {% endblock %}
         {% block tabpanels %}
             <div id="received" class="card w-100">
-                {% include '@CitadelAureum/core/packages/blocks/received.html.twig' with {
-                    'packages': packages,
-                    'logs': logs,
-                    'editForms': editForms,
-                } %}
+                <div class="card-title" style="background-color:#13233A;color:#ececec;">Received Guest Packages</div>
+                <div class="card-body">
+                    {{ component('Aureum\\PackageTable', {
+                        hotelId: hotelId,
+                        statuses: ['received']
+                    }) }}
+                </div>
             </div>
             <div id="collected" class="card w-100">
-                {% include '@CitadelAureum/core/packages/blocks/collected.html.twig' with {
-                    'packages': packages,
-                    'logs': logs,
-                    'editForms': editForms,
-                } %}
+                <div class="card-title" style="background-color:#13233A;color:#ececec;">Collected Guest Packages</div>
+                <div class="card-body">
+                    {{ component('Aureum\\PackageTable', {
+                        hotelId: hotelId,
+                        statuses: ['picked_up']
+                    }) }}
+                </div>
             </div>
             <div id="help" class="w-100">
                 {% include '@CitadelAureum/core/packages/blocks/help.html.twig' %}
