@@ -51,6 +51,13 @@
         "fetch": "eager",
         "enabled": true,
         "autoimport": {}
+      },
+      "drawer": {
+        "main": "dist/drawer_controller.js",
+        "name": "drawer",
+        "fetch": "eager",
+        "enabled": true,
+        "autoimport": {}
       }
     },
     "importmap": {
