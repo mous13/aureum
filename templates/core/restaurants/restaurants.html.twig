@@ -1,75 +1,90 @@
 {% extends '@CitadelAureum/core/base.html.twig' %}
 {% block body %}
     {{ component('Aureum\\Announcements', { module: 'restaurants' }) }}
-    <div class="card">
-        <div class="card-title luxury">
-            New Restaurant
-        </div>
-        <div class="card-body form-split-body">
-            {{ form_start(form) }}
-            <div class="form-split">
-                <div class="form-rail luxury">
-                    <div class="form-rail-inner">
-                        {{ form_row(form.name) }}
-                        {{ form_row(form.tags) }}
-                    </div>
-                </div>
 
-                <div class="form-detail-panel">
-                    <div class="form-detail-head">
-                        <i class="icon ph ph-bowl-steam"></i>
-                        <h2>Restaurant Details</h2>
-                    </div>
+    <div class="au-page-head">
+        <h1 class="au-page-title">Restaurants</h1>
+        <div class="au-page-actions">
+            {% embed '@CitadelAureum/core/components/drawer.html.twig' with {
+                drawer_id: 'restaurant-new',
+                drawer_open: form.vars.submitted and not form.vars.valid,
+                drawer_autofocus: true,
+                drawer_wide: true,
+            } %}
+                {% block drawer_trigger %}
+                    <button type="button" class="luxury-light square btn btn-primary" data-action="drawer#open">
+                        <i class="ph ph-plus"></i>New Restaurant
+                    </button>
+                {% endblock %}
+                {% block drawer_title %}New Restaurant{% endblock %}
+                {% block drawer_body %}
+                    {{ form_start(form, { attr: { id: 'restaurant-new-form' } }) }}
+                    <div class="form-split-body">
+                        <div class="form-split">
+                            <div class="form-rail luxury">
+                                <div class="form-rail-inner">
+                                    {{ form_row(form.name) }}
+                                    {{ form_row(form.tags) }}
+                                </div>
+                            </div>
 
-                    <div>
-                        <span class="form-label">Location</span>
-                        <div class="form-field-grid">
-                            {{ form_row(form.neighbourhood) }}
-                            {{ form_row(form.street) }}
+                            <div class="form-detail-panel">
+                                <div class="form-detail-head">
+                                    <i class="icon ph ph-bowl-steam"></i>
+                                    <h2>Restaurant Details</h2>
+                                </div>
+
+                                <div>
+                                    <span class="form-label">Location</span>
+                                    <div class="form-field-grid">
+                                        {{ form_row(form.neighbourhood) }}
+                                        {{ form_row(form.street) }}
+                                    </div>
+                                </div>
+
+                                <div class="form-section">
+                                    <span class="form-label">Cuisine &amp; Dining</span>
+                                    <div class="form-field-grid">
+                                        {{ form_row(form.cuisines) }}
+                                        {{ form_row(form.mealPeriods) }}
+                                        {{ form_row(form.dietaryRequirements) }}
+                                    </div>
+                                </div>
+
+                                <div class="form-section">
+                                    {{ form_row(form.connections) }}
+                                </div>
+
+                                {% include '@CitadelAureum/core/restaurants/blocks/opening_times_editor.html.twig' with {
+                                    form: form,
+                                } only %}
+                            </div>
                         </div>
                     </div>
-
-                    <div class="form-section">
-                        <span class="form-label">Cuisine &amp; Dining</span>
-                        <div class="form-field-grid">
-                            {{ form_row(form.cuisines) }}
-                            {{ form_row(form.mealPeriods) }}
-                            {{ form_row(form.dietaryRequirements) }}
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        {{ form_row(form.connections) }}
-                    </div>
-
-                    {% include '@CitadelAureum/core/restaurants/blocks/opening_times_editor.html.twig' with {
-                        form: form,
-                    } only %}
-
-                    <div class="flex gap-2 justify-end">
-                        <button type="submit" class="luxury-light square btn btn-primary">Submit Restaurant</button>
-                        {% embed '@Forumify/components/menu.html.twig' with {
-                            placement: 'bottom-end',
-                            hideAdornment: false,
-                            buttonClass: 'btn-primary btn luxury-light square'
-                        } %}
-                            {% block button_text %}<i class="ph ph-gear"></i>{% endblock %}
-                            {% block menu_items %}
-                                <a class="btn-link" href="{{ path('aureum_tags_create') }}">New Tag</a>
-                                <a class="btn-link" href="{{ path('aureum_cuisines_create') }}">New Cuisine</a>
-                            {% endblock %}
-                        {% endembed %}
-                    </div>
-                </div>
-            </div>
-            {{ form_end(form) }}
+                    {{ form_end(form) }}
+                {% endblock %}
+                {% block drawer_footer %}
+                    <button type="button" class="btn-outlined square" data-action="drawer#close">Cancel</button>
+                    <button type="submit" form="restaurant-new-form" class="luxury-light square btn btn-primary">Submit Restaurant</button>
+                {% endblock %}
+            {% endembed %}
+            {% embed '@Forumify/components/menu.html.twig' with {
+                placement: 'bottom-end',
+                hideAdornment: false,
+                buttonClass: 'btn-primary btn luxury-light square'
+            } %}
+                {% block button_text %}<i class="ph ph-gear"></i>{% endblock %}
+                {% block menu_items %}
+                    <a class="btn-link" href="{{ path('aureum_tags_create') }}">New Tag</a>
+                    <a class="btn-link" href="{{ path('aureum_cuisines_create') }}">New Cuisine</a>
+                {% endblock %}
+            {% endembed %}
         </div>
     </div>
-    <div class="mt-5">
-        {{ component('RestaurantTable', { hotelId: hotelId }) }}
-        <div class="mt-2">
-            <div><i class="ph-fill ph-sparkle text-luxury-light"></i><span class="text-italic text-small">- Concierge has a connection, hover over the icon to see.</span></div>
-            <div><i class="ph-fill ph-tag text-luxury-light-alternative"></i><span class="text-italic text-small">- Restaurant has an ongoing deal/event</span></div>
-        </div>
+
+    {{ component('RestaurantTable', { hotelId: hotelId }) }}
+    <div class="mt-2">
+        <div><i class="ph-fill ph-sparkle text-luxury-light"></i><span class="text-italic text-small">- Concierge has a connection, hover over the icon to see.</span></div>
+        <div><i class="ph-fill ph-tag text-luxury-light-alternative"></i><span class="text-italic text-small">- Restaurant has an ongoing deal/event</span></div>
     </div>
 {% endblock %}

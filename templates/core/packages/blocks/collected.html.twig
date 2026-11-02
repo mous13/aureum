@@ -2,35 +2,41 @@
     Collected Guest Packages
 </div>
 <div class="card-body">
-    <table>
-        <tr>
-            <th class="text-left">Date</th>
-            <th class="text-left">Guest Name</th>
-            <th class="text-left">Package Description</th>
-            <th class="text-left">Location Stored</th>
-            <th class="text-left">Logged By</th>
-            <th class="text-left"></th>
-        </tr>
-        {% for package in packages %}
-            {% if package.status.value == 'picked_up' %}
-                <tr>
-                    <td>{{ package.updatedAt|date('d/m/y H:i') }}</td>
-                    <td>{{ package.name }}</td>
-                    <td>{{ package.description }}</td>
-                    <td>{{ package.location }}</td>
-                    <td>{{ package.employee.name }}</td>
-                    <td>
-                        {% include '@CitadelAureum/core/packages/blocks/package_notes.html.twig' with {
-                            'package': package,
-                            'logs': logs[package.id] ?? []
-                        } %}
-                        {% include '@CitadelAureum/core/packages/blocks/packages_edit.html.twig' with {
-                            'package': package,
-                            'editForm': editForms[package.id]
-                        } %}
-                    </td>
-                </tr>
-            {% endif %}
-        {% endfor %}
+    <table class="au-table-cards">
+        <thead>
+            <tr>
+                <th class="text-left">Date</th>
+                <th class="text-left">Guest Name</th>
+                <th class="text-left">Package Description</th>
+                <th class="text-left">Location Stored</th>
+                <th class="text-left">Logged By</th>
+                <th class="text-left"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for package in packages %}
+                {% if package.status.value == 'picked_up' %}
+                    <tr>
+                        <td data-label="Date">{{ package.updatedAt|date('d/m/y H:i') }}</td>
+                        <td data-label="Guest Name">{{ package.name }}</td>
+                        <td data-label="Package Description">{{ package.description }}</td>
+                        <td data-label="Location Stored">{{ package.location }}</td>
+                        <td data-label="Logged By">{{ package.employee.name }}</td>
+                        <td>
+                            <div class="flex items-center">
+                                {% include '@CitadelAureum/core/packages/blocks/package_notes.html.twig' with {
+                                    'package': package,
+                                    'logs': logs[package.id] ?? []
+                                } %}
+                                {% include '@CitadelAureum/core/packages/blocks/packages_edit.html.twig' with {
+                                    'package': package,
+                                    'editForm': editForms[package.id]
+                                } %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
     </table>
 </div>

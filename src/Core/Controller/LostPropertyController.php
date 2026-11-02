@@ -11,6 +11,7 @@ use Citadel\Aureum\Core\Repository\LostPropertyLogRepository;
 use Citadel\Aureum\Core\Repository\LostPropertyRepository;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\LostPropertyLogService;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -25,6 +26,7 @@ class LostPropertyController extends AbstractController
         private readonly AureumService $aureumService,
         private readonly LostPropertyLogService $logService,
         private readonly LostPropertyLogRepository $lostPropertyLogRepository,
+        private readonly FormFactoryInterface $formFactory,
     ) {
     }
 
@@ -54,7 +56,7 @@ class LostPropertyController extends AbstractController
         }
         $editForms = [];
         foreach ($lostProperties as $lp) {
-            $editForm = $this->createForm(LostPropertyEditType::class, $lp, [
+            $editForm = $this->formFactory->createNamed('lost_property_edit_' . $lp->getId(), LostPropertyEditType::class, $lp, [
                 'action' => $this->generateUrl('aureum_lost_property_edit', ['id' => $lp->getId()]),
             ]);
             $editForms[$lp->getId()] = $editForm->createView();
@@ -80,7 +82,11 @@ class LostPropertyController extends AbstractController
         $originalData = $this->logService->captureCurrentState($lostProperty);
         $employee = $this->aureumService->getEmployee();
 
-        $form = $this->createForm(lostPropertyEditType::class, $lostProperty);
+        $form = $this->formFactory->createNamed(
+            'lost_property_edit_' . $lostProperty->getId(),
+            LostPropertyEditType::class,
+            $lostProperty,
+        );
         $form->handleRequest($request);
         $lostProperty = $form->getData();
 

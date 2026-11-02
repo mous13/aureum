@@ -1,88 +1,87 @@
-{% embed '@Forumify/components/modal.html.twig' %}
-    {% block modalOpenButton %}
-        <button type="button" class="btn-link btn-icon" {{ stimulus_action('forumify/forumify-platform/modal', 'open') }}>
+{% set form_id = editForm.vars.id ~ '-form' %}
+{% embed '@CitadelAureum/core/components/drawer.html.twig' with { drawer_id: editForm.vars.id ~ '-drawer', drawer_wide: true } %}
+    {% block drawer_trigger %}
+        <button type="button" class="btn-link btn-icon" aria-label="Edit booking" data-action="drawer#open">
             <i class="ph ph-pencil-simple-line" style="color:#1a3f5f;"></i>
         </button>
     {% endblock %}
-    {% block modalContent %}
-        {{ form_start(editForm) }}
-        <div class="card w-100" data-controller="booking-form" data-type-meta="{{ typeMeta|json_encode|e('html_attr') }}">
-            <div class="card-title luxury">
-                Edit Booking - {{ booking.guest }}
-            </div>
-            <div class="card-body form-split-body">
-                <div class="form-split">
-                    <div class="form-rail luxury">
-                        <div class="form-rail-inner">
-                            <div>
-                                <span class="form-label">{{ editForm.type.vars.label }}</span>
-                                <div class="type-toggle" role="radiogroup" aria-label="Booking type">
-                                    {% for radio in editForm.type %}
-                                        <label class="type-toggle-item" for="{{ radio.vars.id }}">
-                                            {{ form_widget(radio) }}
-                                            <i class="{{ typeMeta[radio.vars.value].icon }}"></i>
-                                            <span>{{ radio.vars.label }}</span>
-                                        </label>
-                                    {% endfor %}
-                                </div>
+    {% block drawer_title %}Edit Booking: {{ booking.guest }}{% endblock %}
+    {% block drawer_body %}
+        {{ form_start(editForm, { attr: { id: form_id } }) }}
+        <div class="form-split-body" data-controller="booking-form" data-type-meta="{{ typeMeta|json_encode|e('html_attr') }}">
+            <div class="form-split">
+                <div class="form-rail luxury">
+                    <div class="form-rail-inner">
+                        <div>
+                            <span class="form-label">{{ editForm.type.vars.label }}</span>
+                            <div class="type-toggle" role="radiogroup" aria-label="Booking type">
+                                {% for radio in editForm.type %}
+                                    <label class="type-toggle-item" for="{{ radio.vars.id }}">
+                                        {{ form_widget(radio) }}
+                                        <i class="{{ typeMeta[radio.vars.value].icon }}"></i>
+                                        <span>{{ radio.vars.label }}</span>
+                                    </label>
+                                {% endfor %}
                             </div>
-                            {{ form_row(editForm.date) }}
-                            {{ form_row(editForm.status) }}
-                            {{ form_row(editForm.reference) }}
+                        </div>
+                        {{ form_row(editForm.date) }}
+                        {{ form_row(editForm.status) }}
+                        {{ form_row(editForm.reference) }}
+                    </div>
+                </div>
+
+                <div class="form-detail-panel">
+                    <div class="form-detail-head">
+                        <i class="icon" data-booking-form-target="serviceIcon"></i>
+                        <h2 data-booking-form-target="serviceHeading">Booking Details</h2>
+                    </div>
+                    {% include '@CitadelAureum/core/bookings/blocks/details_fields.html.twig' with {
+                        'details': editForm.details,
+                        'showLabels': true,
+                        'layout': 'grid'
+                    } %}
+
+                    <div class="form-section">
+                        <span class="form-label">Guest</span>
+                        <div class="form-field-grid">
+                            {{ form_row(editForm.guest) }}
+                            {{ form_row(editForm.number) }}
+                            {{ form_row(editForm.email) }}
                         </div>
                     </div>
 
-                    <div class="form-detail-panel">
-                        <div class="form-detail-head">
-                            <i class="icon" data-booking-form-target="serviceIcon"></i>
-                            <h2 data-booking-form-target="serviceHeading">Booking Details</h2>
+                    <div class="form-section">
+                        <span class="form-label">Supplier</span>
+                        <div class="form-field-grid">
+                            {{ form_row(editForm.middleman) }}
+                            {{ form_row(editForm.vendor) }}
+                            {{ form_row(editForm.cost) }}
                         </div>
-                        {% include '@CitadelAureum/core/bookings/blocks/details_fields.html.twig' with {
-                            'details': editForm.details,
-                            'showLabels': true,
-                            'layout': 'grid'
-                        } %}
+                    </div>
 
-                        <div class="form-section">
-                            <span class="form-label">Guest</span>
-                            <div class="form-field-grid">
-                                {{ form_row(editForm.guest) }}
-                                {{ form_row(editForm.number) }}
-                                {{ form_row(editForm.email) }}
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <span class="form-label">Supplier</span>
-                            <div class="form-field-grid">
-                                {{ form_row(editForm.middleman) }}
-                                {{ form_row(editForm.vendor) }}
-                                {{ form_row(editForm.cost) }}
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            {{ form_row(editForm.notes) }}
-                        </div>
-
-                        <div class="flex justify-end">
-                            <button type="submit" class="luxury-light square btn btn-primary">Save Changes</button>
-                        </div>
+                    <div class="form-section">
+                        {{ form_row(editForm.notes) }}
                     </div>
                 </div>
             </div>
         </div>
         {{ form_end(editForm) }}
-                {% if is_granted('aureum.module.bookings.manage') %}
-                    <form
-                        method="post"
-                        action="{{ path('aureum_bookings_delete', {id: booking.id}) }}"
-                        onsubmit="return confirm('Permanently delete this record and its history? This cannot be undone.');"
-                        class="flex justify-end mt-2"
-                    >
-                        <input type="hidden" name="_token" value="{{ csrf_token('aureum_booking_delete_' ~ booking.id) }}">
-                        <button type="submit" class="btn-link btn-small text-error">Delete record</button>
-                    </form>
-                {% endif %}
+        {% if is_granted('aureum.module.bookings.manage') %}
+            <form
+                id="{{ form_id }}-delete"
+                method="post"
+                action="{{ path('aureum_bookings_delete', {id: booking.id}) }}"
+                onsubmit="return confirm('Permanently delete this record and its history? This cannot be undone.');"
+            >
+                <input type="hidden" name="_token" value="{{ csrf_token('aureum_booking_delete_' ~ booking.id) }}">
+            </form>
+        {% endif %}
+    {% endblock %}
+    {% block drawer_footer %}
+        {% if is_granted('aureum.module.bookings.manage') %}
+            <button type="submit" form="{{ form_id }}-delete" class="btn-link btn-small text-error au-drawer-foot-start">Delete record</button>
+        {% endif %}
+        <button type="button" class="btn-outlined square" data-action="drawer#close">Cancel</button>
+        <button type="submit" form="{{ form_id }}" class="luxury-light square btn btn-primary">Save Changes</button>
     {% endblock %}
 {% endembed %}
