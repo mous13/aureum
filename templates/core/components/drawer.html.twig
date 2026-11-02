@@ -1,0 +1,18 @@
+<div class="au-drawer-root" data-controller="drawer" data-drawer-open-value="{{ drawer_open|default(false) ? 'true' : 'false' }}" data-drawer-autofocus-value="{{ drawer_autofocus|default(false) ? 'true' : 'false' }}">
+    {% block drawer_trigger %}{% endblock %}
+    <div class="au-drawer{{ drawer_wide|default(false) ? ' au-drawer-wide' : '' }}" data-drawer-target="drawer" hidden>
+        <div class="au-drawer-backdrop" data-action="click->drawer#close"></div>
+        <aside class="au-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="{{ drawer_id }}-title" tabindex="-1" data-drawer-target="panel">
+            <header class="au-drawer-head luxury">
+                <h2 id="{{ drawer_id }}-title">{% block drawer_title %}{% endblock %}</h2>
+                <button type="button" class="au-drawer-close" aria-label="Close" data-action="drawer#close">
+                    <i class="ph ph-x"></i>
+                </button>
+            </header>
+            <div class="au-drawer-body">
+                {% block drawer_body %}{% endblock %}
+            </div>
+            <footer class="au-drawer-foot">{% block drawer_footer %}{% endblock %}</footer>
+        </aside>
+    </div>
+</div>

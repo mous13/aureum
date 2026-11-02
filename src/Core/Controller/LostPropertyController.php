@@ -7,10 +7,10 @@ namespace Citadel\Aureum\Core\Controller;
 use Citadel\Aureum\Core\Entity\LostProperty;
 use Citadel\Aureum\Core\Form\LostPropertyEditType;
 use Citadel\Aureum\Core\Form\LostPropertyType;
-use Citadel\Aureum\Core\Repository\LostPropertyLogRepository;
 use Citadel\Aureum\Core\Repository\LostPropertyRepository;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\LostPropertyLogService;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -24,7 +24,7 @@ class LostPropertyController extends AbstractController
         private readonly LostPropertyRepository $lostPropertyRepository,
         private readonly AureumService $aureumService,
         private readonly LostPropertyLogService $logService,
-        private readonly LostPropertyLogRepository $lostPropertyLogRepository,
+        private readonly FormFactoryInterface $formFactory,
     ) {
     }
 
@@ -33,7 +33,6 @@ class LostPropertyController extends AbstractController
     {
         $employee = $this->aureumService->getEmployee();
         $hotel = $this->aureumService->getHotel();
-        $lostProperties = $this->lostPropertyRepository->findAllOrderedByDate($hotel);
 
         $lostProperty = new LostProperty();
         $form = $this->createForm(LostPropertyType::class, $lostProperty);
@@ -52,24 +51,10 @@ class LostPropertyController extends AbstractController
             $this->addFlash('success', 'Lost property has been created.');
             return $this->redirectToRoute('aureum_lost_property');
         }
-        $editForms = [];
-        foreach ($lostProperties as $lp) {
-            $editForm = $this->createForm(LostPropertyEditType::class, $lp, [
-                'action' => $this->generateUrl('aureum_lost_property_edit', ['id' => $lp->getId()]),
-            ]);
-            $editForms[$lp->getId()] = $editForm->createView();
-        }
-
-        $propertyLogs = [];
-        foreach ($lostProperties as $lp) {
-            $propertyLogs[$lp->getId()] = $this->lostPropertyLogRepository->findByLostProperty($lp);
-        }
 
         return $this->render('@CitadelAureum/core/lostproperty/lost_property.html.twig', [
-            'lostProperties' => $lostProperties,
             'form' => $form,
-            'editForms' => $editForms,
-            'propertyLogs' => $propertyLogs,
+            'hotelId' => $hotel->getId(),
         ]);
     }
 
@@ -80,7 +65,11 @@ class LostPropertyController extends AbstractController
         $originalData = $this->logService->captureCurrentState($lostProperty);
         $employee = $this->aureumService->getEmployee();
 
-        $form = $this->createForm(lostPropertyEditType::class, $lostProperty);
+        $form = $this->formFactory->createNamed(
+            'lost_property_edit_' . $lostProperty->getId(),
+            LostPropertyEditType::class,
+            $lostProperty,
+        );
         $form->handleRequest($request);
         $lostProperty = $form->getData();
 

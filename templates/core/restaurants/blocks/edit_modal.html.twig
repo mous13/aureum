@@ -1,68 +1,65 @@
-{% embed '@Forumify/components/modal.html.twig' %}
-    {% block modalOpenButton %}
-        <button type="button" class="btn-link btn-icon btn-small" {{ stimulus_action('forumify/modal', 'open') }}>
+{% set form_id = editForm.vars.id ~ '-form' %}
+{% embed '@CitadelAureum/core/components/drawer.html.twig' with { drawer_id: editForm.vars.id ~ '-drawer', drawer_wide: true } %}
+    {% block drawer_trigger %}
+        <button type="button" class="btn-link btn-icon btn-small" aria-label="Edit restaurant" data-action="drawer#open">
             <i class="ph ph-pencil-simple-line" style="color:#1a3f5f;"></i>
         </button>
     {% endblock %}
-    {% block modalContent %}
-        <div class="card">
-            <div class="card-title luxury">
-                Edit Restaurant — {{ restaurant.name }}
-            </div>
-            <div class="card-body form-split-body">
-                {{ form_start(editForm) }}
-                <div class="form-split">
-                    <div class="form-rail luxury">
-                        <div class="form-rail-inner">
-                            {{ form_row(editForm.name) }}
-                            {{ form_row(editForm.tags) }}
-                        </div>
-                    </div>
-
-                    <div class="form-detail-panel">
-                        <div class="form-detail-head">
-                            <i class="icon ph ph-bowl-steam"></i>
-                            <h2>Restaurant Details</h2>
-                        </div>
-
-                        <div>
-                            <span class="form-label">Location</span>
-                            <div class="form-field-grid">
-                                {{ form_row(editForm.neighbourhood) }}
-                                {{ form_row(editForm.street) }}
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <span class="form-label">Cuisine &amp; Dining</span>
-                            <div class="form-field-grid">
-                                {{ form_row(editForm.cuisines) }}
-                                {{ form_row(editForm.mealPeriods) }}
-                                {{ form_row(editForm.dietaryRequirements) }}
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            {{ form_row(editForm.connections) }}
-                        </div>
-
-                        {% include '@CitadelAureum/core/restaurants/blocks/opening_times_editor.html.twig' with {
-                            form: editForm,
-                            restaurant: restaurant,
-                            googleEnabled: googleEnabled ?? false,
-                            searchUrl: googleSearchUrl ?? '',
-                            linkUrl: googleLinkUrl ?? '',
-                            unlinkUrl: googleUnlinkUrl ?? '',
-                            googleCsrfToken: googleCsrfToken ?? '',
-                        } only %}
-
-                        <div class="flex justify-end">
-                            <button type="submit" class="btn btn-primary luxury-light square">Save Changes</button>
-                        </div>
+    {% block drawer_title %}Edit Restaurant: {{ restaurant.name }}{% endblock %}
+    {% block drawer_body %}
+        {{ form_start(editForm, { attr: { id: form_id } }) }}
+        <div class="form-split-body">
+            <div class="form-split">
+                <div class="form-rail luxury">
+                    <div class="form-rail-inner">
+                        {{ form_row(editForm.name) }}
+                        {{ form_row(editForm.tags) }}
                     </div>
                 </div>
-                {{ form_end(editForm) }}
+
+                <div class="form-detail-panel">
+                    <div class="form-detail-head">
+                        <i class="icon ph ph-bowl-steam"></i>
+                        <h2>Restaurant Details</h2>
+                    </div>
+
+                    <div>
+                        <span class="form-label">Location</span>
+                        <div class="form-field-grid">
+                            {{ form_row(editForm.neighbourhood) }}
+                            {{ form_row(editForm.street) }}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <span class="form-label">Cuisine &amp; Dining</span>
+                        <div class="form-field-grid">
+                            {{ form_row(editForm.cuisines) }}
+                            {{ form_row(editForm.mealPeriods) }}
+                            {{ form_row(editForm.dietaryRequirements) }}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        {{ form_row(editForm.connections) }}
+                    </div>
+
+                    {% include '@CitadelAureum/core/restaurants/blocks/opening_times_editor.html.twig' with {
+                        form: editForm,
+                        restaurant: restaurant,
+                        googleEnabled: googleEnabled ?? false,
+                        searchUrl: googleSearchUrl ?? '',
+                        linkUrl: googleLinkUrl ?? '',
+                        unlinkUrl: googleUnlinkUrl ?? '',
+                        googleCsrfToken: googleCsrfToken ?? '',
+                    } only %}
+                </div>
             </div>
         </div>
+        {{ form_end(editForm) }}
+    {% endblock %}
+    {% block drawer_footer %}
+        <button type="button" class="btn-outlined square" data-action="drawer#close">Cancel</button>
+        <button type="submit" form="{{ form_id }}" class="btn btn-primary luxury-light square">Save Changes</button>
     {% endblock %}
 {% endembed %}

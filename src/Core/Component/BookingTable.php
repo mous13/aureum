@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Component;
 
+use Citadel\Aureum\Core\Component\Trait\TableSearchTrait;
 use Citadel\Aureum\Core\Entity\Booking;
 use Citadel\Aureum\Core\Entity\Enum\BookingStatus;
 use Citadel\Aureum\Core\Entity\Enum\BookingType;
@@ -23,6 +24,8 @@ use Twig\Environment;
 #[IsGranted('aureum.module.bookings.view')]
 class BookingTable extends AbstractDoctrineTable
 {
+    use TableSearchTrait;
+
     /** @var array<string, "ASC"|"DESC"|null> */
     #[LiveProp]
     public array $sort = ['date' => self::SORT_DESC];
@@ -52,9 +55,9 @@ class BookingTable extends AbstractDoctrineTable
     {
         $typeSearch = trim((string)($search['type'] ?? ''));
         $guestSearch = trim((string)($search['guest'] ?? ''));
-        unset($search['type'], $search['guest']);
 
-        $qb = parent::getQuery($search)
+        $qb = parent::getQuery([])
+            ->leftJoin('e.middleman', 'search_middleman')
             ->andWhere('e.hotel = :hotel')
             ->setParameter('hotel', $this->hotelId);
 
@@ -88,7 +91,10 @@ class BookingTable extends AbstractDoctrineTable
                 ->setParameter('guest', '%' . $guestSearch . '%');
         }
 
-        return $qb;
+        return $this->applyTextSearch($qb, $search, [
+            'vendor' => 'e.vendor',
+            'concierge' => 'search_middleman.name',
+        ]);
     }
 
     protected function buildTable(): void
@@ -174,11 +180,6 @@ class BookingTable extends AbstractDoctrineTable
             static fn (BookingType $type) => str_contains(mb_strtolower($type->getLabel()), $term)
                 || str_contains($type->value, $term),
         ));
-    }
-
-    private function renderText(mixed $value): string
-    {
-        return htmlspecialchars((string)($value ?? ''), ENT_QUOTES);
     }
 
     private function renderType(BookingType $type): string
@@ -267,7 +268,7 @@ class BookingTable extends AbstractDoctrineTable
             return $actions;
         }
 
-        $editForm = $this->formFactory->create(BookingEditType::class, $booking, [
+        $editForm = $this->formFactory->createNamed('booking_edit_' . $booking->getId(), BookingEditType::class, $booking, [
             'action' => $this->urlGenerator->generate('aureum_bookings_edit', ['id' => $id]),
             'userTimezone' => $this->aureumService->getEmployee()?->getUser()?->getTimezone() ?? 'UTC',
             'hotel' => $booking->getHotel(),

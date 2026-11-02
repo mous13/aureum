@@ -1,61 +1,59 @@
-{% embed '@Forumify/components/modal.html.twig' %}
-    {% block modalOpenButton %}
-        <button type="button" class="btn-link" {{ stimulus_action('forumify/forumify-platform/modal', 'open') }}>
+{% set form_id = editForm.vars.id ~ '-form' %}
+{% embed '@CitadelAureum/core/components/drawer.html.twig' with { drawer_id: editForm.vars.id ~ '-drawer' } %}
+    {% block drawer_trigger %}
+        <button type="button" class="btn-link btn-icon" aria-label="Edit fine" data-action="drawer#open">
             <i class="ph ph-pencil-simple-line" style="color:#1a3f5f;"></i>
         </button>
     {% endblock %}
-    {% block modalContent %}
-        <div class="card">
-            <div class="card-title luxury">Edit Fine - {{ fine.name }}: {{ fine.number }}</div>
-            <div class="card-body form-split-body">
-                {{ form_start(editForm) }}
-                <div class="form-split">
-                    <div class="form-rail luxury">
-                        <div class="form-rail-inner">
-                            {{ form_row(editForm.number) }}
-                            {{ form_row(editForm.status) }}
-                        </div>
-                    </div>
-
-                    <div class="form-detail-panel">
-                        <div class="form-detail-head">
-                            <i class="icon ph ph-article"></i>
-                            <h2>Fine Details</h2>
-                        </div>
-
-                        <div>
-                            <span class="form-label">Guest</span>
-                            <div class="form-field-grid">
-                                {{ form_row(editForm.name) }}
-                                {{ form_row(editForm.email) }}
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            {{ form_row(editForm.note) }}
-                        </div>
-
-                        <div class="flex justify-end">
-                            <button type="submit" class="luxury-light square btn btn-primary">
-                                Save Changes
-                            </button>
-                        </div>
+    {% block drawer_title %}Edit Fine: {{ fine.number }}{% endblock %}
+    {% block drawer_body %}
+        {{ form_start(editForm, { attr: { id: form_id } }) }}
+        <div class="form-split-body">
+            <div class="form-split">
+                <div class="form-rail luxury">
+                    <div class="form-rail-inner">
+                        {{ form_row(editForm.number) }}
+                        {{ form_row(editForm.status) }}
                     </div>
                 </div>
-                {{ form_end(editForm) }}
-                {% if is_granted('aureum.module.fines.manage') %}
-                    <form
-                        method="post"
-                        action="{{ path('aureum_fines_delete', {id: fine.id}) }}"
-                        onsubmit="return confirm('Permanently delete this record and its history? This cannot be undone.');"
-                        class="flex justify-end mt-2"
-                    >
-                        <input type="hidden" name="_token" value="{{ csrf_token('aureum_fine_delete_' ~ fine.id) }}">
-                        <button type="submit" class="btn-link btn-small text-error">Delete record</button>
-                    </form>
-                {% endif %}
+
+                <div class="form-detail-panel">
+                    <div class="form-detail-head">
+                        <i class="icon ph ph-article"></i>
+                        <h2>Fine Details</h2>
+                    </div>
+
+                    <div>
+                        <span class="form-label">Guest</span>
+                        <div class="form-field-grid">
+                            {{ form_row(editForm.name) }}
+                            {{ form_row(editForm.email) }}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        {{ form_row(editForm.note) }}
+                    </div>
+                </div>
             </div>
         </div>
-
+        {{ form_end(editForm) }}
+        {% if is_granted('aureum.module.fines.manage') %}
+            <form
+                id="{{ form_id }}-delete"
+                method="post"
+                action="{{ path('aureum_fines_delete', {id: fine.id}) }}"
+                onsubmit="return confirm('Permanently delete this record and its history? This cannot be undone.');"
+            >
+                <input type="hidden" name="_token" value="{{ csrf_token('aureum_fine_delete_' ~ fine.id) }}">
+            </form>
+        {% endif %}
+    {% endblock %}
+    {% block drawer_footer %}
+        {% if is_granted('aureum.module.fines.manage') %}
+            <button type="submit" form="{{ form_id }}-delete" class="btn-link btn-small text-error au-drawer-foot-start">Delete record</button>
+        {% endif %}
+        <button type="button" class="btn-outlined square" data-action="drawer#close">Cancel</button>
+        <button type="submit" form="{{ form_id }}" class="luxury-light square btn btn-primary">Save Changes</button>
     {% endblock %}
 {% endembed %}

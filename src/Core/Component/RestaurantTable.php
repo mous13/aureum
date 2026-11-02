@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Component;
 
 use Citadel\Aureum\Admin\Service\GooglePlacesKeyManager;
+use Citadel\Aureum\Core\Component\Trait\TableSearchTrait;
 use Citadel\Aureum\Core\Entity\Enum\DietaryRequirements;
 use Citadel\Aureum\Core\Entity\Enum\MealPeriods;
 use Citadel\Aureum\Core\Entity\Restaurant;
@@ -25,6 +26,17 @@ use Twig\Environment;
 #[IsGranted('aureum.module.restaurants.view')]
 class RestaurantTable extends AbstractDoctrineTable
 {
+    use TableSearchTrait;
+
+    private const SEARCH_FIELDS = [
+        'name' => 'e.name',
+        'neighbourhood' => 'e.neighbourhood',
+        'street' => 'e.street',
+    ];
+
+    #[LiveProp]
+    public array $sort = ['name' => self::SORT_ASC];
+
     #[LiveProp]
     public int $hotelId;
 
@@ -104,11 +116,10 @@ class RestaurantTable extends AbstractDoctrineTable
             unset($search[$field]);
         }
 
-        $qb = parent::getQuery($search);
+        $qb = parent::getQuery([]);
         $qb
             ->andWhere('e.hotel = :hotel')
-            ->setParameter('hotel', $this->hotelId)
-            ->orderBy('e.name', 'ASC');
+            ->setParameter('hotel', $this->hotelId);
 
         foreach (self::SEARCHABLE_JOINS as $field => $config) {
             if (!empty($specialSearches[$field])) {
@@ -127,7 +138,7 @@ class RestaurantTable extends AbstractDoctrineTable
             }
         }
 
-        return $qb;
+        return $this->applyTextSearch($qb, $search, self::SEARCH_FIELDS);
     }
 
     protected function buildTable(): void
@@ -135,19 +146,20 @@ class RestaurantTable extends AbstractDoctrineTable
         $this
             ->addColumn('open', [
                 'field' => 'id',
-                'label' => '',
+                'label' => 'Open',
                 'sortable' => true,
                 'searchable' => false,
                 'renderer' => fn($id, Restaurant $restaurant) => $this->renderOpeningTimes($restaurant),
             ])
             ->addColumn('name', [
+                'label' => 'Name',
                 'field' => 'name',
-                'sortable' => false,
+                'sortable' => true,
                 'searchable' => true,
                 'renderer' => fn($name, Restaurant $restaurant) => $this->renderName($name, $restaurant),
-
             ])
             ->addColumn('cuisines', [
+                'label' => 'Cuisines',
                 'field' => 'cuisines',
                 'sortable' => false,
                 'searchable' => true,
@@ -156,16 +168,21 @@ class RestaurantTable extends AbstractDoctrineTable
                 ),
             ])
             ->addColumn('neighbourhood', [
+                'label' => 'Neighbourhood',
                 'field' => 'neighbourhood',
-                'sortable' => false,
+                'sortable' => true,
                 'searchable' => true,
+                'renderer' => $this->renderText(...),
             ])
             ->addColumn('street', [
+                'label' => 'Street',
                 'field' => 'street',
-                'sortable' => false,
+                'sortable' => true,
                 'searchable' => true,
+                'renderer' => $this->renderText(...),
             ])
-            ->addColumn('Meals', [
+            ->addColumn('mealPeriods', [
+                'label' => 'Meals',
                 'field' => 'mealPeriods',
                 'sortable' => false,
                 'searchable' => true,
@@ -174,7 +191,8 @@ class RestaurantTable extends AbstractDoctrineTable
                     $periods ?? []
                 )),
             ])
-            ->addColumn('dietary requirements', [
+            ->addColumn('dietaryRequirements', [
+                'label' => 'Dietary Requirements',
                 'field' => 'dietaryRequirements',
                 'sortable' => false,
                 'searchable' => true,
@@ -184,6 +202,7 @@ class RestaurantTable extends AbstractDoctrineTable
                 )),
             ])
             ->addColumn('tags', [
+                'label' => 'Tags',
                 'field' => 'tags',
                 'sortable' => false,
                 'searchable' => true,

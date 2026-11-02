@@ -8,10 +8,10 @@ use Citadel\Aureum\Core\Entity\Fine;
 use Citadel\Aureum\Core\Form\FineEditType;
 use Citadel\Aureum\Core\Form\FineType;
 use Citadel\Aureum\Core\Repository\EmployeeRepository;
-use Citadel\Aureum\Core\Repository\FineLogRepository;
 use Citadel\Aureum\Core\Repository\FineRepository;
 use Citadel\Aureum\Core\Service\AureumService;
 use Citadel\Aureum\Core\Service\FineLogService;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -27,8 +27,8 @@ class FinesController extends AbstractController
         private readonly Security $security,
         private readonly EmployeeRepository $employeeRepository,
         private readonly FineLogService $logService,
-        private readonly FineLogRepository $fineLogRepository,
         private readonly AureumService $aureumService,
+        private readonly FormFactoryInterface $formFactory,
     ) {
     }
 
@@ -38,7 +38,6 @@ class FinesController extends AbstractController
         $user = $this->security->getUser();
         $employee = $this->employeeRepository->findOneBy(['user' => $user]);
         $hotel = $employee->getHotel();
-        $fines = $this->fineRepository->findAllOrderedByDate($hotel);
 
         $fine = new Fine();
         $form = $this->createForm(FineType::class, $fine);
@@ -58,24 +57,9 @@ class FinesController extends AbstractController
             return $this->redirectToRoute('aureum_fines');
         }
 
-        $editForms = [];
-        foreach ($fines as $fne) {
-            $editForm = $this->createForm(FineEditType::class, $fne, [
-                'action' => $this->generateUrl('aureum_fines_edit', ['id' => $fne->getId()]),
-            ]);
-            $editForms[$fne->getId()] = $editForm->createView();
-        }
-
-        $fineLogs = [];
-        foreach ($fines as $fne) {
-            $fineLogs[$fne->getId()] = $this->fineLogRepository->findByFine($fne);
-        }
-
         return $this->render('@CitadelAureum/core/fines/fines.html.twig', [
-            'fines' => $fines,
             'form' => $form,
-            'editForms' => $editForms,
-            'logs' => $fineLogs,
+            'hotelId' => $hotel->getId(),
         ]);
     }
 
@@ -86,7 +70,7 @@ class FinesController extends AbstractController
         $originalData = $this->logService->captureCurrentState($fine);
         $employee = $this->aureumService->getEmployee();
 
-        $form = $this->createForm(FineEditType::class, $fine);
+        $form = $this->formFactory->createNamed('fine_edit_' . $fine->getId(), FineEditType::class, $fine);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
