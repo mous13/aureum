@@ -89,25 +89,31 @@
         {% endblock %}
         {% block tabpanels %}
             <div id="lost" class="card w-100">
-                {% include '@CitadelAureum/core/lostproperty/blocks/lost.html.twig' with {
-                    'lostProperties': lostProperties,
-                    'propertyLogs': propertyLogs,
-                    'editForms': editForms
-                } %}
+                <div class="card-title" style="background-color:#13233A;color:#ececec;">Lost Property</div>
+                <div class="card-body">
+                    {{ component('Aureum\\LostPropertyTable', {
+                        hotelId: hotelId,
+                        statuses: ['open']
+                    }) }}
+                </div>
             </div>
             <div id="found" class="card w-100">
-                {% include '@CitadelAureum/core/lostproperty/blocks/found.html.twig' with {
-                    'lostProperties': lostProperties,
-                    'propertyLogs': propertyLogs,
-                    'editForms': editForms
-                } %}
+                <div class="card-title" style="background-color:#13233A;color:#ececec;">Found Property</div>
+                <div class="card-body">
+                    {{ component('Aureum\\LostPropertyTable', {
+                        hotelId: hotelId,
+                        statuses: ['waiting for collection', 'waiting to be posted', 'stored']
+                    }) }}
+                </div>
             </div>
             <div id="closed" class="card w-100">
-                {% include '@CitadelAureum/core/lostproperty/blocks/closed.html.twig' with {
-                    'lostProperties': lostProperties,
-                    'propertyLogs': propertyLogs,
-                    'editForms': editForms
-                } %}
+                <div class="card-title" style="background-color:#13233A;color:#ececec;">Closed Entries</div>
+                <div class="card-body">
+                    {{ component('Aureum\\LostPropertyTable', {
+                        hotelId: hotelId,
+                        statuses: ['collected', 'posted', 'disposed']
+                    }) }}
+                </div>
             </div>
             <div id="help">
                 {% include '@CitadelAureum/core/lostproperty/blocks/help.html.twig' %}
