@@ -82,7 +82,12 @@
         </div>
     </div>
 
-    {{ component('RestaurantTable', { hotelId: hotelId }) }}
+    <div class="card w-100">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">Restaurants</div>
+        <div class="card-body">
+            {{ component('RestaurantTable', { hotelId: hotelId }) }}
+        </div>
+    </div>
     <div class="mt-2">
         <div><i class="ph-fill ph-sparkle text-luxury-light"></i><span class="text-italic text-small">- Concierge has a connection, hover over the icon to see.</span></div>
         <div><i class="ph-fill ph-tag text-luxury-light-alternative"></i><span class="text-italic text-small">- Restaurant has an ongoing deal/event</span></div>
