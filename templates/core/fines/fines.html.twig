@@ -1,76 +1,86 @@
 {% extends '@CitadelAureum/core/base.html.twig' %}
 {% block body %}
     {{ component('Aureum\\Announcements', { module: 'fines' }) }}
-    <div class="card">
-        <div class="card-title luxury">
-            New Fine
-        </div>
-        <div class="card-body form-split-body">
-            {{ form_start(form) }}
-            <div class="form-split">
-                <div class="form-rail luxury">
-                    <div class="form-rail-inner">
-                        {{ form_row(form.number) }}
-                        {{ form_row(form.status) }}
-                    </div>
-                </div>
 
-                <div class="form-detail-panel">
-                    <div class="form-detail-head">
-                        <i class="icon ph ph-article"></i>
-                        <h2>Fine Details</h2>
-                    </div>
+    <div class="au-page-head">
+        <h1 class="au-page-title">Fines</h1>
+        <div class="au-page-actions">
+            {% embed '@CitadelAureum/core/components/drawer.html.twig' with {
+                drawer_id: 'fine-new',
+                drawer_open: form.vars.submitted and not form.vars.valid,
+                drawer_autofocus: true,
+            } %}
+                {% block drawer_trigger %}
+                    <button type="button" class="luxury-light square btn btn-primary" data-action="drawer#open">
+                        <i class="ph ph-plus"></i>New Fine
+                    </button>
+                {% endblock %}
+                {% block drawer_title %}New Fine{% endblock %}
+                {% block drawer_body %}
+                    {{ form_start(form, { attr: { id: 'fine-new-form' } }) }}
+                    <div class="form-split-body">
+                        <div class="form-split">
+                            <div class="form-rail luxury">
+                                <div class="form-rail-inner">
+                                    {{ form_row(form.number) }}
+                                    {{ form_row(form.status) }}
+                                </div>
+                            </div>
 
-                    <div>
-                        <span class="form-label">Guest</span>
-                        <div class="form-field-grid">
-                            {{ form_row(form.name) }}
-                            {{ form_row(form.email) }}
+                            <div class="form-detail-panel">
+                                <div class="form-detail-head">
+                                    <i class="icon ph ph-article"></i>
+                                    <h2>Fine Details</h2>
+                                </div>
+
+                                <div>
+                                    <span class="form-label">Guest</span>
+                                    <div class="form-field-grid">
+                                        {{ form_row(form.name) }}
+                                        {{ form_row(form.email) }}
+                                    </div>
+                                </div>
+
+                                <div class="form-section">
+                                    {{ form_row(form.note) }}
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="form-section">
-                        {{ form_row(form.note) }}
-                    </div>
-
-                    <div class="flex justify-end">
-                        <button type="submit" class="luxury-light square btn btn-primary">Submit Fine</button>
-                    </div>
-                </div>
-            </div>
-            {{ form_end(form) }}
-        </div>
-    </div>
-
-    <div class="mt-5">
-        <div>
-            {% embed '@Forumify/components/tabs.html.twig' %}
-                {% block tabs %}
-                    <button type="button" class="luxury-light square btn-link" data-tab-id="not_completed">Not Completed</button>
-                    <button type="button" class="luxury-light square btn-link" data-tab-id="completed">Completed</button>
-                    <button type="button" class="luxury-light square btn-link btn-icon" data-tab-id="help">Help</button>
+                    {{ form_end(form) }}
                 {% endblock %}
-                {% block tabpanels %}
-                    <div id="not_completed" class="card w-100">
-                        {% include '@CitadelAureum/core/fines/blocks/not_completed.html.twig' with {
-                            'fines': fines,
-                            'logs': logs,
-                            'editForms': editForms
-                        } %}
-                    </div>
-                    <div id="completed" class="card w-100">
-                        {% include '@CitadelAureum/core/fines/blocks/completed.html.twig' with {
-                            'fines': fines,
-                            'logs': logs,
-                            'editForms': editForms
-                        } %}
-                    </div>
-                    <div id="help">
-                        {% include '@CitadelAureum/core/fines/blocks/help.html.twig' %}
-                    </div>
+                {% block drawer_footer %}
+                    <button type="button" class="btn-outlined square" data-action="drawer#close">Cancel</button>
+                    <button type="submit" form="fine-new-form" class="luxury-light square btn btn-primary">Submit Fine</button>
                 {% endblock %}
             {% endembed %}
         </div>
     </div>
 
+    {% embed '@Forumify/components/tabs.html.twig' %}
+        {% block tabs %}
+            <button type="button" class="luxury-light square btn-link" data-tab-id="not_completed">Not Completed</button>
+            <button type="button" class="luxury-light square btn-link" data-tab-id="completed">Completed</button>
+            <button type="button" class="luxury-light square btn-link btn-icon" data-tab-id="help">Help</button>
+        {% endblock %}
+        {% block tabpanels %}
+            <div id="not_completed" class="card w-100">
+                {% include '@CitadelAureum/core/fines/blocks/not_completed.html.twig' with {
+                    'fines': fines,
+                    'logs': logs,
+                    'editForms': editForms
+                } %}
+            </div>
+            <div id="completed" class="card w-100">
+                {% include '@CitadelAureum/core/fines/blocks/completed.html.twig' with {
+                    'fines': fines,
+                    'logs': logs,
+                    'editForms': editForms
+                } %}
+            </div>
+            <div id="help">
+                {% include '@CitadelAureum/core/fines/blocks/help.html.twig' %}
+            </div>
+        {% endblock %}
+    {% endembed %}
 {% endblock %}
