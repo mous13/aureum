@@ -1,0 +1,26 @@
+{% set form_id = editForm.vars.id ~ '-form' %}
+{% embed '@CitadelAureum/core/components/drawer.html.twig' with { drawer_id: editForm.vars.id ~ '-drawer', drawer_wide: true } %}
+    {% block drawer_trigger %}
+        <button type="button" class="btn-link btn-icon btn-small" aria-label="Edit bar" data-action="drawer#open">
+            <i class="ph ph-pencil-simple-line" style="color:#1a3f5f;"></i>
+        </button>
+    {% endblock %}
+    {% block drawer_title %}Edit Bar: {{ bar.name }}{% endblock %}
+    {% block drawer_body %}
+        {{ form_start(editForm, { attr: { id: form_id } }) }}
+        {% include '@CitadelAureum/core/bars/blocks/form_fields.html.twig' with {
+            form: editForm,
+            bar: bar,
+            googleEnabled: googleEnabled ?? false,
+            googleSearchUrl: googleSearchUrl ?? '',
+            googleLinkUrl: googleLinkUrl ?? '',
+            googleUnlinkUrl: googleUnlinkUrl ?? '',
+            googleCsrfToken: googleCsrfToken ?? '',
+        } only %}
+        {{ form_end(editForm) }}
+    {% endblock %}
+    {% block drawer_footer %}
+        <button type="button" class="btn-outlined square" data-action="drawer#close">Cancel</button>
+        <button type="submit" form="{{ form_id }}" class="btn btn-primary luxury-light square">Save Changes</button>
+    {% endblock %}
+{% endembed %}

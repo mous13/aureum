@@ -45,6 +45,12 @@ class DocsController extends AbstractController
             'section' => 'Modules',
             'permission' => 'aureum.module.restaurants.view',
         ],
+        'bars' => [
+            'title' => 'Bars',
+            'summary' => 'The bar directory, with styles, dress codes, happy hours and entry policies.',
+            'section' => 'Modules',
+            'permission' => 'aureum.module.bars.view',
+        ],
         'events' => [
             'title' => 'Events',
             'summary' => 'The hotel events calendar.',

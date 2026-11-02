@@ -53,6 +53,10 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
                 'icon' => 'ph ph-bowl-steam',
                 'permission' => 'aureum.module.restaurants.view',
             ]),
+            new MenuItem('Bars', $url('aureum_bars_list'), [
+                'icon' => 'ph ph-martini',
+                'permission' => 'aureum.module.bars.view',
+            ]),
             new MenuItem('Rooms Directory', $url('aureum_rooms_directory'), [
                 'icon' => 'ph ph-door',
                 'permission' => 'aureum.module.rooms.view',

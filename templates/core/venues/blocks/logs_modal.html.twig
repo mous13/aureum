@@ -7,7 +7,7 @@
     {% block modalContent %}
         <div class="card">
             <div class="card-title luxury">
-                {{ restaurant.name }} — History
+                {{ venue.name }} — History
             </div>
             <div class="card-body">
                 {% if logs is empty %}
@@ -36,7 +36,7 @@
                                                 {% for field, change in log.changes %}
                                                     {% if change.old is defined %}
                                                         <li>
-                                                            <strong>{{ field|title }}:</strong>
+                                                            <strong>{{ field|u.snake.replace('_', ' ').title(true) }}:</strong>
                                                             <span style="text-decoration:line-through;color:#999;">
                                                                 {{ change.old is iterable ? change.old|join(', ') : (change.old ?? 'empty') }}
                                                             </span>
@@ -47,7 +47,7 @@
                                                         </li>
                                                     {% else %}
                                                         <li>
-                                                            <strong>{{ field|title }}:</strong>
+                                                            <strong>{{ field|u.snake.replace('_', ' ').title(true) }}:</strong>
                                                             {{ change is iterable ? change|join(', ') : change }}
                                                         </li>
                                                     {% endif %}

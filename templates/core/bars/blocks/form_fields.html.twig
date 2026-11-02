@@ -1,0 +1,49 @@
+<div class="form-split-body">
+    <div class="form-split">
+        <div class="form-rail luxury">
+            <div class="form-rail-inner">
+                {{ form_row(form.name) }}
+                {{ form_row(form.tags) }}
+            </div>
+        </div>
+
+        <div class="form-detail-panel">
+            <div class="form-detail-head">
+                <i class="icon ph ph-martini"></i>
+                <h2>Bar Details</h2>
+            </div>
+
+            <div>
+                <span class="form-label">Location</span>
+                <div class="form-field-grid">
+                    {{ form_row(form.neighbourhood) }}
+                    {{ form_row(form.street) }}
+                </div>
+            </div>
+
+            <div class="form-section">
+                <span class="form-label">Style &amp; Entry</span>
+                <div class="form-field-grid">
+                    {{ form_row(form.styles) }}
+                    {{ form_row(form.dressCode) }}
+                    {{ form_row(form.entryPolicy) }}
+                    {{ form_row(form.happyHour) }}
+                </div>
+            </div>
+
+            <div class="form-section">
+                {{ form_row(form.connections) }}
+            </div>
+
+            {% include '@CitadelAureum/core/venues/blocks/opening_times_editor.html.twig' with {
+                form: form,
+                venue: bar ?? null,
+                googleEnabled: googleEnabled ?? false,
+                searchUrl: googleSearchUrl ?? '',
+                linkUrl: googleLinkUrl ?? '',
+                unlinkUrl: googleUnlinkUrl ?? '',
+                googleCsrfToken: googleCsrfToken ?? '',
+            } only %}
+        </div>
+    </div>
+</div>

@@ -9,13 +9,14 @@ use Citadel\Aureum\Core\Entity\Tag;
 use Citadel\Aureum\Core\Form\TagType;
 use Citadel\Aureum\Core\Service\AureumService;
 use Forumify\Admin\Crud\AbstractCrudController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/tags', 'tags')]
-#[IsGranted('aureum.module.restaurants.manage')]
+#[IsGranted(new Expression("is_granted('aureum.module.restaurants.manage') or is_granted('aureum.module.bars.manage')"))]
 class TagController extends AbstractCrudController
 {
     use HotelScopedCrudTrait;

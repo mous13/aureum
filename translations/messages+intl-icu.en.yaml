@@ -14,6 +14,12 @@ aureum:
         crud:
           single: 'cuisine'
           plural: 'cuisines'
+  bar_style:
+    admin:
+      bar_style:
+        crud:
+          single: 'bar style'
+          plural: 'bar styles'
   sop_category:
     admin:
       sop_category:

@@ -44,6 +44,9 @@ class Hotel
     #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Restaurant::class, cascade: ['persist', 'remove'])]
     private Collection $restaurants;
 
+    #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Bar::class, cascade: ['persist', 'remove'])]
+    private Collection $bars;
+
     #[ORM\OneToMany(mappedBy: 'hotel', targetEntity: Event::class, cascade: ['persist', 'remove'])]
     private Collection $events;
 
@@ -79,6 +82,7 @@ class Hotel
         $this->fines = new ArrayCollection();
         $this->bookings = new ArrayCollection();
         $this->restaurants = new ArrayCollection();
+        $this->bars = new ArrayCollection();
         $this->events = new ArrayCollection();
     }
 
@@ -176,6 +180,16 @@ class Hotel
     public function setRestaurants(Collection $restaurants): void
     {
         $this->restaurants = $restaurants;
+    }
+
+    public function getBars(): Collection
+    {
+        return $this->bars;
+    }
+
+    public function setBars(Collection $bars): void
+    {
+        $this->bars = $bars;
     }
 
     public function getEvents(): Collection

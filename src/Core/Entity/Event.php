@@ -45,6 +45,10 @@ class Event implements HotelOwnedInterface
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Restaurant $restaurant = null;
 
+    #[ORM\ManyToOne(targetEntity: Bar::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Bar $bar = null;
+
     public function getName(): string
     {
         return $this->name;
@@ -133,5 +137,15 @@ class Event implements HotelOwnedInterface
     public function setRestaurant(?Restaurant $restaurant): void
     {
         $this->restaurant = $restaurant;
+    }
+
+    public function getBar(): ?Bar
+    {
+        return $this->bar;
+    }
+
+    public function setBar(?Bar $bar): void
+    {
+        $this->bar = $bar;
     }
 }

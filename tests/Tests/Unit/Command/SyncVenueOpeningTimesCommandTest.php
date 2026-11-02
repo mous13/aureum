@@ -5,47 +5,58 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Tests\Unit\Command;
 
 use Citadel\Aureum\Admin\Service\GooglePlacesKeyManager;
-use Citadel\Aureum\Core\Command\SyncRestaurantOpeningTimesCommand;
+use Citadel\Aureum\Core\Command\SyncVenueOpeningTimesCommand;
+use Citadel\Aureum\Core\Entity\Bar;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Entity\Restaurant;
 use Citadel\Aureum\Core\Exception\GooglePlacesException;
 use Citadel\Aureum\Core\Repository\HotelRepository;
-use Citadel\Aureum\Core\Service\RestaurantGoogleService;
+use Citadel\Aureum\Core\Service\VenueGoogleService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class SyncRestaurantOpeningTimesCommandTest extends TestCase
+class SyncVenueOpeningTimesCommandTest extends TestCase
 {
     private GooglePlacesKeyManager&MockObject $keyManager;
     private HotelRepository&MockObject $hotelRepository;
-    private RestaurantGoogleService&MockObject $googleService;
+    private VenueGoogleService&MockObject $googleService;
     private CommandTester $tester;
 
     protected function setUp(): void
     {
         $this->keyManager = $this->createMock(GooglePlacesKeyManager::class);
         $this->hotelRepository = $this->createMock(HotelRepository::class);
-        $this->googleService = $this->createMock(RestaurantGoogleService::class);
+        $this->googleService = $this->createMock(VenueGoogleService::class);
 
-        $this->tester = new CommandTester(new SyncRestaurantOpeningTimesCommand(
+        $this->tester = new CommandTester(new SyncVenueOpeningTimesCommand(
             $this->keyManager,
             $this->hotelRepository,
             $this->googleService,
         ));
     }
 
-    private function hotel(Restaurant ...$restaurants): Hotel
+    private function hotel(Restaurant|Bar ...$venues): Hotel
     {
         $hotel = new Hotel();
         $hotel->setName('Test Hotel');
         $hotel->setGooglePlacesEnabled(true);
-        foreach ($restaurants as $restaurant) {
-            $hotel->getRestaurants()->add($restaurant);
+        foreach ($venues as $venue) {
+            $collection = $venue instanceof Bar ? $hotel->getBars() : $hotel->getRestaurants();
+            $collection->add($venue);
         }
 
         return $hotel;
+    }
+
+    private function linkedBar(string $placeId = 'ChIJbar'): Bar
+    {
+        $bar = new Bar();
+        $bar->setName('Test Bar');
+        $bar->setGooglePlaceId($placeId);
+
+        return $bar;
     }
 
     private function linkedRestaurant(string $placeId = 'ChIJabc'): Restaurant
@@ -137,5 +148,29 @@ class SyncRestaurantOpeningTimesCommandTest extends TestCase
         $display = $this->tester->getDisplay();
         self::assertStringContainsString('1 synced', $display);
         self::assertStringContainsString('1 failed', $display);
+    }
+
+    public function testSyncsLinkedBarsAlongsideRestaurants(): void
+    {
+        $this->keyManager->method('hasKey')->willReturn(true);
+        $restaurant = $this->linkedRestaurant();
+        $bar = $this->linkedBar();
+        $unlinkedBar = new Bar();
+        $unlinkedBar->setName('Manual Only Bar');
+        $this->hotelRepository->method('findBy')->willReturn([$this->hotel($restaurant, $bar, $unlinkedBar)]);
+
+        $synced = [];
+        $this->googleService
+            ->expects(self::exactly(2))
+            ->method('sync')
+            ->willReturnCallback(static function (Restaurant|Bar $venue) use (&$synced): bool {
+                $synced[] = $venue;
+
+                return true;
+            });
+
+        self::assertSame(Command::SUCCESS, $this->tester->execute([]));
+        self::assertSame([$restaurant, $bar], $synced);
+        self::assertStringContainsString('2 synced', $this->tester->getDisplay());
     }
 }

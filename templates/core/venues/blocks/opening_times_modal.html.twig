@@ -13,16 +13,16 @@
     {% block modalContent %}
         <div class="card">
             <div class="card-title luxury">
-                {{ restaurant.name }} — Opening Times
+                {{ venue.name }} — Opening Times
             </div>
             <div class="card-body">
-                {% if restaurant.openingTimes is null %}
+                {% if venue.openingTimes is null %}
                     <p>No opening times recorded.</p>
                 {% else %}
                     <table class="w-100">
                         <tbody>
                         {% for key, label in {mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday', sun: 'Sunday'} %}
-                            {% set day = restaurant.openingTimes[key] ?? null %}
+                            {% set day = venue.openingTimes[key] ?? null %}
                             <tr {% if key == todayKey %}style="font-weight:600;"{% endif %}>
                                 <td>{{ label }}</td>
                                 <td>
@@ -38,8 +38,8 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                    {% if restaurant.openingTimesSyncedAt %}
-                        <p class="text-small mt-2">Last synced from Google {{ restaurant.openingTimesSyncedAt|date('d/m/Y') }}</p>
+                    {% if venue.openingTimesSyncedAt %}
+                        <p class="text-small mt-2">Last synced from Google {{ venue.openingTimesSyncedAt|date('d/m/Y') }}</p>
                     {% endif %}
                 {% endif %}
             </div>

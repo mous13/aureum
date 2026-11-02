@@ -12,6 +12,7 @@ use Citadel\Aureum\Core\Entity\Enum\PackageStatus;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Repository\AbstractLogRepository;
 use Citadel\Aureum\Core\Repository\AnnouncementRepository;
+use Citadel\Aureum\Core\Repository\BarLogRepository;
 use Citadel\Aureum\Core\Repository\BookingLogRepository;
 use Citadel\Aureum\Core\Repository\BookingRepository;
 use Citadel\Aureum\Core\Repository\EventRepository;
@@ -41,6 +42,7 @@ class DashboardService
         private readonly FineLogRepository $fineLogRepository,
         private readonly LostPropertyLogRepository $lostPropertyLogRepository,
         private readonly RestaurantLogRepository $restaurantLogRepository,
+        private readonly BarLogRepository $barLogRepository,
         private readonly AnnouncementRepository $announcementRepository,
         private readonly EventRepository $eventRepository,
     ) {
@@ -234,6 +236,7 @@ class DashboardService
             [Module::FINES, $this->fineLogRepository],
             [Module::LOST_PROPERTY, $this->lostPropertyLogRepository],
             [Module::RESTAURANTS, $this->restaurantLogRepository],
+            [Module::BARS, $this->barLogRepository],
         ];
     }
 }

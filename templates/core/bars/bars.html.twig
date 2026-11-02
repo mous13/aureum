@@ -1,0 +1,57 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block body %}
+    {{ component('Aureum\\Announcements', { module: 'bars' }) }}
+
+    <div class="au-page-head">
+        <h1 class="au-page-title">Bars</h1>
+        {% if is_granted('aureum.module.bars.manage') %}
+            <div class="au-page-actions">
+                {% embed '@CitadelAureum/core/components/drawer.html.twig' with {
+                    drawer_id: 'bar-new',
+                    drawer_open: form.vars.submitted and not form.vars.valid,
+                    drawer_autofocus: true,
+                    drawer_wide: true,
+                } %}
+                    {% block drawer_trigger %}
+                        <button type="button" class="luxury-light square btn btn-primary" data-action="drawer#open">
+                            <i class="ph ph-plus"></i>New Bar
+                        </button>
+                    {% endblock %}
+                    {% block drawer_title %}New Bar{% endblock %}
+                    {% block drawer_body %}
+                        {{ form_start(form, { attr: { id: 'bar-new-form' } }) }}
+                        {% include '@CitadelAureum/core/bars/blocks/form_fields.html.twig' with { form: form } only %}
+                        {{ form_end(form) }}
+                    {% endblock %}
+                    {% block drawer_footer %}
+                        <button type="button" class="btn-outlined square" data-action="drawer#close">Cancel</button>
+                        <button type="submit" form="bar-new-form" class="luxury-light square btn btn-primary">Submit Bar</button>
+                    {% endblock %}
+                {% endembed %}
+                {% embed '@Forumify/components/menu.html.twig' with {
+                    placement: 'bottom-end',
+                    hideAdornment: false,
+                    buttonClass: 'btn-primary btn luxury-light square'
+                } %}
+                    {% block button_text %}<i class="ph ph-gear"></i>{% endblock %}
+                    {% block menu_items %}
+                        <a class="btn-link" href="{{ path('aureum_tags_create') }}">New Tag</a>
+                        <a class="btn-link" href="{{ path('aureum_bar_styles_create') }}">New Bar Style</a>
+                        <a class="btn-link" href="{{ path('aureum_bar_styles_list') }}">Manage Bar Styles</a>
+                    {% endblock %}
+                {% endembed %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="card w-100">
+        <div class="card-title" style="background-color:#13233A;color:#ececec;">Bars</div>
+        <div class="card-body">
+            {{ component('BarTable', { hotelId: hotelId }) }}
+        </div>
+    </div>
+    <div class="mt-2">
+        <div><i class="ph-fill ph-sparkle text-luxury-light"></i><span class="text-italic text-small">- Concierge has a connection, hover over the icon to see.</span></div>
+        <div><i class="ph-fill ph-tag text-luxury-light-alternative"></i><span class="text-italic text-small">- Bar has a deal/event on today</span></div>
+    </div>
+{% endblock %}

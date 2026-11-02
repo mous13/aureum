@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Citadel\Aureum\Core\Form;
 
+use Citadel\Aureum\Core\Entity\Bar;
 use Citadel\Aureum\Core\Entity\Enum\EventType;
+use Citadel\Aureum\Core\Entity\Enum\Module;
 use Citadel\Aureum\Core\Entity\Event;
+use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Entity\Restaurant;
+use Citadel\Aureum\Core\Repository\BarRepository;
 use Citadel\Aureum\Core\Repository\RestaurantRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -73,5 +77,22 @@ class EventFormType extends AbstractType
                     ->orderBy('r.name', 'ASC'),
             ])
         ;
+
+        $hotel = $options['hotel'];
+        if (!$hotel instanceof Hotel || !$hotel->isModuleEnabled(Module::BARS)) {
+            return;
+        }
+
+        $builder->add('bar', EntityType::class, [
+            'class' => Bar::class,
+            'choice_label' => 'name',
+            'required' => false,
+            'placeholder' => 'No bar',
+            'query_builder' => static fn (BarRepository $repository) => $repository
+                ->createQueryBuilder('b')
+                ->where('b.hotel = :hotel')
+                ->setParameter('hotel', $hotel)
+                ->orderBy('b.name', 'ASC'),
+        ]);
     }
 }

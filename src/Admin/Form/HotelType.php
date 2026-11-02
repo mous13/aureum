@@ -62,12 +62,12 @@ class HotelType extends AbstractType
             ->add('timezone', TimezoneType::class, [
                 'required' => false,
                 'placeholder' => 'Select a timezone',
-                'help' => 'Used to show whether restaurants are currently open.',
+                'help' => 'Used to show whether restaurants and bars are currently open.',
             ])
             ->add('googlePlacesEnabled', CheckboxType::class, [
                 'required' => false,
                 'label' => 'Google Places sync',
-                'help' => 'Allow this hotel to link restaurants to Google and sync opening times.',
+                'help' => 'Allow this hotel to link restaurants and bars to Google and sync opening times.',
             ]);
     }
 }

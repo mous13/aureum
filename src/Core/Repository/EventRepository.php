@@ -42,12 +42,22 @@ class EventRepository extends AbstractRepository
 
     public function findRestaurantsWithActiveEvents(Hotel $hotel): array
     {
+        return $this->findVenueIdsWithEventsToday($hotel, 'restaurant');
+    }
+
+    public function findBarsWithActiveEvents(Hotel $hotel): array
+    {
+        return $this->findVenueIdsWithEventsToday($hotel, 'bar');
+    }
+
+    private function findVenueIdsWithEventsToday(Hotel $hotel, string $association): array
+    {
         $today = new \DateTimeImmutable('today');
 
         $result = $this->createQueryBuilder('e')
-            ->select('DISTINCT IDENTITY(e.restaurant) AS restaurantId')
+            ->select("DISTINCT IDENTITY(e.{$association}) AS venueId")
             ->where('e.hotel = :hotel')
-            ->andWhere('e.restaurant IS NOT NULL')
+            ->andWhere("e.{$association} IS NOT NULL")
             ->andWhere('e.start >= :todayStart')
             ->andWhere('e.start < :tomorrowStart')
             ->setParameter('hotel', $hotel)
@@ -56,6 +66,6 @@ class EventRepository extends AbstractRepository
             ->getQuery()
             ->getScalarResult();
 
-        return array_map(static fn (array $row) => (int) $row['restaurantId'], $result);
+        return array_map(static fn (array $row) => (int) $row['venueId'], $result);
     }
 }

@@ -11,6 +11,7 @@ enum Module: string
     case LOST_PROPERTY = 'lost_property';
     case FINES = 'fines';
     case RESTAURANTS = 'restaurants';
+    case BARS = 'bars';
     case ROOMS = 'rooms';
     case EVENTS = 'events';
     case AMENITIES = 'amenities';
@@ -24,6 +25,7 @@ enum Module: string
             self::LOST_PROPERTY => 'Lost Property',
             self::FINES => 'Fines',
             self::RESTAURANTS => 'Restaurants',
+            self::BARS => 'Bars',
             self::ROOMS => 'Rooms Directory',
             self::EVENTS => 'Events',
             self::AMENITIES => 'Amenities',

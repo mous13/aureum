@@ -6,6 +6,7 @@ namespace Citadel\Aureum\Core\Component;
 
 use Citadel\Aureum\Admin\Service\GooglePlacesKeyManager;
 use Citadel\Aureum\Core\Component\Trait\TableSearchTrait;
+use Citadel\Aureum\Core\Controller\RestaurantGoogleController;
 use Citadel\Aureum\Core\Entity\Enum\DietaryRequirements;
 use Citadel\Aureum\Core\Entity\Enum\MealPeriods;
 use Citadel\Aureum\Core\Entity\Restaurant;
@@ -273,8 +274,8 @@ class RestaurantTable extends AbstractDoctrineTable
             $todayKey = strtolower((new \DateTimeImmutable('now', new \DateTimeZone($timezone)))->format('D'));
         }
 
-        return $this->twig->render('@CitadelAureum/core/restaurants/blocks/opening_times_modal.html.twig', [
-            'restaurant' => $restaurant,
+        return $this->twig->render('@CitadelAureum/core/venues/blocks/opening_times_modal.html.twig', [
+            'venue' => $restaurant,
             'isOpen' => $isOpen,
             'todayKey' => $todayKey,
         ]);
@@ -284,8 +285,8 @@ class RestaurantTable extends AbstractDoctrineTable
     {
         $logs = $this->restaurantLogRepository->findByRestaurant($restaurant);
 
-        return $this->twig->render('@CitadelAureum/core/restaurants/blocks/logs_modal.html.twig', [
-            'restaurant' => $restaurant,
+        return $this->twig->render('@CitadelAureum/core/venues/blocks/logs_modal.html.twig', [
+            'venue' => $restaurant,
             'logs' => $logs,
         ]);
     }
@@ -308,7 +309,7 @@ class RestaurantTable extends AbstractDoctrineTable
             'googleSearchUrl' => $this->urlGenerator->generate('aureum_restaurants_google_search', ['id' => $id]),
             'googleLinkUrl' => $this->urlGenerator->generate('aureum_restaurants_google_link', ['id' => $id]),
             'googleUnlinkUrl' => $this->urlGenerator->generate('aureum_restaurants_google_unlink', ['id' => $id]),
-            'googleCsrfToken' => $this->csrfTokenManager->getToken('aureum_restaurant_google')->getValue(),
+            'googleCsrfToken' => $this->csrfTokenManager->getToken(RestaurantGoogleController::CSRF_TOKEN_ID)->getValue(),
         ]);
     }
 
