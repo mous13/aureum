@@ -44,10 +44,6 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
                 'icon' => 'ph ph-books',
                 'permission' => 'aureum.module.sops.view',
             ]),
-            new MenuItem('Streetle', $url('aureum_streetle_index'), [
-                'icon' => 'ph ph-map-trifold',
-                'permission' => 'aureum.module.streetle.view',
-            ]),
         ]);
 
         $menu->addItem($general);
@@ -68,6 +64,15 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
         ]);
 
         $menu->addItem($directory);
+
+        $training = new Menu('TRAINING', ['icon' => ''], [
+            new MenuItem('Streetle', $url('aureum_streetle_index'), [
+                'icon' => 'ph ph-map-trifold',
+                'permission' => 'aureum.module.streetle.view',
+            ]),
+        ]);
+
+        $menu->addItem($training);
 
         $manager = new Menu('MANAGER', ['icon' => ''], [
             new MenuItem('Manage Floors', $url('aureum_floors_list'), [
