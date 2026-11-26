@@ -21,6 +21,7 @@ const PALETTE = {
     selected: '#e8590c',
     label: '#2a2722',
     landmark: '#6f6a61',
+    neighbourhood: '#4a443c',
 };
 const STREET_WIDTH = { major: [4, 22], minor: [2.5, 16], path: [1.2, 7] };
 
@@ -171,6 +172,14 @@ export default class extends Controller {
                 geometry: { type: 'Point', coordinates: landmark.at },
             })),
         };
+        const neighbourhoods = {
+            type: 'FeatureCollection',
+            features: (data.neighbourhoods ?? []).map((neighbourhood) => ({
+                type: 'Feature',
+                properties: { name: neighbourhood.name, colour: neighbourhood.colour },
+                geometry: { type: 'MultiPolygon', coordinates: neighbourhood.polygons.map((ring) => [[...ring, ring[0]]]) },
+            })),
+        };
         const outside = {
             type: 'Feature',
             geometry: {
@@ -197,6 +206,7 @@ export default class extends Controller {
                 outside: { type: 'geojson', data: outside },
                 labels: { type: 'geojson', data: EMPTY },
                 landmarks: { type: 'geojson', data: landmarks },
+                neighbourhoods: { type: 'geojson', data: neighbourhoods },
             },
             layers: [
                 { id: 'land', type: 'background', paint: { 'background-color': PALETTE.land } },
@@ -204,6 +214,8 @@ export default class extends Controller {
                 { id: 'water', type: 'fill', source: 'water', paint: { 'fill-color': PALETTE.water } },
                 { id: 'waterways', type: 'line', source: 'waterways', paint: { 'line-color': PALETTE.water, 'line-width': ['interpolate', ['linear'], ['zoom'], 14, 2, 18, 12] } },
                 { id: 'buildings', type: 'fill', source: 'buildings', paint: { 'fill-color': PALETTE.building, 'fill-outline-color': PALETTE.buildingEdge } },
+                { id: 'neighbourhood-fill', type: 'fill', source: 'neighbourhoods', paint: { 'fill-color': ['get', 'colour'], 'fill-opacity': 0.45 } },
+                { id: 'neighbourhood-edge', type: 'line', source: 'neighbourhoods', paint: { 'line-color': ['get', 'colour'], 'line-width': 2, 'line-opacity': 0.9 } },
                 { id: 'rail', type: 'line', source: 'rail', paint: { 'line-color': PALETTE.rail, 'line-width': 1.5, 'line-dasharray': [3, 2] } },
                 { id: 'tram', type: 'line', source: 'tram', paint: { 'line-color': PALETTE.tram, 'line-width': 1.5 } },
                 { id: 'street-casing', type: 'line', source: 'streets', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': PALETTE.casing, 'line-width': streetWidth(1, 2) } },
@@ -223,6 +235,19 @@ export default class extends Controller {
                     id: 'landmarks', type: 'symbol', source: 'landmarks', minzoom: 15,
                     layout: { 'text-field': ['get', 'name'], 'text-font': LABEL_FONT, 'text-size': 11, 'text-max-width': 8, 'text-optional': true },
                     paint: { 'text-color': PALETTE.landmark, 'text-halo-color': PALETTE.land, 'text-halo-width': 1.5 },
+                },
+                {
+                    id: 'neighbourhood-names', type: 'symbol', source: 'neighbourhoods', maxzoom: 16.5,
+                    layout: {
+                        'text-field': ['upcase', ['get', 'name']],
+                        'text-font': LABEL_FONT,
+                        'text-size': ['interpolate', ['linear'], ['zoom'], 13, 10, 16, 13],
+                        'text-letter-spacing': 0.1,
+                        'text-max-width': 7,
+                        'text-variable-anchor': ['center', 'top', 'bottom', 'left', 'right'],
+                        'text-radial-offset': 0.6,
+                    },
+                    paint: { 'text-color': PALETTE.neighbourhood, 'text-halo-color': 'rgba(255,255,255,0.85)', 'text-halo-width': 1.5 },
                 },
                 {
                     id: 'labels', type: 'symbol', source: 'labels',

@@ -12,6 +12,7 @@ use Citadel\Aureum\Core\Repository\StreetleMapRepository;
 use Citadel\Aureum\Core\Repository\StreetleSessionRepository;
 use Citadel\Aureum\Core\Repository\StreetleStreetRepository;
 use Citadel\Aureum\Core\Service\AureumService;
+use Citadel\Aureum\Core\Service\Streetle\ManchesterNeighbourhoods;
 use Citadel\Aureum\Core\Service\Streetle\StreetleGame;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,7 +52,13 @@ class StreetleApiController extends AbstractController
         $response = new Response();
         $response->setPrivate();
         $response->headers->addCacheControlDirective('no-cache');
-        $response->setEtag(hash('xxh128', implode('|', [$map->getId(), $map->getImportedAt()->format('U.u'), $hotel->getName(), ...($location ?? [])])));
+        $response->setEtag(hash('xxh128', implode('|', [
+            $map->getId(),
+            $map->getImportedAt()->format('U.u'),
+            $hotel->getName(),
+            ...($location ?? []),
+            hash('xxh128', serialize(ManchesterNeighbourhoods::ALL)),
+        ])));
         $response->setVary('Accept-Encoding');
         if ($response->isNotModified($request)) {
             return $response;
@@ -62,6 +69,7 @@ class StreetleApiController extends AbstractController
             'streets' => $this->streetRepository->findShapes($map),
             'basemap' => $map->getBasemap(),
             'hotel' => $location === null ? null : ['name' => $hotel->getName(), 'at' => $location],
+            'neighbourhoods' => ManchesterNeighbourhoods::ALL,
         ], JSON_THROW_ON_ERROR);
 
         if (in_array('gzip', $request->getEncodings(), true)) {
