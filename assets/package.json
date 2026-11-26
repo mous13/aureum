@@ -65,6 +65,13 @@
         "fetch": "lazy",
         "enabled": true,
         "autoimport": {}
+      },
+      "submit-busy": {
+        "main": "dist/submit_busy_controller.js",
+        "name": "submit-busy",
+        "fetch": "eager",
+        "enabled": true,
+        "autoimport": {}
       }
     },
     "importmap": {

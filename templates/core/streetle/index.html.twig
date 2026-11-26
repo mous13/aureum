@@ -11,13 +11,43 @@
                 Streetle
             </div>
             {% if canManage %}
-                <form method="post" action="{{ path('aureum_streetle_refresh_map') }}">
-                    <input type="hidden" name="_token" value="{{ csrf_token(constant('Citadel\\Aureum\\Core\\Controller\\StreetleController::CSRF_TOKEN_ID')) }}">
-                    <button type="submit" class="luxury-light square btn btn-primary"
-                            title="{{ map ? 'Downloaded ' ~ map.importedAt|date('j M Y') : 'Download the streets from OpenStreetMap' }}">
-                        <i class="ph ph-cloud-arrow-down"></i> {{ map ? 'Refresh map' : 'Download map' }}
-                    </button>
-                </form>
+                {% embed '@Forumify/components/modal.html.twig' %}
+                    {% block modalOpenButton %}
+                        <button type="button" class="luxury-light square btn btn-primary"
+                                title="{{ map ? 'Downloaded ' ~ map.importedAt|date('j M Y') : 'Download the streets from OpenStreetMap' }}">
+                            <i class="ph ph-cloud-arrow-down"></i> {{ map ? 'Refresh map' : 'Download map' }}
+                        </button>
+                    {% endblock %}
+                    {% block modalCloseButton %}{% endblock %}
+                    {% block modalContent %}
+                        <div class="card streetle-confirm">
+                            <div class="card-title luxury">{{ map ? 'Refresh the map?' : 'Download the map?' }}</div>
+                            <form method="post" action="{{ path('aureum_streetle_refresh_map') }}" class="card-body"
+                                  {{ stimulus_controller('submit-busy') }} {{ stimulus_action('submit-busy', 'show', 'submit') }}>
+                                <input type="hidden" name="_token" value="{{ csrf_token(constant('Citadel\\Aureum\\Core\\Controller\\StreetleController::CSRF_TOKEN_ID')) }}">
+                                <div {{ stimulus_target('submit-busy', 'idle') }}>
+                                    {% if map %}
+                                        <p>This downloads the latest streets from OpenStreetMap and replaces the current map.</p>
+                                        <p>Anyone playing right now will have their session ended. Their scores are kept.</p>
+                                    {% else %}
+                                        <p>This downloads the streets around the hotel from OpenStreetMap so your team can start playing.</p>
+                                    {% endif %}
+                                    <p class="streetle-muted">It can take up to a minute.</p>
+                                    <div class="streetle-confirm__actions">
+                                        <button type="button" class="btn-outlined square" {{ stimulus_action('forumify/modal', 'close') }}>Cancel</button>
+                                        <button type="submit" class="luxury-light square btn btn-primary">
+                                            <i class="ph ph-cloud-arrow-down"></i> {{ map ? 'Refresh map' : 'Download map' }}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="streetle-confirm__busy" {{ stimulus_target('submit-busy', 'busy') }} hidden>
+                                    {% include '@Forumify/components/loader.html.twig' %}
+                                    <p>Downloading streets from OpenStreetMap...</p>
+                                </div>
+                            </form>
+                        </div>
+                    {% endblock %}
+                {% endembed %}
             {% endif %}
         </div>
         <div class="card-body">

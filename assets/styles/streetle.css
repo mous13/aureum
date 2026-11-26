@@ -179,6 +179,36 @@
     font-size: var(--au-text-sm);
 }
 
+.streetle-confirm.card {
+    width: min(28rem, calc(100vw - 2rem));
+    color: var(--au-ink);
+    text-align: left;
+    white-space: normal;
+    font-weight: normal;
+}
+
+.streetle-confirm p {
+    margin: 0 0 var(--au-space-xs);
+}
+
+.streetle-confirm__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--au-space-xs);
+    margin-top: var(--au-space-md);
+}
+
+.streetle-confirm .streetle-confirm__busy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.streetle-confirm .streetle-confirm__busy[hidden] {
+    display: none;
+}
+
 .streetle-loading,
 .streetle-intro-pill {
     position: absolute;
@@ -192,8 +222,17 @@
     z-index: 2;
 }
 
-.streetle-loading {
-    top: 40%;
+.streetle-stage .streetle-loading {
+    top: 35%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 0.75rem;
+    padding: var(--au-space-md) var(--au-space-lg);
+}
+
+.streetle-loading p {
+    margin: 0;
 }
 
 .streetle-intro-pill {

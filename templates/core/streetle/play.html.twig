@@ -29,14 +29,39 @@
                 <span class="streetle-pill" title="Streets named">
                     <i class="ph ph-check-circle"></i> <b data-streetle-target="score">{{ session.correctCount }}</b>&nbsp;/&nbsp;{{ map.streetCount }}
                 </span>
-                <button type="button" class="luxury-light square btn btn-primary" data-action="streetle#finish">
-                    <i class="ph ph-flag-checkered"></i> End session
-                </button>
+                {% embed '@Forumify/components/modal.html.twig' %}
+                    {% block modalOpenButton %}
+                        <button type="button" class="luxury-light square btn btn-primary">
+                            <i class="ph ph-flag-checkered"></i> End session
+                        </button>
+                    {% endblock %}
+                    {% block modalCloseButton %}{% endblock %}
+                    {% block modalContent %}
+                        <div class="card streetle-confirm">
+                            <div class="card-title luxury">End this session?</div>
+                            <div class="card-body">
+                                <p>
+                                    {% if session.deadline %}There's still time on the clock. {% endif %}
+                                    You'll see your results and where you rank. This session can't be picked up again afterwards.
+                                </p>
+                                <div class="streetle-confirm__actions">
+                                    <button type="button" class="btn-outlined square" {{ stimulus_action('forumify/modal', 'close') }}>Keep playing</button>
+                                    <button type="button" class="luxury-light square btn btn-primary" data-action="streetle#end">
+                                        <i class="ph ph-flag-checkered"></i> End session
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endblock %}
+                {% endembed %}
             </div>
         </div>
         <div class="streetle-stage">
             <div class="streetle-map" data-streetle-target="map"></div>
-            <p class="streetle-loading" data-streetle-target="loading">Loading the map...</p>
+            <div class="streetle-loading" data-streetle-target="loading">
+                {% include '@Forumify/components/loader.html.twig' %}
+                <p>Loading the map</p>
+            </div>
             <p class="streetle-intro-pill" data-streetle-target="intro">Click any street to name it.</p>
 
             <div class="streetle-panel" data-streetle-target="panel" hidden>

@@ -390,11 +390,6 @@ export default class extends Controller {
         this.finishIfComplete();
     }
 
-    finish() {
-        if (this.finishing || (!this.isExpired() && !confirm('End this session and see your results?'))) return;
-        this.end();
-    }
-
     finishIfComplete() {
         if (this.settled.size >= this.totalValue) this.end();
     }
