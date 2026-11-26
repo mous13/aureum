@@ -40,7 +40,7 @@ class StreetleSessionRepository extends AbstractRepository
     /** @return list<StreetleSession> */
     public function findScoredForBoard(Hotel $hotel, StreetleMode $mode): array
     {
-        return $this->createQueryBuilder('s')
+        $sessions = $this->createQueryBuilder('s')
             ->join('s.employee', 'e')
             ->addSelect('e')
             ->where('s.hotel = :hotel')
@@ -52,5 +52,7 @@ class StreetleSessionRepository extends AbstractRepository
             ->setParameter('mode', $mode)
             ->getQuery()
             ->getResult();
+
+        return is_array($sessions) ? array_values(array_filter($sessions, static fn (mixed $session): bool => $session instanceof StreetleSession)) : [];
     }
 }

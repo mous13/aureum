@@ -45,11 +45,13 @@ class StreetleApiController extends AbstractController
     public function map(Request $request): Response
     {
         $map = $this->hotelMap();
+        $hotel = $map->getHotel();
+        $location = $hotel->getLocation();
 
         $response = new Response();
         $response->setPrivate();
         $response->headers->addCacheControlDirective('no-cache');
-        $response->setEtag(hash('xxh128', $map->getId() . '@' . $map->getImportedAt()->format('U.u')));
+        $response->setEtag(hash('xxh128', implode('|', [$map->getId(), $map->getImportedAt()->format('U.u'), $hotel->getName(), ...($location ?? [])])));
         $response->setVary('Accept-Encoding');
         if ($response->isNotModified($request)) {
             return $response;
@@ -59,6 +61,7 @@ class StreetleApiController extends AbstractController
             'bounds' => $map->getBounds()->toArray(),
             'streets' => $this->streetRepository->findShapes($map),
             'basemap' => $map->getBasemap(),
+            'hotel' => $location === null ? null : ['name' => $hotel->getName(), 'at' => $location],
         ], JSON_THROW_ON_ERROR);
 
         if (in_array('gzip', $request->getEncodings(), true)) {
@@ -80,7 +83,7 @@ class StreetleApiController extends AbstractController
             return $ended;
         }
 
-        $guess = trim((string)($request->toArray()['guess'] ?? ''));
+        $guess = trim($request->getPayload()->getString('guess'));
         if ($guess === '' || mb_strlen($guess) > self::MAX_GUESS_LENGTH) {
             throw new UnprocessableEntityHttpException('Type a street name to guess.');
         }
@@ -104,7 +107,7 @@ class StreetleApiController extends AbstractController
             return $ended;
         }
 
-        $level = (int)($request->toArray()['level'] ?? 1);
+        $level = $request->getPayload()->getInt('level', 1);
 
         return new JsonResponse(['hint' => $this->game->hint($this->target($request, $session), $level)]);
     }
@@ -149,7 +152,7 @@ class StreetleApiController extends AbstractController
 
     private function target(Request $request, StreetleSession $session): StreetleStreet
     {
-        $street = $this->streetRepository->findInMap($this->hotelMap(), (int)($request->toArray()['street'] ?? 0))
+        $street = $this->streetRepository->findInMap($this->hotelMap(), $request->getPayload()->getInt('street'))
             ?? throw $this->createNotFoundException('That street is no longer on the map.');
 
         if ($session->isSettled($street->getId())) {

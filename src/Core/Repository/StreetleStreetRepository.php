@@ -33,18 +33,11 @@ class StreetleStreetRepository extends AbstractRepository
      */
     public function findShapes(StreetleMap $map): array
     {
-        $rows = $this->createQueryBuilder('s')
-            ->select('s.id', 's.kind', 's.lines')
-            ->where('s.map = :map')
-            ->setParameter('map', $map)
-            ->getQuery()
-            ->getArrayResult();
-
-        return array_map(static fn (array $row): array => [
-            'id' => (int)$row['id'],
-            'kind' => $row['kind']->value,
-            'lines' => $row['lines'],
-        ], $rows);
+        return array_map(static fn (StreetleStreet $street): array => [
+            'id' => $street->getId(),
+            'kind' => $street->getKind()->value,
+            'lines' => $street->getLines(),
+        ], $this->findBy(['map' => $map]));
     }
 
     /**
@@ -57,16 +50,10 @@ class StreetleStreetRepository extends AbstractRepository
             return [];
         }
 
-        $rows = $this->createQueryBuilder('s')
-            ->select('s.id', 's.name')
-            ->where('s.map = :map')
-            ->andWhere('s.id IN (:ids)')
-            ->setParameter('map', $map)
-            ->setParameter('ids', $ids)
-            ->getQuery()
-            ->getArrayResult();
-
-        return array_map(static fn (array $row): array => ['id' => (int)$row['id'], 'name' => (string)$row['name']], $rows);
+        return array_map(
+            static fn (StreetleStreet $street): array => ['id' => $street->getId(), 'name' => $street->getName()],
+            $this->findBy(['map' => $map, 'id' => $ids]),
+        );
     }
 
     public function deleteForMap(StreetleMap $map): void

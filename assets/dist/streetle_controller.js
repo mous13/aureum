@@ -134,6 +134,7 @@ export default class extends Controller {
         });
         this.map.touchZoomRotate.disableRotation();
         this.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+        if (data.hotel) this.addHotelMarker(data.hotel);
 
         this.map.on('load', () => {
             this.map.setMinZoom(this.map.getZoom() - 0.5);
@@ -230,6 +231,18 @@ export default class extends Controller {
                 },
             ],
         };
+    }
+
+    addHotelMarker(hotel) {
+        const element = document.createElement('div');
+        const icon = document.createElement('i');
+        const name = document.createElement('span');
+        element.className = 'streetle-hotel';
+        icon.className = 'ph-fill ph-building';
+        name.textContent = hotel.name;
+        element.append(icon, name);
+
+        new maplibregl.Marker({ element, anchor: 'bottom', offset: [0, -6] }).setLngLat(hotel.at).addTo(this.map);
     }
 
     nearestStreet(point, radius) {

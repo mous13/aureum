@@ -68,6 +68,12 @@ class Hotel
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $googlePlacesEnabled = false;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $latitude = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $longitude = null;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
@@ -266,5 +272,31 @@ class Hotel
     public function setGooglePlacesEnabled(bool $googlePlacesEnabled): void
     {
         $this->googlePlacesEnabled = $googlePlacesEnabled;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): void
+    {
+        $this->latitude = $latitude;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): void
+    {
+        $this->longitude = $longitude;
+    }
+
+    /** @return array{float, float}|null */
+    public function getLocation(): ?array
+    {
+        return $this->latitude === null || $this->longitude === null ? null : [$this->longitude, $this->latitude];
     }
 }

@@ -142,6 +142,37 @@
     inset: 0;
 }
 
+.streetle-hotel {
+    display: flex;
+    align-items: center;
+    gap: var(--au-space-2xs);
+    padding: 0.2rem 0.55rem 0.2rem 0.35rem;
+    border-radius: 999px;
+    background: oklch(30% 0.04 260);
+    color: #fff;
+    font-size: var(--au-text-xs);
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+
+.streetle-hotel::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: oklch(30% 0.04 260);
+    border-bottom: 0;
+}
+
+.streetle-hotel i {
+    color: var(--au-accent);
+    font-size: var(--au-text-sm);
+}
+
 .streetle-loading,
 .streetle-intro-pill {
     position: absolute;

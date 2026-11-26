@@ -24,7 +24,7 @@ class OverpassClient
     }
 
     /**
-     * @return list<array<string, mixed>>
+     * @return list<array<mixed>>
      */
     public function fetchArea(StreetleBounds $bounds): array
     {
@@ -44,7 +44,7 @@ class OverpassClient
 
                 $elements = $response->toArray(false)['elements'] ?? null;
                 if (is_array($elements)) {
-                    return array_values($elements);
+                    return array_values(array_filter($elements, is_array(...)));
                 }
             } catch (ExceptionInterface) {
                 continue;

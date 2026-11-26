@@ -22,7 +22,7 @@ final class StreetleMapBuilder
     }
 
     /**
-     * @param list<array<string, mixed>> $elements Overpass elements requested with "out geom"
+     * @param list<array<mixed>> $elements Overpass elements requested with "out geom"
      */
     public function build(array $elements, StreetleBounds $playArea): StreetleMapData
     {
@@ -31,10 +31,10 @@ final class StreetleMapBuilder
         $landmarkNames = [];
 
         foreach ($elements as $element) {
-            $tags = is_array($element['tags'] ?? null) ? $element['tags'] : [];
+            $tags = $this->tags($element['tags'] ?? null);
 
             if (($element['type'] ?? null) === 'node') {
-                $landmark = $this->landmark($tags, $element);
+                $landmark = $this->landmark($tags, $this->point($element));
                 if ($landmark !== null && !isset($landmarkNames[$landmark['kind'] . $landmark['name']])) {
                     $landmarkNames[$landmark['kind'] . $landmark['name']] = true;
                     $basemap['landmarks'][] = $landmark;
@@ -74,13 +74,13 @@ final class StreetleMapBuilder
 
     /**
      * @param array<string, array{name: string, normalizedName: string, kind: StreetKind, lines: list<list<array{float, float}>>}> $streets
-     * @param array<string, mixed> $tags
+     * @param array<string, string> $tags
      * @param list<array{float, float}> $line
      */
     private function addStreet(array &$streets, array $tags, array $line): void
     {
-        $name = trim((string)($tags['name'] ?? ''));
-        $highway = (string)$tags['highway'];
+        $name = trim($tags['name'] ?? '');
+        $highway = $tags['highway'] ?? '';
         if ($name === '' || in_array($highway, self::EXCLUDED_HIGHWAYS, true)) {
             return;
         }
@@ -102,7 +102,7 @@ final class StreetleMapBuilder
     }
 
     /**
-     * @param array<string, mixed> $tags
+     * @param array<string, string> $tags
      */
     private function basemapLayer(array $tags): ?string
     {
@@ -120,14 +120,14 @@ final class StreetleMapBuilder
     }
 
     /**
-     * @param array<string, mixed> $tags
-     * @param array<string, mixed> $element
+     * @param array<string, string> $tags
+     * @param array{float, float}|null $at
      * @return array{name: string, kind: string, at: array{float, float}}|null
      */
-    private function landmark(array $tags, array $element): ?array
+    private function landmark(array $tags, ?array $at): ?array
     {
-        $name = trim((string)($tags['name'] ?? ''));
-        if ($name === '' || !isset($element['lat'], $element['lon'])) {
+        $name = trim($tags['name'] ?? '');
+        if ($name === '' || $at === null) {
             return null;
         }
 
@@ -138,11 +138,23 @@ final class StreetleMapBuilder
             default => null,
         };
 
-        return $kind === null ? null : ['name' => $name, 'kind' => $kind, 'at' => $this->point($element)];
+        return $kind === null ? null : ['name' => $name, 'kind' => $kind, 'at' => $at];
     }
 
     /**
-     * @param array<string, mixed> $tags
+     * @return array<string, string>
+     */
+    private function tags(mixed $tags): array
+    {
+        if (!is_array($tags)) {
+            return [];
+        }
+
+        return array_filter($tags, static fn (mixed $value, int|string $key): bool => is_string($key) && is_string($value), ARRAY_FILTER_USE_BOTH);
+    }
+
+    /**
+     * @param array<string, string> $tags
      * @param array<string, list<string>> $wanted
      */
     private function matches(array $tags, array $wanted): bool
@@ -167,8 +179,9 @@ final class StreetleMapBuilder
 
         $line = [];
         foreach ($geometry as $point) {
-            if (is_array($point) && isset($point['lat'], $point['lon'])) {
-                $line[] = $this->point($point);
+            $coordinate = $this->point($point);
+            if ($coordinate !== null) {
+                $line[] = $coordinate;
             }
         }
 
@@ -176,12 +189,17 @@ final class StreetleMapBuilder
     }
 
     /**
-     * @param array<string, mixed> $point
-     * @return array{float, float}
+     * @return array{float, float}|null
      */
-    private function point(array $point): array
+    private function point(mixed $point): ?array
     {
-        return [round((float)$point['lon'], 5), round((float)$point['lat'], 5)];
+        $lon = is_array($point) ? $point['lon'] ?? null : null;
+        $lat = is_array($point) ? $point['lat'] ?? null : null;
+        if (!is_int($lon) && !is_float($lon) || !is_int($lat) && !is_float($lat)) {
+            return null;
+        }
+
+        return [round($lon, 5), round($lat, 5)];
     }
 
     /**
