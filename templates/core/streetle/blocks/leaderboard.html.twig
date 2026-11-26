@@ -1,0 +1,38 @@
+{% set top = entries|slice(0, 10) %}
+<section class="streetle-board">
+    <h3 class="streetle-board__title">{{ mode.label }} leaderboard</h3>
+    {% if entries is empty %}
+        <p class="streetle-board__empty">No scores yet.</p>
+    {% else %}
+        <table class="table w-100">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Streets</th>
+                <th>{{ mode.value == 'sprint' ? 'Accuracy' : 'Time' }}</th>
+                <th>Per min</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entry in top %}
+                {{ _self.row(entry, mode, employeeId) }}
+            {% endfor %}
+            {% if mine is not null and top|filter(e => e.employeeId == mine.employeeId) is empty %}
+                {{ _self.row(mine, mode, employeeId) }}
+            {% endif %}
+            </tbody>
+        </table>
+    {% endif %}
+</section>
+
+{% macro row(entry, mode, employeeId) %}
+    {% import '@CitadelAureum/core/streetle/blocks/macros.html.twig' as streetle %}
+    <tr class="{{ entry.employeeId == employeeId ? 'streetle-board__me' }}">
+        <td>{{ entry.rank }}</td>
+        <td>{{ entry.employeeName }}</td>
+        <td>{{ entry.session.correctCount }}</td>
+        <td>{{ mode.value == 'sprint' ? streetle.accuracy(entry.session.accuracy) : streetle.duration(entry.session.durationSeconds) }}</td>
+        <td>{{ entry.session.streetsPerMinute|number_format(1) }}</td>
+    </tr>
+{% endmacro %}

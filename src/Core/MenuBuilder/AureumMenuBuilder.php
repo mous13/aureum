@@ -44,6 +44,10 @@ class AureumMenuBuilder implements AureumMenuBuilderInterface
                 'icon' => 'ph ph-books',
                 'permission' => 'aureum.module.sops.view',
             ]),
+            new MenuItem('Streetle', $url('aureum_streetle_index'), [
+                'icon' => 'ph ph-map-trifold',
+                'permission' => 'aureum.module.streetle.view',
+            ]),
         ]);
 
         $menu->addItem($general);

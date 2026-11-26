@@ -58,6 +58,13 @@
         "fetch": "eager",
         "enabled": true,
         "autoimport": {}
+      },
+      "streetle": {
+        "main": "dist/streetle_controller.js",
+        "name": "streetle",
+        "fetch": "lazy",
+        "enabled": true,
+        "autoimport": {}
       }
     },
     "importmap": {
@@ -65,6 +72,7 @@
     }
   },
   "dependencies": {
+    "maplibre-gl": "^5.24.0"
   },
   "devDependencies": {
     "@hotwired/stimulus": "^3.0.0",

@@ -1,0 +1,79 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title %}Streetle - Aureum{% endblock %}
+{% block body %}
+    {{ component('Aureum\\Announcements', { module: 'streetle' }) }}
+    {% set canManage = is_granted('aureum.module.streetle.manage') %}
+
+    <div class="card">
+        <div class="card-title luxury items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="icon ph ph-map-trifold"></i>
+                Streetle
+            </div>
+            {% if canManage %}
+                <form method="post" action="{{ path('aureum_streetle_refresh_map') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token(constant('Citadel\\Aureum\\Core\\Controller\\StreetleController::CSRF_TOKEN_ID')) }}">
+                    <button type="submit" class="luxury-light square btn btn-primary"
+                            title="{{ map ? 'Downloaded ' ~ map.importedAt|date('j M Y') : 'Download the streets from OpenStreetMap' }}">
+                        <i class="ph ph-cloud-arrow-down"></i> {{ map ? 'Refresh map' : 'Download map' }}
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            {% if map is null %}
+                <div class="streetle-empty">
+                    <i class="ph ph-map-trifold"></i>
+                    <p>Streetle isn't ready yet.</p>
+                    <p class="streetle-muted">
+                        {% if canManage %}
+                            Download the map to get started. It takes up to a minute.
+                        {% else %}
+                            Ask a manager to download the map.
+                        {% endif %}
+                    </p>
+                </div>
+            {% else %}
+                <p class="streetle-intro">
+                    Learn the {{ map.streetCount }} streets around the hotel. Click a street on the map and type its name.
+                </p>
+                <div class="streetle-modes">
+                    {% for board in boards %}
+                        <div class="streetle-mode">
+                            <div>
+                                <h3 class="streetle-mode__title">{{ board.mode.label }}</h3>
+                                <p class="streetle-muted">
+                                    {% if board.mode.value == 'sprint' %}
+                                        Five minutes on the clock. Name as many streets as you can.
+                                    {% else %}
+                                        No clock. Work through the map at your own pace and finish when you're ready.
+                                    {% endif %}
+                                </p>
+                                {% if board.mine %}
+                                    <p class="streetle-mode__best">
+                                        {% set best = board.mine.session.correctCount %}
+                                        Your best: <strong>{{ best }} street{{ best == 1 ? '' : 's' }}</strong>
+                                        &middot; #{{ board.mine.rank }} of {{ board.entries|length }}
+                                    </p>
+                                {% endif %}
+                                {% include '@CitadelAureum/core/streetle/blocks/rival.html.twig' with {
+                                    mode: board.mode, mine: board.mine, rival: board.rival, entries: board.entries,
+                                } only %}
+                            </div>
+                            {% include '@CitadelAureum/core/streetle/blocks/start_form.html.twig' with {
+                                mode: board.mode, label: 'Start ' ~ board.mode.label|lower,
+                            } only %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="streetle-boards">
+                    {% for board in boards %}
+                        {% include '@CitadelAureum/core/streetle/blocks/leaderboard.html.twig' with {
+                            mode: board.mode, entries: board.entries, mine: board.mine, employeeId: employee.id,
+                        } only %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

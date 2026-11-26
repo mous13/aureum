@@ -81,6 +81,12 @@ class DocsController extends AbstractController
             'section' => 'Modules',
             'permission' => 'aureum.module.lost_property.view',
         ],
+        'streetle' => [
+            'title' => 'Streetle',
+            'summary' => 'Learn the streets around the hotel and climb the leaderboard.',
+            'section' => 'Modules',
+            'permission' => 'aureum.module.streetle.view',
+        ],
         'roles-and-access' => [
             'title' => 'Roles & access',
             'summary' => 'How roles, module permissions, and the modules screen fit together.',

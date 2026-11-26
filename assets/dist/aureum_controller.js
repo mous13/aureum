@@ -9,6 +9,7 @@ import "../styles/docs.css";
 import "../styles/amenities.css";
 import "../styles/sops.css";
 import "../styles/drawer.css";
+import "../styles/streetle.css";
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {

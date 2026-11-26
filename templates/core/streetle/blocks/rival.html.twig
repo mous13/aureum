@@ -1,0 +1,26 @@
+{% if mine is null %}
+    <p class="streetle-rival">
+        {% if entries is empty %}
+            Nobody has played {{ mode.label|lower }} yet. Set the first score.
+        {% else %}
+            {% set leader = entries|first %}
+            You're not on the board yet. {{ leader.employeeName }} leads with {{ leader.session.correctCount }} street{{ leader.session.correctCount == 1 ? '' : 's' }}.
+        {% endif %}
+    </p>
+{% elseif rival is null %}
+    <p class="streetle-rival streetle-rival--top">
+        <i class="ph ph-crown-simple"></i> You're top of the board.
+    </p>
+{% else %}
+    {% set gap = rival.session.correctCount - mine.session.correctCount %}
+    <p class="streetle-rival streetle-rival--chase">
+        <i class="ph ph-sneaker-move"></i>
+        {% if gap > 0 %}
+            <strong>{{ rival.employeeName }}</strong> is {{ gap }} street{{ gap == 1 ? '' : 's' }} ahead of you.
+        {% elseif mode.value == 'sprint' %}
+            <strong>{{ rival.employeeName }}</strong> matched your score with better accuracy.
+        {% else %}
+            <strong>{{ rival.employeeName }}</strong> matched your score in a faster time.
+        {% endif %}
+    </p>
+{% endif %}
