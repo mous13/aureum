@@ -1,0 +1,63 @@
+{% extends '@CitadelAureum/core/docs/layout.html.twig' %}
+
+{% block article %}
+    <p>
+        Streetle is a training game for front-of-house teams. It shows the
+        streets around the hotel with every name hidden. Click a street, type
+        its name, and see how well you really know the area guests ask about.
+    </p>
+
+    <p>
+        When the hotel's location is set, the hotel is marked on the map so
+        you can work outwards from the front door.
+    </p>
+    <p>
+        The map is shaded with Manchester's neighbourhoods, using the same
+        names and colours as the Visit Manchester city map handed to guests,
+        so you learn which streets belong to Ancoats, Spinningfields, the
+        Northern Quarter and the rest.
+    </p>
+    <p>
+        Parks, museums, Manchester Art Gallery, the Arndale, Afflecks, train
+        stations and tram stops are marked to help you find your bearings.
+        Zoom in to see their names.
+    </p>
+
+    <h2>Game modes</h2>
+    <ul>
+        <li><strong>Sprint</strong> gives you five minutes to name as many streets as you can. <strong>Skip</strong> moves past a street you don't know.</li>
+        <li><strong>Free play</strong> has no clock. Work through the map at your own pace and press <strong>End session</strong> when you're done.</li>
+    </ul>
+
+    <h2>Common tasks</h2>
+    <ol class="au-docs-steps">
+        <li>Pick a mode on the Streetle page and press <strong>Start</strong>.</li>
+        <li>Click a street. It turns orange. Type its name and press <strong>Guess</strong>. Abbreviations such as <em>St</em>, <em>Rd</em> and <em>Sq</em> are accepted.</li>
+        <li>If you name a different street, Streetle tells you how far away it is.</li>
+        <li><strong>Hint</strong> shows the shape of the name, then one more letter of each word, up to three times.</li>
+        <li>When the session ends you see your streets named, time, streets per minute and accuracy, plus where you rank and who is just ahead of you.</li>
+    </ol>
+
+    <h2>Your recent games</h2>
+    <p>
+        The Streetle page lists your last ten games of either mode, with the
+        streets you named, your time and accuracy, and a link back to each
+        set of results.
+    </p>
+
+    <h2>The leaderboard</h2>
+    <p>
+        Each mode has its own leaderboard showing everyone's best session.
+        Sprint is ranked by streets named, then accuracy. Free play is ranked
+        by streets named, then the fastest time.
+    </p>
+
+    <div class="au-docs-note">
+        <i class="ph ph-info"></i>
+        <p>
+            Managers download the map once with <strong>Download map</strong>,
+            and can refresh it later to pick up new streets. Map data comes
+            from OpenStreetMap.
+        </p>
+    </div>
+{% endblock %}

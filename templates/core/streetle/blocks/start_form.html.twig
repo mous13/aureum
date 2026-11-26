@@ -1,0 +1,7 @@
+<form method="post" action="{{ path('aureum_streetle_start') }}">
+    <input type="hidden" name="_token" value="{{ csrf_token(constant('Citadel\\Aureum\\Core\\Controller\\StreetleController::CSRF_TOKEN_ID')) }}">
+    <input type="hidden" name="mode" value="{{ mode.value }}">
+    <button type="submit" class="btn btn-primary luxury-light square">
+        <i class="ph ph-play"></i> {{ label }}
+    </button>
+</form>

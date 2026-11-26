@@ -1,0 +1,7 @@
+{% macro duration(seconds) -%}
+    {{ seconds // 60 }}:{{ '%02d'|format(seconds % 60) }}
+{%- endmacro %}
+
+{% macro accuracy(value) -%}
+    {{ value is null ? '-' : (value * 100)|round ~ '%' }}
+{%- endmacro %}

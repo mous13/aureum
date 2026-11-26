@@ -1,0 +1,74 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% import '@CitadelAureum/core/streetle/blocks/macros.html.twig' as streetle %}
+{% block title %}Streetle results - Aureum{% endblock %}
+{% block body %}
+    <div class="card">
+        <div class="card-title luxury items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="icon ph ph-flag-checkered"></i>
+                {{ session.mode.label }} results
+            </div>
+            <form method="get" action="{{ path('aureum_streetle_index') }}">
+                <button type="submit" class="luxury-light square btn btn-primary">
+                    <i class="ph ph-arrow-left"></i> Streetle
+                </button>
+            </form>
+        </div>
+        <div class="card-body">
+            {% if topOf or isPersonalBest %}
+                <div class="streetle-banners">
+                    {% if topOf %}
+                        <p class="streetle-banner"><i class="ph ph-crown-simple"></i> You're #1 {{ topOf.phrase ?? 'of all time' }}!</p>
+                    {% endif %}
+                    {% if isPersonalBest %}
+                        <p class="streetle-banner"><i class="ph ph-star"></i> New personal best!</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="streetle-stats">
+                <div class="streetle-stat">
+                    <span class="streetle-stat__value">{{ session.correctCount }}</span>
+                    <span class="streetle-stat__label">Streets named</span>
+                </div>
+                <div class="streetle-stat">
+                    <span class="streetle-stat__value">{{ streetle.duration(session.durationSeconds) }}</span>
+                    <span class="streetle-stat__label">Time</span>
+                </div>
+                <div class="streetle-stat">
+                    <span class="streetle-stat__value">{{ session.streetsPerMinute|number_format(1) }}</span>
+                    <span class="streetle-stat__label">Streets per minute</span>
+                </div>
+                <div class="streetle-stat">
+                    <span class="streetle-stat__value">{{ streetle.accuracy(session.accuracy) }}</span>
+                    <span class="streetle-stat__label">Accuracy</span>
+                </div>
+            </div>
+
+            <div class="streetle-next">
+                {% include '@CitadelAureum/core/streetle/blocks/start_form.html.twig' with {
+                    mode: session.mode, label: 'Play ' ~ session.mode.label|lower ~ ' again',
+                } only %}
+            </div>
+
+            {% embed '@Forumify/components/tabs.html.twig' %}
+                {% block tabs %}
+                    {% for item in periods %}
+                        <button type="button" class="luxury-light square btn-link" data-tab-id="streetle-{{ item.period.value }}">{{ item.period.label }}</button>
+                    {% endfor %}
+                {% endblock %}
+                {% block tabpanels %}
+                    {% for item in periods %}
+                        <div id="streetle-{{ item.period.value }}">
+                            {% if item.mine %}
+                                <p class="streetle-mode__best">You're <strong>#{{ item.mine.rank }}</strong> of {{ item.entries|length }} on the {{ session.mode.label|lower }} board{{ item.period.phrase ? ' ' ~ item.period.phrase }}.</p>
+                            {% endif %}
+                            {% include '@CitadelAureum/core/streetle/blocks/rival.html.twig' with item only %}
+                            {% include '@CitadelAureum/core/streetle/blocks/leaderboard.html.twig' with item|merge({ employeeId: employee.id }) only %}
+                        </div>
+                    {% endfor %}
+                {% endblock %}
+            {% endembed %}
+        </div>
+    </div>
+{% endblock %}

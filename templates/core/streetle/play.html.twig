@@ -1,0 +1,86 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% block title %}Streetle - Aureum{% endblock %}
+{% block body %}
+    {% set id = session.id %}
+    <div class="card streetle-play" {{ stimulus_controller('streetle', {
+        mapUrl: path('aureum_streetle_api_map'),
+        guessUrl: path('aureum_streetle_api_guess', { id: id }),
+        hintUrl: path('aureum_streetle_api_hint', { id: id }),
+        revealUrl: path('aureum_streetle_api_reveal', { id: id }),
+        endUrl: path('aureum_streetle_api_end', { id: id }),
+        csrfToken: csrf_token(constant('Citadel\\Aureum\\Core\\Controller\\StreetleController::CSRF_TOKEN_ID')),
+        deadline: session.deadline ? session.deadline.timestamp * 1000 : 0,
+        startedAt: session.startedAt.timestamp * 1000,
+        serverNow: 'now'|date('U') * 1000,
+        total: map.streetCount,
+        named: named,
+        revealed: revealed,
+        maxHintLevel: maxHintLevel,
+    }) }}>
+        <div class="card-title luxury items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="icon ph ph-map-trifold"></i>
+                Streetle &middot; {{ session.mode.label }}
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="streetle-pill" title="{{ session.deadline ? 'Time left' : 'Time played' }}">
+                    <i class="ph ph-timer"></i> <b data-streetle-target="clock">{{ session.deadline ? '5:00' : '0:00' }}</b>
+                </span>
+                <span class="streetle-pill" title="Streets named">
+                    <i class="ph ph-check-circle"></i> <b data-streetle-target="score">{{ session.correctCount }}</b>&nbsp;/&nbsp;{{ map.streetCount }}
+                </span>
+                {% embed '@Forumify/components/modal.html.twig' %}
+                    {% block modalOpenButton %}
+                        <button type="button" class="luxury-light square btn btn-primary">
+                            <i class="ph ph-flag-checkered"></i> End session
+                        </button>
+                    {% endblock %}
+                    {% block modalCloseButton %}{% endblock %}
+                    {% block modalContent %}
+                        <div class="card streetle-confirm">
+                            <div class="card-title luxury">End this session?</div>
+                            <div class="card-body">
+                                <p>
+                                    {% if session.deadline %}There's still time on the clock. {% endif %}
+                                    You'll see your results and where you rank. This session can't be picked up again afterwards.
+                                </p>
+                                <div class="streetle-confirm__actions">
+                                    <button type="button" class="btn-outlined square" {{ stimulus_action('forumify/modal', 'close') }}>Keep playing</button>
+                                    <button type="button" class="luxury-light square btn btn-primary" data-action="streetle#end">
+                                        <i class="ph ph-flag-checkered"></i> End session
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endblock %}
+                {% endembed %}
+            </div>
+        </div>
+        <div class="streetle-stage">
+            <div class="streetle-map" data-streetle-target="map"></div>
+            <div class="streetle-loading" data-streetle-target="loading">
+                {% include '@Forumify/components/loader.html.twig' %}
+                <p>Loading the map</p>
+            </div>
+            <p class="streetle-intro-pill" data-streetle-target="intro">Click any street to name it.</p>
+
+            <div class="streetle-panel" data-streetle-target="panel" hidden>
+                <h3 class="streetle-panel__title">What's this street called?</h3>
+                <form class="streetle-panel__row" autocomplete="off" data-action="streetle#guess">
+                    <input type="text" data-streetle-target="input" placeholder="e.g. Deansgate" aria-label="Street name" maxlength="120">
+                    <button type="submit" class="btn btn-primary" data-streetle-target="submit">Guess</button>
+                </form>
+                <p class="streetle-panel__hint" data-streetle-target="hint"></p>
+                <ul class="streetle-panel__guesses" data-streetle-target="guesses"></ul>
+                <p class="streetle-panel__message" data-streetle-target="message" aria-live="polite"></p>
+                <div class="streetle-panel__actions">
+                    <div class="flex gap-2">
+                        <button type="button" class="btn btn-outlined" data-streetle-target="hintButton" data-action="streetle#hint">Hint</button>
+                        <button type="button" class="btn btn-outlined" data-streetle-target="revealButton" data-action="streetle#reveal">{{ session.deadline ? 'Skip' : 'Reveal' }}</button>
+                    </div>
+                    <button type="button" class="btn btn-outlined" data-action="streetle#close">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -9,11 +9,13 @@ use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class HotelType extends AbstractType
 {
@@ -28,6 +30,9 @@ class HotelType extends AbstractType
             [
                 'data_class' => Hotel::class,
                 'image_required' => false,
+                'constraints' => [
+                    new Assert\Callback(self::validateLocation(...)),
+                ],
             ]
         );
     }
@@ -68,6 +73,32 @@ class HotelType extends AbstractType
                 'required' => false,
                 'label' => 'Google Places sync',
                 'help' => 'Allow this hotel to link restaurants to Google and sync opening times.',
+            ])
+            ->add('latitude', NumberType::class, [
+                'required' => false,
+                'scale' => 6,
+                'html5' => true,
+                'attr' => ['step' => 'any', 'placeholder' => 'e.g. 53.479'],
+                'help' => 'Marks the hotel on the Streetle map. Right-click the hotel in Google Maps to copy its coordinates.',
+                'constraints' => [new Assert\Range(min: -90, max: 90)],
+            ])
+            ->add('longitude', NumberType::class, [
+                'required' => false,
+                'scale' => 6,
+                'html5' => true,
+                'attr' => ['step' => 'any', 'placeholder' => 'e.g. -2.245'],
+                'constraints' => [new Assert\Range(min: -180, max: 180)],
             ]);
+    }
+
+    public static function validateLocation(Hotel $hotel, ExecutionContextInterface $context): void
+    {
+        if (($hotel->getLatitude() === null) === ($hotel->getLongitude() === null)) {
+            return;
+        }
+
+        $context->buildViolation('Enter both a latitude and a longitude, or leave both empty.')
+            ->atPath($hotel->getLatitude() === null ? 'latitude' : 'longitude')
+            ->addViolation();
     }
 }

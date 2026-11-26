@@ -1,0 +1,156 @@
+{% extends '@CitadelAureum/core/base.html.twig' %}
+{% import '@CitadelAureum/core/streetle/blocks/macros.html.twig' as streetle %}
+{% block title %}Streetle - Aureum{% endblock %}
+{% block body %}
+    {{ component('Aureum\\Announcements', { module: 'streetle' }) }}
+    {% set canManage = is_granted('aureum.module.streetle.manage') %}
+
+    <div class="card">
+        <div class="card-title luxury items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="icon ph ph-map-trifold"></i>
+                Streetle
+            </div>
+            {% if canManage %}
+                {% embed '@Forumify/components/modal.html.twig' %}
+                    {% block modalOpenButton %}
+                        <button type="button" class="luxury-light square btn btn-primary"
+                                title="{{ map ? 'Downloaded ' ~ map.importedAt|date('j M Y') : 'Download the streets from OpenStreetMap' }}">
+                            <i class="ph ph-cloud-arrow-down"></i> {{ map ? 'Refresh map' : 'Download map' }}
+                        </button>
+                    {% endblock %}
+                    {% block modalCloseButton %}{% endblock %}
+                    {% block modalContent %}
+                        <div class="card streetle-confirm">
+                            <div class="card-title luxury">{{ map ? 'Refresh the map?' : 'Download the map?' }}</div>
+                            <form method="post" action="{{ path('aureum_streetle_refresh_map') }}" class="card-body"
+                                  {{ stimulus_controller('submit-busy') }} {{ stimulus_action('submit-busy', 'show', 'submit') }}>
+                                <input type="hidden" name="_token" value="{{ csrf_token(constant('Citadel\\Aureum\\Core\\Controller\\StreetleController::CSRF_TOKEN_ID')) }}">
+                                <div {{ stimulus_target('submit-busy', 'idle') }}>
+                                    {% if map %}
+                                        <p>This downloads the latest streets from OpenStreetMap and replaces the current map.</p>
+                                        <p>Anyone playing right now will have their session ended. Their scores are kept.</p>
+                                    {% else %}
+                                        <p>This downloads the streets around the hotel from OpenStreetMap so your team can start playing.</p>
+                                    {% endif %}
+                                    <p class="streetle-muted">It can take up to a minute.</p>
+                                    <div class="streetle-confirm__actions">
+                                        <button type="button" class="btn-outlined square" {{ stimulus_action('forumify/modal', 'close') }}>Cancel</button>
+                                        <button type="submit" class="luxury-light square btn btn-primary">
+                                            <i class="ph ph-cloud-arrow-down"></i> {{ map ? 'Refresh map' : 'Download map' }}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="streetle-confirm__busy" {{ stimulus_target('submit-busy', 'busy') }} hidden>
+                                    {% include '@Forumify/components/loader.html.twig' %}
+                                    <p>Downloading streets from OpenStreetMap...</p>
+                                </div>
+                            </form>
+                        </div>
+                    {% endblock %}
+                {% endembed %}
+            {% endif %}
+        </div>
+        <div class="card-body">
+            {% if map is null %}
+                <div class="streetle-empty">
+                    <i class="ph ph-map-trifold"></i>
+                    <p>Streetle isn't ready yet.</p>
+                    <p class="streetle-muted">
+                        {% if canManage %}
+                            Download the map to get started. It takes up to a minute.
+                        {% else %}
+                            Ask a manager to download the map.
+                        {% endif %}
+                    </p>
+                </div>
+            {% else %}
+                <p class="streetle-intro">
+                    Learn the {{ map.streetCount }} streets around the hotel. Click a street on the map and type its name.
+                </p>
+                <div class="streetle-modes">
+                    {% for item in modes %}
+                        <div class="streetle-mode">
+                            <div>
+                                <h3 class="streetle-mode__title">{{ item.mode.label }}</h3>
+                                <p class="streetle-muted">
+                                    {% if item.mode.value == 'sprint' %}
+                                        Five minutes on the clock. Name as many streets as you can.
+                                    {% else %}
+                                        No clock. Work through the map at your own pace and finish when you're ready.
+                                    {% endif %}
+                                </p>
+                                {% if item.best %}
+                                    {% set best = item.best.session.correctCount %}
+                                    <p class="streetle-mode__best">
+                                        Your best: <strong>{{ best }} street{{ best == 1 ? '' : 's' }}</strong>
+                                    </p>
+                                {% endif %}
+                            </div>
+                            {% include '@CitadelAureum/core/streetle/blocks/start_form.html.twig' with {
+                                mode: item.mode, label: 'Start ' ~ item.mode.label|lower,
+                            } only %}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% embed '@Forumify/components/tabs.html.twig' %}
+                    {% block tabs %}
+                        {% for item in periods %}
+                            <button type="button" class="luxury-light square btn-link" data-tab-id="streetle-{{ item.period.value }}">{{ item.period.label }}</button>
+                        {% endfor %}
+                    {% endblock %}
+                    {% block tabpanels %}
+                        {% for item in periods %}
+                            <div id="streetle-{{ item.period.value }}">
+                                <div class="streetle-boards">
+                                    {% for board in item.boards %}
+                                        <div>
+                                            {% include '@CitadelAureum/core/streetle/blocks/leaderboard.html.twig' with board|merge({
+                                                period: item.period, employeeId: employee.id,
+                                            }) only %}
+                                            {% include '@CitadelAureum/core/streetle/blocks/rival.html.twig' with board|merge({ period: item.period }) only %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endblock %}
+                {% endembed %}
+
+                <section class="streetle-recent">
+                    <h3 class="streetle-board__title">Your last {{ recent|length > 1 ? recent|length ~ ' games' : 'game' }}</h3>
+                    {% if recent is empty %}
+                        <p class="streetle-board__empty">Your games will show here once you've played.</p>
+                    {% else %}
+                        <table class="table w-100">
+                            <thead>
+                            <tr>
+                                <th>When</th>
+                                <th>Mode</th>
+                                <th>Streets</th>
+                                <th>Time</th>
+                                <th>Accuracy</th>
+                                <th>Per min</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for game in recent %}
+                                <tr>
+                                    <td>{{ game.endedAt|date('j M, H:i', timezone) }}</td>
+                                    <td>{{ game.mode.label }}</td>
+                                    <td>{{ game.correctCount }}</td>
+                                    <td>{{ streetle.duration(game.durationSeconds) }}</td>
+                                    <td>{{ streetle.accuracy(game.accuracy) }}</td>
+                                    <td>{{ game.streetsPerMinute|number_format(1) }}</td>
+                                    <td><a href="{{ path('aureum_streetle_summary', { id: game.id }) }}">Results</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </section>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
