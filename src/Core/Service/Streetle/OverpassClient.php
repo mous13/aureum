@@ -64,6 +64,7 @@ class OverpassClient
             . 'way["natural"="water"]' . $box . ';'
             . 'way["waterway"]' . $box . ';'
             . 'way["leisure"~"^(park|garden)$"]' . $box . ';'
+            . 'relation["leisure"="park"]["name"]' . $box . ';'
             . 'way["landuse"~"^(grass|village_green)$"]' . $box . ';'
             . 'way["railway"~"^(rail|light_rail|subway|narrow_gauge|tram)$"]' . $box . ';'
             . ');out geom;('

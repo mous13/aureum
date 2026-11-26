@@ -28,19 +28,23 @@ final class StreetleMapBuilder
     public function build(array $elements, StreetleBounds $playArea): StreetleMapData
     {
         $streets = [];
-        $basemap = ['buildings' => [], 'parks' => [], 'water' => [], 'waterways' => [], 'rail' => [], 'tram' => [], 'places' => []];
-        $placeKeys = [];
+        $basemap = ['buildings' => [], 'green' => [], 'parks' => [], 'water' => [], 'waterways' => [], 'rail' => [], 'tram' => [], 'places' => []];
+        $places = [];
+        $parkAreas = [];
 
         foreach ($elements as $element) {
             $tags = $this->tags($element['tags'] ?? null);
 
             $at = $this->point($element['center'] ?? $element);
             if ($at !== null) {
-                $kind = $this->placeKind($tags);
-                $name = trim($tags['name'] ?? '');
-                if ($kind !== null && $name !== '' && !isset($placeKeys[$kind . $name])) {
-                    $placeKeys[$kind . $name] = true;
-                    $basemap['places'][] = ['name' => $kind === 'tram' ? null : $name, 'kind' => $kind, 'at' => $at];
+                $this->addPlace($places, $tags, $at);
+                continue;
+            }
+
+            $parkName = ($tags['leisure'] ?? null) === 'park' ? trim($tags['name'] ?? '') : '';
+            if ($parkName !== '') {
+                foreach ($this->rings($element) as $ring) {
+                    $parkAreas[] = ['name' => $parkName, 'ring' => $ring];
                 }
                 continue;
             }
@@ -56,15 +60,23 @@ final class StreetleMapBuilder
             }
 
             $layer = $this->basemapLayer($tags);
-            if ($layer === null) {
-                continue;
+            if ($layer !== null && (!in_array($layer, ['buildings', 'green', 'water'], true) || $this->isClosed($line))) {
+                $basemap[$layer][] = $line;
             }
+        }
 
-            if (in_array($layer, ['buildings', 'parks', 'water'], true) && !$this->isClosed($line)) {
-                continue;
+        $basemap['places'] = array_values(array_filter(
+            $places,
+            static fn (array $place): bool => $playArea->contains(...$place['at']),
+        ));
+        $markedParks = [];
+        foreach ($basemap['places'] as $place) {
+            if ($place['kind'] === 'park') {
+                $markedParks[$place['name']] = true;
             }
-
-            $basemap[$layer][] = $line;
+        }
+        foreach ($parkAreas as $area) {
+            $basemap[isset($markedParks[$area['name']]) ? 'parks' : 'green'][] = $area['ring'];
         }
 
         $inPlay = array_filter($streets, static fn (array $street): bool => $playArea->touches($street['lines']));
@@ -73,6 +85,45 @@ final class StreetleMapBuilder
             static fn (array $street): StreetData => new StreetData($street['name'], $street['normalizedName'], $street['kind'], LineJoiner::join($street['lines'])),
             $inPlay,
         )), $basemap);
+    }
+
+    /**
+     * @param array<string, array{name: ?string, kind: string, at: array{float, float}}> $places
+     * @param array<string, string> $tags
+     * @param array{float, float} $at
+     */
+    private function addPlace(array &$places, array $tags, array $at): void
+    {
+        $kind = $this->placeKind($tags);
+        $name = trim($tags['name'] ?? '');
+        if ($kind === null || $name === '') {
+            return;
+        }
+
+        $places[$kind . $name] ??= ['name' => $kind === 'tram' ? null : $name, 'kind' => $kind, 'at' => $at];
+    }
+
+    /**
+     * @param array<mixed> $element
+     * @return list<list<array{float, float}>>
+     */
+    private function rings(array $element): array
+    {
+        if (($element['type'] ?? null) !== 'relation') {
+            $line = $this->line($element['geometry'] ?? null);
+
+            return $this->isClosed($line) ? [$line] : [];
+        }
+
+        $outer = [];
+        foreach (is_array($element['members'] ?? null) ? $element['members'] : [] as $member) {
+            $line = is_array($member) && ($member['role'] ?? null) === 'outer' ? $this->line($member['geometry'] ?? null) : [];
+            if (count($line) >= 2) {
+                $outer[] = $line;
+            }
+        }
+
+        return array_values(array_filter(LineJoiner::join($outer), $this->isClosed(...)));
     }
 
     /**
@@ -115,7 +166,7 @@ final class StreetleMapBuilder
             isset($tags['building']) => 'buildings',
             ($tags['natural'] ?? null) === 'water', ($tags['waterway'] ?? null) === 'riverbank' => 'water',
             in_array($tags['waterway'] ?? null, ['river', 'canal', 'stream'], true) => 'waterways',
-            $this->matches($tags, self::PARK_TAGS) => 'parks',
+            $this->matches($tags, self::PARK_TAGS) => 'green',
             in_array($railway, self::RAIL_TYPES, true) => 'rail',
             $railway === 'tram' => 'tram',
             default => null,

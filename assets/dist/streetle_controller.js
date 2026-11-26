@@ -9,6 +9,7 @@ const PALETTE = {
     land: '#f3efe6',
     building: '#e3ddd1',
     buildingEdge: '#d5cec0',
+    green: '#d9e6c9',
     park: '#a9d18e',
     parkEdge: '#6fa35a',
     water: '#bcd5e6',
@@ -198,6 +199,7 @@ export default class extends Controller {
             version: 8,
             glyphs: GLYPHS,
             sources: {
+                green: { type: 'geojson', data: polygons(data.basemap.green ?? []) },
                 parks: { type: 'geojson', data: polygons(data.basemap.parks) },
                 water: { type: 'geojson', data: polygons(data.basemap.water) },
                 waterways: { type: 'geojson', data: lines(data.basemap.waterways) },
@@ -211,6 +213,7 @@ export default class extends Controller {
             },
             layers: [
                 { id: 'land', type: 'background', paint: { 'background-color': PALETTE.land } },
+                { id: 'green', type: 'fill', source: 'green', paint: { 'fill-color': PALETTE.green } },
                 { id: 'water', type: 'fill', source: 'water', paint: { 'fill-color': PALETTE.water } },
                 { id: 'waterways', type: 'line', source: 'waterways', paint: { 'line-color': PALETTE.water, 'line-width': ['interpolate', ['linear'], ['zoom'], 14, 2, 18, 12] } },
                 { id: 'buildings', type: 'fill', source: 'buildings', paint: { 'fill-color': PALETTE.building, 'fill-outline-color': PALETTE.buildingEdge } },

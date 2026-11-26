@@ -100,7 +100,8 @@ class StreetleMapBuilderTest extends TestCase
 
         self::assertSame([], $data->streets);
         self::assertCount(1, $data->basemap['buildings']);
-        self::assertCount(1, $data->basemap['parks']);
+        self::assertCount(1, $data->basemap['green']);
+        self::assertSame([], $data->basemap['parks']);
         self::assertCount(1, $data->basemap['water']);
         self::assertCount(1, $data->basemap['waterways']);
         self::assertCount(1, $data->basemap['rail']);
@@ -141,6 +142,56 @@ class StreetleMapBuilderTest extends TestCase
             ['name' => 'People\'s History Museum', 'kind' => 'museum', 'at' => [-2.2534, 53.4816]],
             ['name' => 'Sackville Gardens', 'kind' => 'park', 'at' => [-2.2364, 53.4747]],
         ], $data->basemap['places']);
+    }
+
+    public function testPlacesOutsideThePlayAreaAreLeftOut(): void
+    {
+        $data = $this->builder->build([
+            $this->node(['tourism' => 'museum', 'name' => 'Far Away Museum'], 52.0, -1.0),
+            $this->node(['railway' => 'tram_stop', 'name' => 'Far Away Stop'], 52.0, -1.0),
+            $this->node(['tourism' => 'museum', 'name' => 'Science and Industry Museum'], 53.4770, -2.2550),
+        ], $this->area());
+
+        self::assertSame(['Science and Industry Museum'], array_column($data->basemap['places'], 'name'));
+    }
+
+    public function testOnlyParksWithAnIconInThePlayAreaAreHighlighted(): void
+    {
+        $sackville = [[53.4740, -2.2370], [53.4750, -2.2370], [53.4750, -2.2360], [53.4740, -2.2370]];
+        $farPark = [[52.0, -1.0], [52.01, -1.0], [52.01, -1.01], [52.0, -1.0]];
+        $lawn = [[53.48, -2.24], [53.481, -2.24], [53.481, -2.241], [53.48, -2.24]];
+
+        $data = $this->builder->build([
+            $this->way(['leisure' => 'park', 'name' => 'Sackville Gardens'], $sackville),
+            $this->centred('way', ['leisure' => 'park', 'name' => 'Sackville Gardens'], 53.4745, -2.2366),
+            $this->way(['leisure' => 'park', 'name' => 'Far Park'], $farPark),
+            $this->centred('way', ['leisure' => 'park', 'name' => 'Far Park'], 52.005, -1.005),
+            $this->way(['landuse' => 'grass'], $lawn),
+        ], $this->area());
+
+        self::assertSame(['Sackville Gardens'], array_column($data->basemap['places'], 'name'));
+        self::assertCount(1, $data->basemap['parks']);
+        self::assertSame(-2.237, $data->basemap['parks'][0][0][0]);
+        self::assertCount(2, $data->basemap['green']);
+    }
+
+    public function testParkRelationsAreJoinedFromTheirOuterWays(): void
+    {
+        $data = $this->builder->build([
+            [
+                'type' => 'relation',
+                'tags' => ['leisure' => 'park', 'name' => 'Ancoats Green'],
+                'members' => [
+                    ['type' => 'way', 'role' => 'outer', 'geometry' => [['lat' => 53.48, 'lon' => -2.23], ['lat' => 53.481, 'lon' => -2.23], ['lat' => 53.481, 'lon' => -2.229]]],
+                    ['type' => 'way', 'role' => 'outer', 'geometry' => [['lat' => 53.481, 'lon' => -2.229], ['lat' => 53.48, 'lon' => -2.229], ['lat' => 53.48, 'lon' => -2.23]]],
+                    ['type' => 'way', 'role' => 'inner', 'geometry' => [['lat' => 53.4805, 'lon' => -2.2295], ['lat' => 53.4806, 'lon' => -2.2295]]],
+                ],
+            ],
+            $this->centred('relation', ['leisure' => 'park', 'name' => 'Ancoats Green'], 53.4805, -2.2295),
+        ], $this->area());
+
+        self::assertCount(1, $data->basemap['parks']);
+        self::assertCount(5, $data->basemap['parks'][0]);
     }
 
     public function testDifferentTramStopsAreKeptSeparately(): void
