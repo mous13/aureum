@@ -1,4 +1,5 @@
 {% extends '@CitadelAureum/core/base.html.twig' %}
+{% import '@CitadelAureum/core/streetle/blocks/macros.html.twig' as streetle %}
 {% block title %}Streetle - Aureum{% endblock %}
 {% block body %}
     {{ component('Aureum\\Announcements', { module: 'streetle' }) }}
@@ -115,6 +116,40 @@
                         {% endfor %}
                     {% endblock %}
                 {% endembed %}
+
+                <section class="streetle-recent">
+                    <h3 class="streetle-board__title">Your last {{ recent|length > 1 ? recent|length ~ ' games' : 'game' }}</h3>
+                    {% if recent is empty %}
+                        <p class="streetle-board__empty">Your games will show here once you've played.</p>
+                    {% else %}
+                        <table class="table w-100">
+                            <thead>
+                            <tr>
+                                <th>When</th>
+                                <th>Mode</th>
+                                <th>Streets</th>
+                                <th>Time</th>
+                                <th>Accuracy</th>
+                                <th>Per min</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for game in recent %}
+                                <tr>
+                                    <td>{{ game.endedAt|date('j M, H:i', timezone) }}</td>
+                                    <td>{{ game.mode.label }}</td>
+                                    <td>{{ game.correctCount }}</td>
+                                    <td>{{ streetle.duration(game.durationSeconds) }}</td>
+                                    <td>{{ streetle.accuracy(game.accuracy) }}</td>
+                                    <td>{{ game.streetsPerMinute|number_format(1) }}</td>
+                                    <td><a href="{{ path('aureum_streetle_summary', { id: game.id }) }}">Results</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </section>
             {% endif %}
         </div>
     </div>

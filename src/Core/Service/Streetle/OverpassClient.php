@@ -66,9 +66,11 @@ class OverpassClient
             . 'way["leisure"~"^(park|garden)$"]' . $box . ';'
             . 'way["landuse"~"^(grass|village_green)$"]' . $box . ';'
             . 'way["railway"~"^(rail|light_rail|subway|narrow_gauge|tram)$"]' . $box . ';'
-            . 'node["railway"~"^(station|tram_stop)$"]["name"]' . $box . ';'
-            . 'node["tourism"~"^(museum|gallery|attraction)$"]["name"]' . $box . ';'
-            . 'node["amenity"~"^(theatre|arts_centre|library|townhall|cinema|concert_hall)$"]["name"]' . $box . ';'
-            . ');out geom;';
+            . ');out geom;('
+            . 'node["railway"="tram_stop"]["name"]' . $box . ';'
+            . 'nwr["tourism"="museum"]["name"]' . $box . ';'
+            . 'nwr["leisure"="park"]["name"]' . $box . ';'
+            . 'nwr["name"~"^(' . implode('|', array_map(preg_quote(...), array_keys(StreetleMapBuilder::FEATURED_PLACES))) . ')$"]' . $box . ';'
+            . ');out center;';
     }
 }

@@ -8,6 +8,8 @@ use Citadel\Aureum\Core\Entity\Employee;
 use Citadel\Aureum\Core\Entity\Enum\StreetleMode;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Entity\StreetleSession;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Forumify\Core\Repository\AbstractRepository;
 
 /**
@@ -29,6 +31,18 @@ class StreetleSessionRepository extends AbstractRepository
     public function findOpenForEmployee(Employee $employee): array
     {
         return $this->findBy(['employee' => $employee, 'endedAt' => null]);
+    }
+
+    /** @return list<StreetleSession> */
+    public function findRecentForEmployee(Employee $employee, int $limit): array
+    {
+        return array_values($this->matching(
+            Criteria::create()
+                ->where(Criteria::expr()->eq('employee', $employee))
+                ->andWhere(Criteria::expr()->neq('endedAt', null))
+                ->orderBy(['endedAt' => Order::Descending])
+                ->setMaxResults($limit),
+        )->toArray());
     }
 
     /** @return list<StreetleSession> */

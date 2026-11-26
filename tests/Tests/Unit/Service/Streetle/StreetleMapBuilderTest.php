@@ -116,21 +116,41 @@ class StreetleMapBuilderTest extends TestCase
         self::assertSame([], $data->basemap['buildings']);
     }
 
-    public function testLandmarksAreKeptOncePerName(): void
+    public function testOnlyTheChosenPlacesAreKept(): void
     {
         $data = $this->builder->build([
             $this->node(['railway' => 'tram_stop', 'name' => 'St Peter\'s Square'], 53.4781, -2.2433),
             $this->node(['railway' => 'tram_stop', 'name' => 'St Peter\'s Square'], 53.4782, -2.2434),
+            $this->centred('way', ['shop' => 'mall', 'name' => 'Manchester Arndale'], 53.4835, -2.2397),
+            $this->centred('relation', ['shop' => 'mall', 'name' => 'Afflecks'], 53.4829, -2.2364),
+            $this->centred('way', ['tourism' => 'gallery', 'name' => 'Manchester Art Gallery'], 53.4787, -2.2413),
+            $this->centred('relation', ['tourism' => 'museum', 'name' => 'People\'s History Museum'], 53.4816, -2.2534),
+            $this->centred('way', ['leisure' => 'park', 'name' => 'Sackville Gardens'], 53.4747, -2.2364),
+            $this->centred('way', ['shop' => 'mall', 'name' => 'Urban Exchange'], 53.4870, -2.2330),
+            $this->node(['tourism' => 'gallery', 'name' => 'Whitewall Galleries'], 53.481, -2.245),
             $this->node(['railway' => 'station', 'name' => 'Manchester Victoria'], 53.4875, -2.2425),
-            $this->node(['tourism' => 'museum', 'name' => 'Science and Industry Museum'], 53.4770, -2.2550),
             $this->node(['amenity' => 'cafe', 'name' => 'Some Cafe'], 53.48, -2.24),
+            $this->centred('way', ['leisure' => 'park'], 53.47, -2.25),
         ], $this->area());
 
         self::assertSame([
-            ['name' => 'St Peter\'s Square', 'kind' => 'tram', 'at' => [-2.2433, 53.4781]],
-            ['name' => 'Manchester Victoria', 'kind' => 'station', 'at' => [-2.2425, 53.4875]],
-            ['name' => 'Science and Industry Museum', 'kind' => 'landmark', 'at' => [-2.255, 53.477]],
-        ], $data->basemap['landmarks']);
+            ['name' => null, 'kind' => 'tram', 'at' => [-2.2433, 53.4781]],
+            ['name' => 'Manchester Arndale', 'kind' => 'shopping', 'at' => [-2.2397, 53.4835]],
+            ['name' => 'Afflecks', 'kind' => 'shopping', 'at' => [-2.2364, 53.4829]],
+            ['name' => 'Manchester Art Gallery', 'kind' => 'gallery', 'at' => [-2.2413, 53.4787]],
+            ['name' => 'People\'s History Museum', 'kind' => 'museum', 'at' => [-2.2534, 53.4816]],
+            ['name' => 'Sackville Gardens', 'kind' => 'park', 'at' => [-2.2364, 53.4747]],
+        ], $data->basemap['places']);
+    }
+
+    public function testDifferentTramStopsAreKeptSeparately(): void
+    {
+        $data = $this->builder->build([
+            $this->node(['railway' => 'tram_stop', 'name' => 'Victoria'], 53.4875, -2.2425),
+            $this->node(['railway' => 'tram_stop', 'name' => 'Shudehill'], 53.4852, -2.2391),
+        ], $this->area());
+
+        self::assertCount(2, $data->basemap['places']);
     }
 
     public function testStreetsOutsideThePlayAreaAreLeftOut(): void
@@ -161,6 +181,15 @@ class StreetleMapBuilderTest extends TestCase
             'tags' => $tags,
             'geometry' => array_map(static fn (array $p): array => ['lat' => $p[0], 'lon' => $p[1]], $points),
         ];
+    }
+
+    /**
+     * @param array<string, string> $tags
+     * @return array<string, mixed>
+     */
+    private function centred(string $type, array $tags, float $lat, float $lon): array
+    {
+        return ['type' => $type, 'tags' => $tags, 'center' => ['lat' => $lat, 'lon' => $lon]];
     }
 
     /**

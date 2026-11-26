@@ -20,9 +20,17 @@ const PALETTE = {
     hover: '#f2b705',
     selected: '#e8590c',
     label: '#2a2722',
-    landmark: '#6f6a61',
+    place: '#4f4a42',
     neighbourhood: '#4a443c',
 };
+const PLACE_ICONS = {
+    tram: { glyph: '\ue9ec', fill: '#f5c400', ink: '#1d1b18' },
+    museum: { glyph: '\ue0b4', fill: '#6b4fa0', ink: '#ffffff' },
+    gallery: { glyph: '\ue6c8', fill: '#b0306a', ink: '#ffffff' },
+    shopping: { glyph: '\ue416', fill: '#c2410c', ink: '#ffffff' },
+    park: { glyph: '\ue6da', fill: '#2f7d32', ink: '#ffffff' },
+};
+const ICON_FONT = 'Phosphor-Fill';
 const STREET_WIDTH = { major: [4, 22], minor: [2.5, 16], path: [1.2, 7] };
 
 const polygons = (rings) => ({
@@ -141,6 +149,7 @@ export default class extends Controller {
             this.map.setMinZoom(this.map.getZoom() - 0.5);
             this.settled.forEach((street, id) => this.paint(id, street.status));
             this.refreshLabels();
+            this.addPlaces(data.basemap.places ?? []);
             this.loadingTarget.hidden = true;
         });
         this.map.on('mousemove', (event) => this.hover(event.point));
@@ -162,14 +171,6 @@ export default class extends Controller {
                 id: street.id,
                 properties: { kind: street.kind },
                 geometry: { type: 'MultiLineString', coordinates: street.lines },
-            })),
-        };
-        const landmarks = {
-            type: 'FeatureCollection',
-            features: data.basemap.landmarks.map((landmark) => ({
-                type: 'Feature',
-                properties: { name: landmark.name, kind: landmark.kind },
-                geometry: { type: 'Point', coordinates: landmark.at },
             })),
         };
         const neighbourhoods = {
@@ -205,7 +206,6 @@ export default class extends Controller {
                 streets: { type: 'geojson', data: streets, tolerance: 0.2 },
                 outside: { type: 'geojson', data: outside },
                 labels: { type: 'geojson', data: EMPTY },
-                landmarks: { type: 'geojson', data: landmarks },
                 neighbourhoods: { type: 'geojson', data: neighbourhoods },
             },
             layers: [
@@ -231,11 +231,6 @@ export default class extends Controller {
                 },
                 { id: 'street-hit', type: 'line', source: 'streets', paint: { 'line-color': '#000', 'line-width': 24, 'line-opacity': 0 } },
                 { id: 'outside', type: 'fill', source: 'outside', paint: { 'fill-color': '#1d1b18', 'fill-opacity': 0.35 } },
-                {
-                    id: 'landmarks', type: 'symbol', source: 'landmarks', minzoom: 15,
-                    layout: { 'text-field': ['get', 'name'], 'text-font': LABEL_FONT, 'text-size': 11, 'text-max-width': 8, 'text-optional': true },
-                    paint: { 'text-color': PALETTE.landmark, 'text-halo-color': PALETTE.land, 'text-halo-width': 1.5 },
-                },
                 {
                     id: 'neighbourhood-names', type: 'symbol', source: 'neighbourhoods', maxzoom: 16.5,
                     layout: {
@@ -268,6 +263,67 @@ export default class extends Controller {
         element.append(icon, name);
 
         new maplibregl.Marker({ element, anchor: 'bottom', offset: [0, -6] }).setLngLat(hotel.at).addTo(this.map);
+    }
+
+    async addPlaces(places) {
+        try {
+            await document.fonts.load(`28px "${ICON_FONT}"`);
+        } catch {
+            return;
+        }
+        if (!this.map) return;
+
+        Object.entries(PLACE_ICONS).forEach(([kind, icon]) => this.map.addImage(`place-${kind}`, this.drawIcon(icon), { pixelRatio: 2 }));
+        this.map.addSource('places', {
+            type: 'geojson',
+            data: {
+                type: 'FeatureCollection',
+                features: places.map((place) => ({
+                    type: 'Feature',
+                    properties: { name: place.name ?? '', kind: place.kind },
+                    geometry: { type: 'Point', coordinates: place.at },
+                })),
+            },
+        });
+        this.map.addLayer({
+            id: 'places',
+            type: 'symbol',
+            source: 'places',
+            layout: {
+                'icon-image': ['concat', 'place-', ['get', 'kind']],
+                'icon-size': ['interpolate', ['linear'], ['zoom'], 13, 0.7, 16, 1],
+                'icon-allow-overlap': true,
+                'text-field': ['step', ['zoom'], '', 15, ['get', 'name']],
+                'text-font': LABEL_FONT,
+                'text-size': 11,
+                'text-max-width': 8,
+                'text-anchor': 'top',
+                'text-offset': [0, 1.2],
+                'text-optional': true,
+            },
+            paint: { 'text-color': PALETTE.place, 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 },
+        }, 'neighbourhood-names');
+    }
+
+    drawIcon({ glyph, fill, ink }) {
+        const size = 52;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext('2d');
+        context.beginPath();
+        context.arc(size / 2, size / 2, size / 2 - 3, 0, Math.PI * 2);
+        context.fillStyle = fill;
+        context.fill();
+        context.lineWidth = 3;
+        context.strokeStyle = '#ffffff';
+        context.stroke();
+        context.fillStyle = ink;
+        context.font = `28px "${ICON_FONT}"`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(glyph, size / 2, size / 2 + 1);
+        return context.getImageData(0, 0, size, size);
     }
 
     nearestStreet(point, radius) {

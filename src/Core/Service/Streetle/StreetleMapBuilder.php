@@ -11,9 +11,10 @@ final class StreetleMapBuilder
     private const EXCLUDED_HIGHWAYS = ['platform', 'bus_stop', 'construction', 'proposed', 'elevator', 'corridor', 'raceway', 'bus_guideway'];
     private const RAIL_TYPES = ['rail', 'light_rail', 'subway', 'narrow_gauge'];
     private const PARK_TAGS = ['leisure' => ['park', 'garden'], 'landuse' => ['grass', 'village_green']];
-    private const LANDMARK_TAGS = [
-        'tourism' => ['museum', 'gallery', 'attraction'],
-        'amenity' => ['theatre', 'arts_centre', 'library', 'townhall', 'cinema', 'concert_hall'],
+    public const FEATURED_PLACES = [
+        'Manchester Arndale' => 'shopping',
+        'Afflecks' => 'shopping',
+        'Manchester Art Gallery' => 'gallery',
     ];
 
     public function __construct(
@@ -27,17 +28,19 @@ final class StreetleMapBuilder
     public function build(array $elements, StreetleBounds $playArea): StreetleMapData
     {
         $streets = [];
-        $basemap = ['buildings' => [], 'parks' => [], 'water' => [], 'waterways' => [], 'rail' => [], 'tram' => [], 'landmarks' => []];
-        $landmarkNames = [];
+        $basemap = ['buildings' => [], 'parks' => [], 'water' => [], 'waterways' => [], 'rail' => [], 'tram' => [], 'places' => []];
+        $placeKeys = [];
 
         foreach ($elements as $element) {
             $tags = $this->tags($element['tags'] ?? null);
 
-            if (($element['type'] ?? null) === 'node') {
-                $landmark = $this->landmark($tags, $this->point($element));
-                if ($landmark !== null && !isset($landmarkNames[$landmark['kind'] . $landmark['name']])) {
-                    $landmarkNames[$landmark['kind'] . $landmark['name']] = true;
-                    $basemap['landmarks'][] = $landmark;
+            $at = $this->point($element['center'] ?? $element);
+            if ($at !== null) {
+                $kind = $this->placeKind($tags);
+                $name = trim($tags['name'] ?? '');
+                if ($kind !== null && $name !== '' && !isset($placeKeys[$kind . $name])) {
+                    $placeKeys[$kind . $name] = true;
+                    $basemap['places'][] = ['name' => $kind === 'tram' ? null : $name, 'kind' => $kind, 'at' => $at];
                 }
                 continue;
             }
@@ -121,24 +124,18 @@ final class StreetleMapBuilder
 
     /**
      * @param array<string, string> $tags
-     * @param array{float, float}|null $at
-     * @return array{name: string, kind: string, at: array{float, float}}|null
      */
-    private function landmark(array $tags, ?array $at): ?array
+    private function placeKind(array $tags): ?string
     {
-        $name = trim($tags['name'] ?? '');
-        if ($name === '' || $at === null) {
-            return null;
-        }
+        $featured = self::FEATURED_PLACES[$tags['name'] ?? ''] ?? null;
 
-        $kind = match (true) {
-            ($tags['railway'] ?? null) === 'station' => 'station',
+        return match (true) {
             ($tags['railway'] ?? null) === 'tram_stop' => 'tram',
-            $this->matches($tags, self::LANDMARK_TAGS) => 'landmark',
+            $featured !== null => $featured,
+            ($tags['tourism'] ?? null) === 'museum' => 'museum',
+            ($tags['leisure'] ?? null) === 'park' => 'park',
             default => null,
         };
-
-        return $kind === null ? null : ['name' => $name, 'kind' => $kind, 'at' => $at];
     }
 
     /**

@@ -67,6 +67,10 @@
     gap: var(--au-space-xs);
 }
 
+.streetle-recent {
+    margin-top: var(--au-space-lg);
+}
+
 .streetle-board__empty {
     color: var(--au-muted);
 }

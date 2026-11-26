@@ -33,6 +33,7 @@ class StreetleController extends AbstractController
 
     public const CSRF_TOKEN_ID = 'aureum_streetle';
     private const IMPORT_TIME_LIMIT_SECONDS = 300;
+    private const RECENT_GAMES = 10;
 
     public function __construct(
         private readonly AureumService $aureumService,
@@ -67,6 +68,8 @@ class StreetleController extends AbstractController
             'map' => $this->mapRepository->findOneByHotel($employee->getHotel()),
             'modes' => $modes,
             'periods' => $periods,
+            'recent' => $this->sessionRepository->findRecentForEmployee($employee, self::RECENT_GAMES),
+            'timezone' => $employee->getHotel()->getTimezone() ?? StreetleLeaderboard::DEFAULT_TIMEZONE,
             'employee' => $employee,
         ]);
     }
