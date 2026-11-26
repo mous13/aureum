@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Citadel\Aureum\Core\Controller;
 
 use Citadel\Aureum\Core\Controller\Trait\StreetleAccessTrait;
+use Citadel\Aureum\Core\Entity\Employee;
 use Citadel\Aureum\Core\Entity\Enum\StreetleMode;
 use Citadel\Aureum\Core\Exception\StreetleException;
 use Citadel\Aureum\Core\Repository\StreetleMapRepository;
 use Citadel\Aureum\Core\Repository\StreetleSessionRepository;
 use Citadel\Aureum\Core\Repository\StreetleStreetRepository;
 use Citadel\Aureum\Core\Service\AureumService;
+use Citadel\Aureum\Core\Service\Streetle\LeaderboardEntry;
 use Citadel\Aureum\Core\Service\Streetle\LeaderboardPeriod;
 use Citadel\Aureum\Core\Service\Streetle\StreetleBounds;
 use Citadel\Aureum\Core\Service\Streetle\StreetleGame;
@@ -43,25 +45,28 @@ class StreetleController extends AbstractController
     }
 
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(Request $request): Response
+    public function index(): Response
     {
         $employee = $this->employee();
-        $period = LeaderboardPeriod::fromQuery($request->query->getString('period'));
-        $boards = [];
+        $now = new DateTimeImmutable();
+        $modes = [];
+        $periods = [];
         foreach (StreetleMode::cases() as $mode) {
-            $entries = $this->leaderboard->forHotel($employee->getHotel(), $mode, new DateTimeImmutable())[$period->value];
-            $boards[] = [
+            $boards = $this->leaderboard->forHotel($employee->getHotel(), $mode, $now);
+            $modes[] = [
                 'mode' => $mode,
-                'entries' => $entries,
-                'mine' => StreetleLeaderboard::entryFor($entries, $employee->getId()),
-                'rival' => StreetleLeaderboard::rivalFor($entries, $employee->getId()),
+                'best' => StreetleLeaderboard::entryFor($boards[LeaderboardPeriod::ALL_TIME->value], $employee->getId()),
             ];
+            foreach (LeaderboardPeriod::cases() as $period) {
+                $periods[$period->value]['period'] = $period;
+                $periods[$period->value]['boards'][] = $this->board($mode, $boards[$period->value], $employee);
+            }
         }
 
         return $this->render('@CitadelAureum/core/streetle/index.html.twig', [
             'map' => $this->mapRepository->findOneByHotel($employee->getHotel()),
-            'boards' => $boards,
-            'period' => $period,
+            'modes' => $modes,
+            'periods' => $periods,
             'employee' => $employee,
         ]);
     }
@@ -101,7 +106,7 @@ class StreetleController extends AbstractController
     }
 
     #[Route('/session/{id}/summary', name: 'summary', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function summary(Request $request, int $id): Response
+    public function summary(int $id): Response
     {
         $session = $this->findSession($id);
         if ($session->isOpen()) {
@@ -109,18 +114,16 @@ class StreetleController extends AbstractController
         }
 
         $employee = $session->getEmployee();
-        $period = LeaderboardPeriod::fromQuery($request->query->getString('period'));
         $boards = $this->leaderboard->forHotel($session->getHotel(), $session->getMode(), new DateTimeImmutable());
-        $entries = $boards[$period->value];
-        $mine = StreetleLeaderboard::entryFor($entries, $employee->getId());
         $best = StreetleLeaderboard::entryFor($boards[LeaderboardPeriod::ALL_TIME->value], $employee->getId());
+        $periods = [];
+        foreach (LeaderboardPeriod::cases() as $period) {
+            $periods[] = ['period' => $period] + $this->board($session->getMode(), $boards[$period->value], $employee);
+        }
 
         return $this->render('@CitadelAureum/core/streetle/summary.html.twig', [
             'session' => $session,
-            'period' => $period,
-            'entries' => $entries,
-            'mine' => $mine,
-            'rival' => StreetleLeaderboard::rivalFor($entries, $employee->getId()),
+            'periods' => $periods,
             'isPersonalBest' => $best !== null && $best->session->getId() === $session->getId(),
             'topOf' => StreetleLeaderboard::widestWin($boards, $session),
             'employee' => $employee,
@@ -142,5 +145,19 @@ class StreetleController extends AbstractController
         }
 
         return $this->redirectToRoute('aureum_streetle_index');
+    }
+
+    /**
+     * @param list<LeaderboardEntry> $entries
+     * @return array{mode: StreetleMode, entries: list<LeaderboardEntry>, mine: ?LeaderboardEntry, rival: ?LeaderboardEntry}
+     */
+    private function board(StreetleMode $mode, array $entries, Employee $employee): array
+    {
+        return [
+            'mode' => $mode,
+            'entries' => $entries,
+            'mine' => StreetleLeaderboard::entryFor($entries, $employee->getId()),
+            'rival' => StreetleLeaderboard::rivalFor($entries, $employee->getId()),
+        ];
     }
 }

@@ -37,45 +37,54 @@
                 <p class="streetle-intro">
                     Learn the {{ map.streetCount }} streets around the hotel. Click a street on the map and type its name.
                 </p>
-                {% include '@CitadelAureum/core/streetle/blocks/period_tabs.html.twig' with {
-                    period: period, route: 'aureum_streetle_index', routeParams: {},
-                } only %}
                 <div class="streetle-modes">
-                    {% for board in boards %}
+                    {% for item in modes %}
                         <div class="streetle-mode">
                             <div>
-                                <h3 class="streetle-mode__title">{{ board.mode.label }}</h3>
+                                <h3 class="streetle-mode__title">{{ item.mode.label }}</h3>
                                 <p class="streetle-muted">
-                                    {% if board.mode.value == 'sprint' %}
+                                    {% if item.mode.value == 'sprint' %}
                                         Five minutes on the clock. Name as many streets as you can.
                                     {% else %}
                                         No clock. Work through the map at your own pace and finish when you're ready.
                                     {% endif %}
                                 </p>
-                                {% if board.mine %}
+                                {% if item.best %}
+                                    {% set best = item.best.session.correctCount %}
                                     <p class="streetle-mode__best">
-                                        {% set best = board.mine.session.correctCount %}
-                                        Your best{{ period.phrase ? ' ' ~ period.phrase }}: <strong>{{ best }} street{{ best == 1 ? '' : 's' }}</strong>
-                                        &middot; #{{ board.mine.rank }} of {{ board.entries|length }}
+                                        Your best: <strong>{{ best }} street{{ best == 1 ? '' : 's' }}</strong>
                                     </p>
                                 {% endif %}
-                                {% include '@CitadelAureum/core/streetle/blocks/rival.html.twig' with {
-                                    mode: board.mode, mine: board.mine, rival: board.rival, entries: board.entries, period: period,
-                                } only %}
                             </div>
                             {% include '@CitadelAureum/core/streetle/blocks/start_form.html.twig' with {
-                                mode: board.mode, label: 'Start ' ~ board.mode.label|lower,
+                                mode: item.mode, label: 'Start ' ~ item.mode.label|lower,
                             } only %}
                         </div>
                     {% endfor %}
                 </div>
-                <div class="streetle-boards">
-                    {% for board in boards %}
-                        {% include '@CitadelAureum/core/streetle/blocks/leaderboard.html.twig' with {
-                            mode: board.mode, entries: board.entries, mine: board.mine, employeeId: employee.id, period: period,
-                        } only %}
-                    {% endfor %}
-                </div>
+                {% embed '@Forumify/components/tabs.html.twig' %}
+                    {% block tabs %}
+                        {% for item in periods %}
+                            <button type="button" class="luxury-light square btn-link" data-tab-id="streetle-{{ item.period.value }}">{{ item.period.label }}</button>
+                        {% endfor %}
+                    {% endblock %}
+                    {% block tabpanels %}
+                        {% for item in periods %}
+                            <div id="streetle-{{ item.period.value }}">
+                                <div class="streetle-boards">
+                                    {% for board in item.boards %}
+                                        <div>
+                                            {% include '@CitadelAureum/core/streetle/blocks/leaderboard.html.twig' with board|merge({
+                                                period: item.period, employeeId: employee.id,
+                                            }) only %}
+                                            {% include '@CitadelAureum/core/streetle/blocks/rival.html.twig' with board|merge({ period: item.period }) only %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endblock %}
+                {% endembed %}
             {% endif %}
         </div>
     </div>

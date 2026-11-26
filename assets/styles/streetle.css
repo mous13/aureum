@@ -61,33 +61,6 @@
     color: var(--au-accent-deep);
 }
 
-.streetle-periods {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--au-space-2xs);
-    margin-bottom: var(--au-space-md);
-}
-
-.streetle-periods .streetle-periods__tab {
-    padding: var(--au-space-2xs) var(--au-space-sm);
-    border-radius: 999px;
-    font-size: var(--au-text-sm);
-    color: var(--au-muted);
-    background: var(--au-paper);
-    box-shadow: var(--au-shadow);
-    text-decoration: none;
-}
-
-.streetle-periods .streetle-periods__tab:hover {
-    color: var(--au-ink);
-}
-
-.streetle-periods .streetle-periods__tab.is-current {
-    background: oklch(30% 0.04 260);
-    color: #fff;
-    font-weight: 600;
-}
-
 .streetle-banners {
     display: flex;
     flex-wrap: wrap;

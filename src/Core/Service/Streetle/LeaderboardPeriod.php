@@ -14,11 +14,6 @@ enum LeaderboardPeriod: string
     case MONTH = 'month';
     case ALL_TIME = 'all';
 
-    public static function fromQuery(?string $value): self
-    {
-        return self::tryFrom((string)$value) ?? self::WEEK;
-    }
-
     public function getLabel(): string
     {
         return match ($this) {

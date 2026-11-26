@@ -1,7 +1,0 @@
-<nav class="streetle-periods" aria-label="Leaderboard period">
-    {% for option in enum('Citadel\\Aureum\\Core\\Service\\Streetle\\LeaderboardPeriod').cases() %}
-        <a href="{{ path(route, routeParams|merge({ period: option.value })) }}"
-           class="streetle-periods__tab{{ option == period ? ' is-current' }}"
-           {{ option == period ? 'aria-current="page"' }}>{{ option.label }}</a>
-    {% endfor %}
-</nav>

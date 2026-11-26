@@ -35,11 +35,4 @@ class LeaderboardPeriodTest extends TestCase
             $start?->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s \U\T\C'),
         );
     }
-
-    public function testTheBoardOpensOnThisWeek(): void
-    {
-        self::assertSame(LeaderboardPeriod::WEEK, LeaderboardPeriod::fromQuery(null));
-        self::assertSame(LeaderboardPeriod::WEEK, LeaderboardPeriod::fromQuery('nonsense'));
-        self::assertSame(LeaderboardPeriod::TODAY, LeaderboardPeriod::fromQuery('today'));
-    }
 }

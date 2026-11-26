@@ -45,27 +45,30 @@
                 </div>
             </div>
 
-            {% include '@CitadelAureum/core/streetle/blocks/period_tabs.html.twig' with {
-                period: period, route: 'aureum_streetle_summary', routeParams: { id: session.id },
-            } only %}
-
             <div class="streetle-next">
-                <div>
-                    {% if mine %}
-                        <p class="streetle-mode__best">You're <strong>#{{ mine.rank }}</strong> of {{ entries|length }} on the {{ session.mode.label|lower }} board{{ period.phrase ? ' ' ~ period.phrase }}.</p>
-                    {% endif %}
-                    {% include '@CitadelAureum/core/streetle/blocks/rival.html.twig' with {
-                        mode: session.mode, mine: mine, rival: rival, entries: entries, period: period,
-                    } only %}
-                </div>
                 {% include '@CitadelAureum/core/streetle/blocks/start_form.html.twig' with {
                     mode: session.mode, label: 'Play ' ~ session.mode.label|lower ~ ' again',
                 } only %}
             </div>
 
-            {% include '@CitadelAureum/core/streetle/blocks/leaderboard.html.twig' with {
-                mode: session.mode, entries: entries, mine: mine, employeeId: employee.id, period: period,
-            } only %}
+            {% embed '@Forumify/components/tabs.html.twig' %}
+                {% block tabs %}
+                    {% for item in periods %}
+                        <button type="button" class="luxury-light square btn-link" data-tab-id="streetle-{{ item.period.value }}">{{ item.period.label }}</button>
+                    {% endfor %}
+                {% endblock %}
+                {% block tabpanels %}
+                    {% for item in periods %}
+                        <div id="streetle-{{ item.period.value }}">
+                            {% if item.mine %}
+                                <p class="streetle-mode__best">You're <strong>#{{ item.mine.rank }}</strong> of {{ item.entries|length }} on the {{ session.mode.label|lower }} board{{ item.period.phrase ? ' ' ~ item.period.phrase }}.</p>
+                            {% endif %}
+                            {% include '@CitadelAureum/core/streetle/blocks/rival.html.twig' with item only %}
+                            {% include '@CitadelAureum/core/streetle/blocks/leaderboard.html.twig' with item|merge({ employeeId: employee.id }) only %}
+                        </div>
+                    {% endfor %}
+                {% endblock %}
+            {% endembed %}
         </div>
     </div>
 {% endblock %}
