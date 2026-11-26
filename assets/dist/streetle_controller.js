@@ -27,6 +27,7 @@ const PALETTE = {
 };
 const PLACE_ICONS = {
     tram: { glyph: '\ue9ec', fill: '#f5c400', ink: '#1d1b18' },
+    station: { glyph: '\ue496', fill: '#1f3a5f', ink: '#ffffff' },
     museum: { glyph: '\ue0b4', fill: '#6b4fa0', ink: '#ffffff' },
     gallery: { glyph: '\ue6c8', fill: '#b0306a', ink: '#ffffff' },
     shopping: { glyph: '\ue416', fill: '#c2410c', ink: '#ffffff' },

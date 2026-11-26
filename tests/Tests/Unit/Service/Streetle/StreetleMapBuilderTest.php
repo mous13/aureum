@@ -130,17 +130,19 @@ class StreetleMapBuilderTest extends TestCase
             $this->centred('way', ['shop' => 'mall', 'name' => 'Urban Exchange'], 53.4870, -2.2330),
             $this->node(['tourism' => 'gallery', 'name' => 'Whitewall Galleries'], 53.481, -2.245),
             $this->node(['railway' => 'station', 'name' => 'Manchester Victoria'], 53.4875, -2.2425),
+            $this->node(['railway' => 'station', 'name' => 'Manchester Victoria'], 53.4876, -2.2426),
             $this->node(['amenity' => 'cafe', 'name' => 'Some Cafe'], 53.48, -2.24),
             $this->centred('way', ['leisure' => 'park'], 53.47, -2.25),
         ], $this->area());
 
         self::assertSame([
-            ['name' => null, 'kind' => 'tram', 'at' => [-2.2433, 53.4781]],
+            ['name' => 'St Peter\'s Square', 'kind' => 'tram', 'at' => [-2.2433, 53.4781]],
             ['name' => 'Manchester Arndale', 'kind' => 'shopping', 'at' => [-2.2397, 53.4835]],
             ['name' => 'Afflecks', 'kind' => 'shopping', 'at' => [-2.2364, 53.4829]],
             ['name' => 'Manchester Art Gallery', 'kind' => 'gallery', 'at' => [-2.2413, 53.4787]],
             ['name' => 'People\'s History Museum', 'kind' => 'museum', 'at' => [-2.2534, 53.4816]],
             ['name' => 'Sackville Gardens', 'kind' => 'park', 'at' => [-2.2364, 53.4747]],
+            ['name' => 'Manchester Victoria', 'kind' => 'station', 'at' => [-2.2425, 53.4875]],
         ], $data->basemap['places']);
     }
 

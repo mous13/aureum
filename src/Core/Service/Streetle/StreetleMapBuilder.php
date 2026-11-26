@@ -88,7 +88,7 @@ final class StreetleMapBuilder
     }
 
     /**
-     * @param array<string, array{name: ?string, kind: string, at: array{float, float}}> $places
+     * @param array<string, array{name: string, kind: string, at: array{float, float}}> $places
      * @param array<string, string> $tags
      * @param array{float, float} $at
      */
@@ -100,7 +100,7 @@ final class StreetleMapBuilder
             return;
         }
 
-        $places[$kind . $name] ??= ['name' => $kind === 'tram' ? null : $name, 'kind' => $kind, 'at' => $at];
+        $places[$kind . $name] ??= ['name' => $name, 'kind' => $kind, 'at' => $at];
     }
 
     /**
@@ -182,6 +182,7 @@ final class StreetleMapBuilder
 
         return match (true) {
             ($tags['railway'] ?? null) === 'tram_stop' => 'tram',
+            ($tags['railway'] ?? null) === 'station' => 'station',
             $featured !== null => $featured,
             ($tags['tourism'] ?? null) === 'museum' => 'museum',
             ($tags['leisure'] ?? null) === 'park' => 'park',

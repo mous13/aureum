@@ -68,7 +68,7 @@ class OverpassClient
             . 'way["landuse"~"^(grass|village_green)$"]' . $box . ';'
             . 'way["railway"~"^(rail|light_rail|subway|narrow_gauge|tram)$"]' . $box . ';'
             . ');out geom;('
-            . 'node["railway"="tram_stop"]["name"]' . $box . ';'
+            . 'node["railway"~"^(tram_stop|station)$"]["name"]' . $box . ';'
             . 'nwr["tourism"="museum"]["name"]' . $box . ';'
             . 'nwr["leisure"="park"]["name"]' . $box . ';'
             . 'nwr["name"~"^(' . implode('|', array_map(preg_quote(...), array_keys(StreetleMapBuilder::FEATURED_PLACES))) . ')$"]' . $box . ';'
