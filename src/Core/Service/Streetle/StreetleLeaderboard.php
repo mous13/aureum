@@ -8,6 +8,8 @@ use Citadel\Aureum\Core\Entity\Enum\StreetleMode;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Entity\StreetleSession;
 use Citadel\Aureum\Core\Repository\StreetleSessionRepository;
+use DateTimeImmutable;
+use DateTimeZone;
 
 class StreetleLeaderboard
 {
@@ -16,10 +18,38 @@ class StreetleLeaderboard
     ) {
     }
 
-    /** @return list<LeaderboardEntry> */
-    public function forHotel(Hotel $hotel, StreetleMode $mode): array
+    public const DEFAULT_TIMEZONE = 'Europe/London';
+
+    /** @return array<value-of<LeaderboardPeriod>, list<LeaderboardEntry>> */
+    public function forHotel(Hotel $hotel, StreetleMode $mode, DateTimeImmutable $now): array
     {
-        return self::rank($this->sessionRepository->findScoredForBoard($hotel, $mode), $mode);
+        return self::byPeriod(
+            $this->sessionRepository->findScoredForBoard($hotel, $mode),
+            $mode,
+            $now,
+            new DateTimeZone($hotel->getTimezone() ?? self::DEFAULT_TIMEZONE),
+        );
+    }
+
+    /**
+     * @param list<StreetleSession> $sessions
+     * @return array<value-of<LeaderboardPeriod>, list<LeaderboardEntry>>
+     */
+    public static function byPeriod(array $sessions, StreetleMode $mode, DateTimeImmutable $now, DateTimeZone $zone): array
+    {
+        $boards = [];
+        foreach (LeaderboardPeriod::cases() as $period) {
+            $start = $period->startsAt($now, $zone);
+            $boards[$period->value] = self::rank(
+                $start === null ? $sessions : array_values(array_filter(
+                    $sessions,
+                    static fn (StreetleSession $session): bool => $session->getEndedAt() >= $start,
+                )),
+                $mode,
+            );
+        }
+
+        return $boards;
     }
 
     /**
@@ -50,6 +80,21 @@ class StreetleLeaderboard
         }
 
         return $entries;
+    }
+
+    /**
+     * @param array<value-of<LeaderboardPeriod>, list<LeaderboardEntry>> $boards
+     */
+    public static function widestWin(array $boards, StreetleSession $session): ?LeaderboardPeriod
+    {
+        foreach ([LeaderboardPeriod::ALL_TIME, LeaderboardPeriod::MONTH, LeaderboardPeriod::WEEK, LeaderboardPeriod::TODAY] as $period) {
+            $leader = $boards[$period->value][0] ?? null;
+            if ($leader !== null && $leader->rank === 1 && $leader->session->getId() === $session->getId()) {
+                return $period;
+            }
+        }
+
+        return null;
     }
 
     /**

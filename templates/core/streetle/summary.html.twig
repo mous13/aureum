@@ -15,8 +15,15 @@
             </form>
         </div>
         <div class="card-body">
-            {% if isPersonalBest %}
-                <p class="streetle-banner"><i class="ph ph-star"></i> New personal best!</p>
+            {% if topOf or isPersonalBest %}
+                <div class="streetle-banners">
+                    {% if topOf %}
+                        <p class="streetle-banner"><i class="ph ph-crown-simple"></i> You're #1 {{ topOf.phrase ?? 'of all time' }}!</p>
+                    {% endif %}
+                    {% if isPersonalBest %}
+                        <p class="streetle-banner"><i class="ph ph-star"></i> New personal best!</p>
+                    {% endif %}
+                </div>
             {% endif %}
 
             <div class="streetle-stats">
@@ -38,13 +45,17 @@
                 </div>
             </div>
 
+            {% include '@CitadelAureum/core/streetle/blocks/period_tabs.html.twig' with {
+                period: period, route: 'aureum_streetle_summary', routeParams: { id: session.id },
+            } only %}
+
             <div class="streetle-next">
                 <div>
                     {% if mine %}
-                        <p class="streetle-mode__best">You're <strong>#{{ mine.rank }}</strong> of {{ entries|length }} on the {{ session.mode.label|lower }} board.</p>
+                        <p class="streetle-mode__best">You're <strong>#{{ mine.rank }}</strong> of {{ entries|length }} on the {{ session.mode.label|lower }} board{{ period.phrase ? ' ' ~ period.phrase }}.</p>
                     {% endif %}
                     {% include '@CitadelAureum/core/streetle/blocks/rival.html.twig' with {
-                        mode: session.mode, mine: mine, rival: rival, entries: entries,
+                        mode: session.mode, mine: mine, rival: rival, entries: entries, period: period,
                     } only %}
                 </div>
                 {% include '@CitadelAureum/core/streetle/blocks/start_form.html.twig' with {
@@ -53,7 +64,7 @@
             </div>
 
             {% include '@CitadelAureum/core/streetle/blocks/leaderboard.html.twig' with {
-                mode: session.mode, entries: entries, mine: mine, employeeId: employee.id,
+                mode: session.mode, entries: entries, mine: mine, employeeId: employee.id, period: period,
             } only %}
         </div>
     </div>

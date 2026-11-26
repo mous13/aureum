@@ -37,6 +37,9 @@
                 <p class="streetle-intro">
                     Learn the {{ map.streetCount }} streets around the hotel. Click a street on the map and type its name.
                 </p>
+                {% include '@CitadelAureum/core/streetle/blocks/period_tabs.html.twig' with {
+                    period: period, route: 'aureum_streetle_index', routeParams: {},
+                } only %}
                 <div class="streetle-modes">
                     {% for board in boards %}
                         <div class="streetle-mode">
@@ -52,12 +55,12 @@
                                 {% if board.mine %}
                                     <p class="streetle-mode__best">
                                         {% set best = board.mine.session.correctCount %}
-                                        Your best: <strong>{{ best }} street{{ best == 1 ? '' : 's' }}</strong>
+                                        Your best{{ period.phrase ? ' ' ~ period.phrase }}: <strong>{{ best }} street{{ best == 1 ? '' : 's' }}</strong>
                                         &middot; #{{ board.mine.rank }} of {{ board.entries|length }}
                                     </p>
                                 {% endif %}
                                 {% include '@CitadelAureum/core/streetle/blocks/rival.html.twig' with {
-                                    mode: board.mode, mine: board.mine, rival: board.rival, entries: board.entries,
+                                    mode: board.mode, mine: board.mine, rival: board.rival, entries: board.entries, period: period,
                                 } only %}
                             </div>
                             {% include '@CitadelAureum/core/streetle/blocks/start_form.html.twig' with {
@@ -69,7 +72,7 @@
                 <div class="streetle-boards">
                     {% for board in boards %}
                         {% include '@CitadelAureum/core/streetle/blocks/leaderboard.html.twig' with {
-                            mode: board.mode, entries: board.entries, mine: board.mine, employeeId: employee.id,
+                            mode: board.mode, entries: board.entries, mine: board.mine, employeeId: employee.id, period: period,
                         } only %}
                     {% endfor %}
                 </div>

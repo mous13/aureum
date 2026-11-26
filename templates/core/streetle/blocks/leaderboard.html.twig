@@ -1,8 +1,8 @@
 {% set top = entries|slice(0, 10) %}
 <section class="streetle-board">
-    <h3 class="streetle-board__title">{{ mode.label }} leaderboard</h3>
+    <h3 class="streetle-board__title">{{ mode.label }} &middot; {{ period.label|lower }}</h3>
     {% if entries is empty %}
-        <p class="streetle-board__empty">No scores yet.</p>
+        <p class="streetle-board__empty">No scores {{ period.phrase ?: 'yet' }}.</p>
     {% else %}
         <table class="table w-100">
             <thead>

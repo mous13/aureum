@@ -9,9 +9,11 @@ use Citadel\Aureum\Core\Entity\Enum\StreetleMode;
 use Citadel\Aureum\Core\Entity\Hotel;
 use Citadel\Aureum\Core\Entity\StreetleSession;
 use Citadel\Aureum\Core\Service\Streetle\LeaderboardEntry;
+use Citadel\Aureum\Core\Service\Streetle\LeaderboardPeriod;
 use Citadel\Aureum\Core\Service\Streetle\StreetleLeaderboard;
 use Citadel\Aureum\Tests\Unit\EntityIdTrait;
 use DateTimeImmutable;
+use DateTimeZone;
 use PHPUnit\Framework\TestCase;
 
 class StreetleLeaderboardTest extends TestCase
@@ -89,6 +91,47 @@ class StreetleLeaderboardTest extends TestCase
         self::assertNull(StreetleLeaderboard::entryFor($board, 99));
     }
 
+    public function testEachPeriodOnlyCountsSessionsFinishedWithinIt(): void
+    {
+        $sam = $this->employee(1, 'Sam');
+        $alex = $this->employee(2, 'Alex');
+        $boards = StreetleLeaderboard::byPeriod([
+            $this->sprint($sam, correct: 30, guesses: 30, finished: '2026-10-15 12:00:00'),
+            $this->sprint($sam, correct: 12, guesses: 12, finished: '2026-11-24 09:00:00'),
+            $this->sprint($alex, correct: 20, guesses: 20, finished: '2026-11-05 09:00:00'),
+            $this->sprint($alex, correct: 9, guesses: 9, finished: '2026-11-26 08:00:00'),
+        ], StreetleMode::SPRINT, new DateTimeImmutable('2026-11-26 15:00:00 UTC'), new DateTimeZone('Europe/London'));
+
+        $summary = static fn (array $entries): array => array_map(
+            static fn (LeaderboardEntry $e): string => $e->employeeName . ' ' . $e->session->getCorrectCount(),
+            $entries,
+        );
+
+        self::assertSame(['Alex 9'], $summary($boards['today']));
+        self::assertSame(['Sam 12', 'Alex 9'], $summary($boards['week']));
+        self::assertSame(['Alex 20', 'Sam 12'], $summary($boards['month']));
+        self::assertSame(['Sam 30', 'Alex 20'], $summary($boards['all']));
+    }
+
+    public function testTheWidestBoardYouTopIsCelebrated(): void
+    {
+        $sam = $this->employee(1, 'Sam');
+        $alex = $this->employee(2, 'Alex');
+        $samsBest = $this->sprint($sam, correct: 30, guesses: 30, finished: '2026-10-15 12:00:00');
+        $alexToday = $this->sprint($alex, correct: 9, guesses: 9, finished: '2026-11-26 08:00:00');
+        $alexEarlier = $this->sprint($alex, correct: 5, guesses: 5, finished: '2026-11-26 07:00:00');
+        $boards = StreetleLeaderboard::byPeriod(
+            [$samsBest, $alexToday, $alexEarlier],
+            StreetleMode::SPRINT,
+            new DateTimeImmutable('2026-11-26 15:00:00 UTC'),
+            new DateTimeZone('Europe/London'),
+        );
+
+        self::assertSame(LeaderboardPeriod::MONTH, StreetleLeaderboard::widestWin($boards, $alexToday));
+        self::assertSame(LeaderboardPeriod::ALL_TIME, StreetleLeaderboard::widestWin($boards, $samsBest));
+        self::assertNull(StreetleLeaderboard::widestWin($boards, $alexEarlier));
+    }
+
     public function testNobodyIsARivalOnAnEmptyBoard(): void
     {
         self::assertNull(StreetleLeaderboard::rivalFor([], 1));
@@ -103,9 +146,9 @@ class StreetleLeaderboardTest extends TestCase
         return $this->withId($employee, $id);
     }
 
-    private function sprint(Employee $employee, int $correct, int $guesses): StreetleSession
+    private function sprint(Employee $employee, int $correct, int $guesses, string $finished = '2026-11-26 10:05:00'): StreetleSession
     {
-        $start = new DateTimeImmutable('2026-11-26 10:00:00');
+        $start = (new DateTimeImmutable($finished . ' UTC'))->modify('-300 seconds');
         $session = new StreetleSession($employee, StreetleMode::SPRINT, $start);
         for ($i = 0; $i < $guesses; $i++) {
             $i < $correct ? $session->recordCorrectGuess($i, $start) : $session->recordWrongGuess($start);
